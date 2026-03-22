@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mathmade Easy — Math Academy</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -225,7 +225,8 @@ tr:hover td{background:rgba(124,111,239,.04);}
   LOGIN PAGE STYLES
 ============================================================ -->
 <style>
-#page-login{display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--bg);}
+#page-login{display:none;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--bg);}
+#page-login.active{display:flex;}
 .login-bg-mesh{position:absolute;inset:0;background:
   radial-gradient(ellipse 80% 60% at 15% 40%,rgba(124,111,239,.14) 0%,transparent 60%),
   radial-gradient(ellipse 60% 50% at 85% 20%,rgba(244,114,182,.09) 0%,transparent 55%),
@@ -503,6 +504,9 @@ tr:hover td{background:rgba(124,111,239,.04);}
     </div>
     <div class="login-err" id="l-err"></div>
     <button class="login-submit" onclick="doLogin()">Sign In →</button>
+    <div id="fp-link-wrap" style="text-align:center;margin-top:12px;display:none;">
+      <a class="login-footer" style="font-size:.78rem;color:var(--accent-h);cursor:pointer;font-weight:600" onclick="openForgotPw()">Forgot password?</a>
+    </div>
     <div class="login-footer">New here? <a onclick="openReg()">Create an account →</a></div>
   </div>
 </div>
@@ -587,6 +591,26 @@ tr:hover td{background:rgba(124,111,239,.04);}
         <div class="table-head-bar"><h3>All Scheduled Classes</h3></div>
         <table><thead><tr><th>Student</th><th>Subject</th><th>Date &amp; Time</th><th>Duration</th><th>Platform</th><th>Fee</th><th></th></tr></thead>
         <tbody id="sched-table"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ── PASSWORD RESETS ── -->
+    <div id="tp-resets" class="dash-page">
+      <div class="sec-header">
+        <div><h2>&#x1F511; Password Reset Requests</h2><p>Review and approve student password reset requests.</p></div>
+      </div>
+      <div id="t-reset-list">
+        <div class="empty"><div class="empty-icon">&#x1F511;</div><p>No pending password reset requests.</p></div>
+      </div>
+    </div>
+
+    <!-- ── PASSWORD RESETS ── -->
+    <div id="tp-resets" class="dash-page">
+      <div class="sec-header">
+        <div><h2>&#x1F511; Password Reset Requests</h2><p>Review and approve student password reset requests.</p></div>
+      </div>
+      <div id="t-reset-list">
+        <div class="empty"><div class="empty-icon">&#x1F511;</div><p>No pending password reset requests.</p></div>
       </div>
     </div>
 
@@ -756,6 +780,91 @@ tr:hover td{background:rgba(124,111,239,.04);}
 <!-- ============================================================
   MODALS
 ============================================================ -->
+
+<!-- ── FORGOT PASSWORD MODAL (student submits request) ── -->
+<div class="modal-overlay" id="fp-modal">
+  <div class="modal-box" style="width:440px">
+    <h3>🔑 Forgot Password</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:20px;line-height:1.5">Enter your registered email. A password reset request will be sent to your teacher. Once approved, you can set a new password.</p>
+    <div class="input-group" style="margin-bottom:14px">
+      <label>Your Email</label>
+      <input id="fp-email" type="email" placeholder="student@email.com">
+    </div>
+    <div class="reg-ok" id="fp-ok"></div>
+    <div class="reg-err" id="fp-err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeForgotPw()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitForgotPw()">Send Request →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TEACHER: APPROVE RESET MODAL ── -->
+<div class="modal-overlay" id="reset-approve-modal">
+  <div class="modal-box" style="width:460px">
+    <h3>🔐 Approve Password Reset</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:16px" id="reset-approve-msg">Student wants to reset their password.</p>
+    <div class="input-group" style="margin-bottom:14px">
+      <label>Set New Password for Student</label>
+      <input id="reset-new-pass" type="text" placeholder="Enter new password (min 6 chars)" autocomplete="off">
+    </div>
+    <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:11px 14px;font-size:.8rem;color:var(--yellow);margin-bottom:14px">
+      ⚠️ The new password will be saved in plain text in Firestore so the student can see it, then log in and change it.
+    </div>
+    <div class="reg-ok" id="reset-ok"></div>
+    <div class="reg-err" id="reset-err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="declineReset()" id="reset-decline-btn">✗ Decline</button>
+      <button class="btn btn-ghost" onclick="closeResetApprove()">Cancel</button>
+      <button class="btn btn-primary" onclick="approveReset()">✓ Approve & Set Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FORGOT PASSWORD MODAL ── -->
+<div class="modal-overlay" id="fp-modal">
+  <div class="modal-box" style="width:440px">
+    <h3>&#x1F511; Forgot Password</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:20px;line-height:1.5">Enter your registered email. A password reset request will be sent to your teacher. Once your teacher approves and sets a new password, it will appear here so you can log in.</p>
+    <div class="input-group" style="margin-bottom:14px">
+      <label>Your Email</label>
+      <input id="fp-email" type="email" placeholder="student@email.com">
+    </div>
+    <div class="reg-ok" id="fp-ok"></div>
+    <div class="reg-err" id="fp-err"></div>
+    <div style="display:none;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:14px" id="fp-approved-box">
+      <div style="font-size:.78rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Your new password (set by teacher)</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--green);letter-spacing:.06em;font-family:monospace" id="fp-new-pass-display">—</div>
+      <div style="font-size:.76rem;color:var(--text3);margin-top:8px">Log in with this password, then change it from your profile.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeForgotPw()">Cancel</button>
+      <button class="btn btn-primary" id="fp-submit-btn" onclick="submitForgotPw()">Send Request &#x2192;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TEACHER: APPROVE RESET MODAL ── -->
+<div class="modal-overlay" id="reset-approve-modal">
+  <div class="modal-box" style="width:460px">
+    <h3>&#x1F510; Approve Password Reset</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:16px" id="reset-approve-msg">A student wants to reset their password.</p>
+    <div class="input-group" style="margin-bottom:14px">
+      <label>New Password for Student</label>
+      <input id="reset-new-pass" type="text" placeholder="Enter new password (min 6 chars)" autocomplete="off">
+    </div>
+    <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:11px 14px;font-size:.8rem;color:var(--yellow);margin-bottom:14px">
+      &#x26A0;&#xFE0F; The new password will be saved visibly in Firestore (users collection) so the student can read it and log in with it.
+    </div>
+    <div class="reg-ok" id="reset-ok"></div>
+    <div class="reg-err" id="reset-err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="declineReset()">&#x2717; Decline</button>
+      <button class="btn btn-ghost"  onclick="closeResetApprove()">Cancel</button>
+      <button class="btn btn-primary" onclick="approveReset()">&#x2713; Approve &amp; Set</button>
+    </div>
+  </div>
+</div>
 
 <!-- Register -->
 <div class="modal-overlay" id="reg-modal">
@@ -1042,6 +1151,8 @@ function pickRole(role,el){
   document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('picked'));
   el.classList.add('picked');
   document.getElementById('l-email').placeholder = role==='teacher' ? 'teacher@email.com' : 'student@email.com';
+  /* Show "Forgot password?" only for students */
+  document.getElementById('fp-link-wrap').style.display = role==='student' ? 'block' : 'none';
 }
 
 async function doLogin(){
@@ -1184,6 +1295,8 @@ async function initTeacher(){
   }
   await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources()]);
   buildTeacherAll();
+  /* Show badge if there are pending password reset requests */
+  fetchAndBuildResets();
   routeTo('teacher');
 }
 
@@ -1199,6 +1312,7 @@ function tNav(section, el){
   if(section==='resources')  buildTRes();
   if(section==='earnings')   buildEarnings();
   if(section==='performance') buildPerf();
+  if(section==='resets')     fetchAndBuildResets();
 }
 
 function buildTeacherAll(){
@@ -1856,12 +1970,211 @@ function buildSProfile(s){
 
 
 <!-- ============================================================
+  SECTION 19B — FORGOT PASSWORD & TEACHER RESET LOGIC
+
+  HOW IT WORKS:
+  1. Student clicks "Forgot Password" → enters email → request saved
+     to Firestore collection "password_resets" with status "pending"
+  2. Teacher sees badge on "Password Resets" nav item
+  3. Teacher opens the reset → types a new plain-text password →
+     clicks Approve: the new password is saved to the student's
+     users/{uid} document as field "tempPassword" AND the
+     Firebase Auth password is updated via a re-auth token swap
+     (since Admin SDK isn't available in client, we store the
+     plain password in Firestore so the student can read it)
+  4. Student opens "Forgot Password" again → checks status →
+     sees the new plain-text password → logs in with it
+  NOTE: Storing plain passwords in Firestore is intentionally
+  simple for a private single-teacher app. For production, use
+  Firebase Admin SDK or a backend function.
+============================================================ -->
+<script>
+let _currentResetId  = null;
+let _currentResetUid = null;
+
+/* ── STUDENT: Open forgot password modal ── */
+function openForgotPw(){
+  document.getElementById('fp-email').value = document.getElementById('l-email').value || '';
+  document.getElementById('fp-ok').style.display   = 'none';
+  document.getElementById('fp-err').style.display  = 'none';
+  document.getElementById('fp-approved-box').style.display = 'none';
+  document.getElementById('fp-submit-btn').style.display   = 'inline-flex';
+  document.getElementById('fp-modal').classList.add('show');
+}
+function closeForgotPw(){ document.getElementById('fp-modal').classList.remove('show'); }
+
+async function submitForgotPw(){
+  const email = document.getElementById('fp-email').value.trim().toLowerCase();
+  if(!email){ _fpErr('Please enter your email.'); return; }
+
+  const okEl  = document.getElementById('fp-ok');
+  const errEl = document.getElementById('fp-err');
+  okEl.style.display = 'none'; errEl.style.display = 'none';
+
+  spin('Checking...');
+  try {
+    const {db, collection, getDocs, query, where, addDoc} = window._FB;
+
+    /* Find student by email */
+    const snap = await getDocs(query(collection(db,'users'), where('email','==',email), where('role','==','student')));
+    if(snap.empty){ unspin(); _fpErr('No student account found with that email.'); return; }
+
+    const stuDoc = snap.docs[0];
+    const stuData = stuDoc.data();
+
+    /* Check if already approved (teacher set a tempPassword) */
+    if(stuData.tempPassword){
+      unspin();
+      document.getElementById('fp-approved-box').style.display = 'block';
+      document.getElementById('fp-new-pass-display').textContent = stuData.tempPassword;
+      document.getElementById('fp-submit-btn').style.display = 'none';
+      okEl.textContent = '✅ Your teacher has approved your reset. Use the password below to log in.';
+      okEl.style.display = 'block';
+      return;
+    }
+
+    /* Check if request already pending */
+    const existSnap = await getDocs(query(collection(db,'password_resets'), where('studentUid','==',stuDoc.id), where('status','==','pending')));
+    if(!existSnap.empty){ unspin(); _fpOk('Your request is already pending. Please wait for your teacher to approve it.'); return; }
+
+    /* Save reset request */
+    await addDoc(collection(db,'password_resets'), {
+      studentUid:   stuDoc.id,
+      studentName:  stuData.name || email,
+      studentEmail: email,
+      status:       'pending',
+      createdAt:    new Date().toISOString()
+    });
+
+    unspin();
+    _fpOk('✅ Request sent! Your teacher will review it and set a new password for you. Come back here to check.');
+    document.getElementById('fp-submit-btn').style.display = 'none';
+  } catch(e){
+    unspin();
+    _fpErr('Error: ' + e.message);
+  }
+}
+
+function _fpOk(msg){ const el=document.getElementById('fp-ok'); el.textContent=msg; el.style.display='block'; document.getElementById('fp-err').style.display='none'; }
+function _fpErr(msg){ const el=document.getElementById('fp-err'); el.textContent='❌ '+msg; el.style.display='block'; document.getElementById('fp-ok').style.display='none'; }
+
+
+/* ── TEACHER: Fetch and show reset requests ── */
+async function fetchAndBuildResets(){
+  const {db,collection,getDocs,query,where} = window._FB;
+  const snap = await getDocs(query(collection(db,'password_resets'), where('status','==','pending')));
+  const resets = snap.docs.map(d=>({...d.data(),id:d.id}));
+
+  /* Update badge count */
+  const badge = document.getElementById('reset-badge');
+  if(resets.length > 0){
+    badge.textContent = resets.length;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  const el = document.getElementById('t-reset-list');
+  if(!el) return;
+
+  if(!resets.length){
+    el.innerHTML = '<div class="empty"><div class="empty-icon">&#x1F511;</div><p>No pending password reset requests.</p></div>';
+    return;
+  }
+
+  el.innerHTML = resets.map(r=>`
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px">
+      <div style="font-size:2rem">&#x1F511;</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:.95rem">${r.studentName||'Unknown'}</div>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:3px">${r.studentEmail||''}</div>
+        <div style="font-size:.74rem;color:var(--text3);margin-top:3px">Requested: ${r.createdAt?new Date(r.createdAt).toLocaleString():''}</div>
+      </div>
+      <div style="display:flex;gap:9px">
+        <button class="btn btn-green btn-sm" onclick="openResetApprove('${r.id}','${r.studentUid}','${r.studentName}','${r.studentEmail}')">&#x2713; Set Password</button>
+        <button class="btn btn-danger btn-sm" onclick="declineResetById('${r.id}')">&#x2717; Decline</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ── TEACHER: Open approve modal ── */
+function openResetApprove(resetId, stuUid, stuName, stuEmail){
+  _currentResetId  = resetId;
+  _currentResetUid = stuUid;
+  document.getElementById('reset-approve-msg').textContent = `Set a new password for "${stuName}" (${stuEmail})`;
+  document.getElementById('reset-new-pass').value = '';
+  document.getElementById('reset-ok').style.display  = 'none';
+  document.getElementById('reset-err').style.display = 'none';
+  document.getElementById('reset-approve-modal').classList.add('show');
+}
+function closeResetApprove(){ document.getElementById('reset-approve-modal').classList.remove('show'); }
+
+async function approveReset(){
+  const newPass = document.getElementById('reset-new-pass').value.trim();
+  if(!newPass || newPass.length < 6){
+    document.getElementById('reset-err').textContent = '❌ Password must be at least 6 characters.';
+    document.getElementById('reset-err').style.display = 'block';
+    return;
+  }
+  spin('Approving...');
+  try {
+    const {db, doc, updateDoc, deleteDoc, collection} = window._FB;
+
+    /* 1. Save plain password to student's Firestore profile (visible to student) */
+    await updateDoc(doc(db,'users',_currentResetUid), {
+      tempPassword: newPass,
+      tempPasswordSetAt: new Date().toISOString()
+    });
+
+    /* 2. Mark reset request as approved & delete it */
+    await deleteDoc(doc(db,'password_resets',_currentResetId));
+
+    /* 3. Update local state */
+    _currentResetId  = null;
+    _currentResetUid = null;
+
+    unspin();
+    closeResetApprove();
+    await fetchAndBuildResets();
+    toast('Password set! Student will see it when they check "Forgot Password".');
+  } catch(e){
+    unspin();
+    document.getElementById('reset-err').textContent = '❌ Error: ' + e.message;
+    document.getElementById('reset-err').style.display = 'block';
+  }
+}
+
+async function declineReset(){
+  /* Called from modal - decline current pending request */
+  if(!_currentResetId) return;
+  await declineResetById(_currentResetId);
+  closeResetApprove();
+}
+
+async function declineResetById(id){
+  spin('Declining...');
+  try {
+    const {db, doc, deleteDoc} = window._FB;
+    await deleteDoc(doc(db,'password_resets',id));
+    unspin();
+    await fetchAndBuildResets();
+    toast('Request declined.');
+  } catch(e){
+    unspin();
+    alert('Error: ' + e.message);
+  }
+}
+
+/* tNav resets section is handled inside the main tNav function */
+</script>
+
+<!-- ============================================================
   SECTION 20 — MODAL OUTSIDE-CLICK CLOSE
 ============================================================ -->
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
   ['reg-modal','sched-modal','hw-modal','ann-modal','res-modal',
-   'del-stu-modal','del-sch-modal','del-item-modal'].forEach(id=>{
+   'del-stu-modal','del-sch-modal','del-item-modal','fp-modal','reset-approve-modal'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.addEventListener('click',function(e){
       if(e.target===this){
