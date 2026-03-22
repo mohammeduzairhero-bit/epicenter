@@ -440,10 +440,182 @@ tr:hover td{background:rgba(124,111,239,.04);}
 .info-box .ib-lbl{font-size:.71rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
 .info-box .ib-val{font-size:.88rem;font-weight:500;}
 
-@media(max-width:900px){
-  #page-teacher.active,#page-student.active{grid-template-columns:1fr;}
-  .t-sidebar,.s-sidebar{display:none;}
-  .week-grid{grid-template-columns:repeat(4,1fr);}
+/* ════════════════════════════════════════════════
+   MOBILE BOTTOM NAV BAR (replaces sidebar on mobile)
+   ════════════════════════════════════════════════ */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:6px 0 env(safe-area-inset-bottom,6px);}
+.mob-nav-inner{display:flex;align-items:center;justify-content:space-around;max-width:600px;margin:0 auto;}
+.mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;
+  border:none;background:none;color:var(--text3);cursor:pointer;border-radius:10px;
+  font-family:'Outfit',sans-serif;min-width:52px;position:relative;}
+.mob-nav-btn .mn-ic{font-size:1.3rem;}
+.mob-nav-btn .mn-lbl{font-size:.6rem;font-weight:600;letter-spacing:.02em;}
+.mob-nav-btn.active{color:var(--accent-h);}
+.mob-nav-badge{position:absolute;top:4px;right:8px;background:var(--red);color:#fff;
+  font-size:.58rem;font-weight:700;padding:1px 5px;border-radius:99px;min-width:14px;text-align:center;}
+
+/* Mobile top bar (replaces sticky sidebar header on mobile) */
+.mob-topbar{display:none;align-items:center;justify-content:space-between;
+  padding:14px 18px;background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:300;}
+.mob-topbar .mt-brand{font-size:1rem;font-weight:900;background:linear-gradient(135deg,#a78bfa,#f472b6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.mob-topbar .mt-right{display:flex;align-items:center;gap:10px;}
+.mob-menu-btn{background:none;border:none;color:var(--text2);font-size:1.3rem;cursor:pointer;padding:4px;}
+
+/* Mobile drawer sidebar overlay */
+.mob-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:450;backdrop-filter:blur(3px);}
+.mob-drawer-overlay.open{display:block;}
+.mob-drawer{position:fixed;left:-280px;top:0;bottom:0;width:280px;background:var(--surface);
+  border-right:1px solid var(--border);z-index:460;transition:.28s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;display:flex;flex-direction:column;}
+.mob-drawer.open{left:0;}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ════════════════════════════════════════════════ */
+
+/* ── TABLET (max 1024px) ── */
+@media(max-width:1024px){
+  .t-main,.s-main{padding:24px 20px;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .earn-bar-chart{height:110px;}
+  .report-head{grid-template-columns:1fr 1fr;}
+  .s-stats{grid-template-columns:repeat(2,1fr);}
+  .student-body,.earnings-grid{grid-template-columns:1fr;}
+  .info-grid,.personal-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* ── MOBILE (max 768px) — full mobile layout ── */
+@media(max-width:768px){
+  /* Hide desktop sidebars — show mobile UI */
+  #page-teacher.active{display:flex;flex-direction:column;}
+  #page-student.active{display:flex;flex-direction:column;}
+  .t-sidebar{display:none;}
+  .s-sidebar{display:none;}
+  .mob-nav{display:block;}
+  .mob-topbar{display:flex;}
+
+  /* Main content gets bottom padding for nav bar */
+  .t-main,.s-main{
+    padding:18px 16px 90px 16px;
+    overflow-y:auto;
+    flex:1;
+    min-height:0;
+  }
+
+  /* Login card full-width */
+  .login-card{padding:32px 24px;width:100%;max-width:100%;border-radius:20px;margin:12px;}
+  .brand-name{font-size:1.6rem;}
+  .role-grid{gap:10px;}
+  .role-card{padding:16px 10px;}
+  .role-card .r-icon{font-size:1.5rem;}
+
+  /* Stat grid → 2 cols on mobile */
+  .stat-grid{grid-template-columns:1fr 1fr;gap:12px;}
+  .stat-card{padding:16px;}
+  .stat-big{font-size:1.5rem;}
+
+  /* Student stats → 2x2 */
+  .s-stats{grid-template-columns:1fr 1fr;gap:12px;}
+  .s-stat .val{font-size:1.4rem;}
+
+  /* Section header stacks */
+  .sec-header{flex-direction:column;align-items:flex-start;gap:12px;}
+  .sec-header h2{font-size:1.35rem;}
+
+  /* Tables → horizontal scroll */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:560px;}
+  th,td{padding:10px 14px;font-size:.82rem;}
+
+  /* Table head bar stacks */
+  .table-head-bar{flex-direction:column;align-items:flex-start;gap:10px;padding:16px 18px;}
+
+  /* Search bar full width */
+  .search-bar{width:100%;}
+  .search-bar input{width:100%;}
+
+  /* Side-by-side grids → single column */
+  .student-body{grid-template-columns:1fr;}
+  .earnings-grid{grid-template-columns:1fr;}
+  .info-grid{grid-template-columns:1fr;}
+  .personal-grid{grid-template-columns:1fr;}
+
+  /* Form grids → single column */
+  .form-grid{grid-template-columns:1fr;}
+  .form-grid .full{grid-column:1;}
+
+  /* Modal full-screen on mobile */
+  .modal-overlay{align-items:flex-end;}
+  .modal-box{
+    width:100%;max-width:100%;border-radius:24px 24px 0 0;
+    padding:26px 20px;max-height:90vh;
+    border-bottom:none;
+  }
+  .confirm-box{width:100%;max-width:100%;border-radius:24px 24px 0 0;padding:28px 22px;}
+  .modal-footer{flex-wrap:wrap;}
+  .modal-footer .btn{flex:1;min-width:120px;justify-content:center;}
+
+  /* Welcome banner stacks */
+  .welcome-banner{flex-wrap:wrap;gap:14px;padding:20px 18px;}
+  .welcome-banner h2{font-size:1.2rem;}
+  .level-ring{margin-left:0;}
+
+  /* Schedule week grid → 2 cols */
+  .week-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+
+  /* Report cards → single col */
+  .report-head{grid-template-columns:1fr;gap:12px;}
+
+  /* Badge grid → smaller */
+  .badge-grid{grid-template-columns:repeat(2,1fr);}
+  .badge-card{padding:14px 10px;}
+
+  /* Resource grid → 2 cols */
+  .res-grid{grid-template-columns:1fr 1fr;}
+  .res-card{padding:14px 12px;}
+
+  /* Profile page stacks */
+  #sp-profile > div{grid-template-columns:1fr !important;}
+
+  /* Bar chart shorter */
+  .earn-bar-chart{height:100px;}
+
+  /* Leaderboard row padding */
+  .lb-row{padding:10px 13px;}
+
+  /* Points log padding */
+  .pts-row{padding:9px 12px;}
+
+  /* Class items */
+  .class-item{padding:12px 13px;}
+
+  /* Announcement cards */
+  .ann-card{padding:14px 15px;}
+
+  /* HW cards */
+  .hw-card{padding:14px 16px;}
+
+  /* Buttons */
+  .btn-lg{padding:12px 20px;}
+
+  /* Nav badge on mobile nav */
+  .mob-nav-btn.active .mn-ic{transform:scale(1.1);}
+}
+
+/* ── SMALL MOBILE (max 380px) ── */
+@media(max-width:380px){
+  .stat-grid{grid-template-columns:1fr;}
+  .s-stats{grid-template-columns:1fr 1fr;}
+  .login-card{padding:28px 18px;}
+  .brand-name{font-size:1.4rem;}
+  .badge-grid{grid-template-columns:1fr 1fr;}
+  .res-grid{grid-template-columns:1fr;}
+  .mob-nav-btn{min-width:44px;padding:5px 8px;}
+  .mob-nav-btn .mn-lbl{font-size:.55rem;}
 }
 </style>
 
@@ -548,6 +720,70 @@ tr:hover td{background:rgba(124,111,239,.04);}
       </div>
     </div>
   </aside>
+
+  <!-- Mobile drawer overlay -->
+  <div class="mob-drawer-overlay" id="t-drawer-overlay" onclick="closeTDrawer()"></div>
+  <!-- Mobile drawer (full sidebar in slide-out panel) -->
+  <div class="mob-drawer" id="t-drawer">
+    <div class="t-sidebar-logo" style="padding:20px 18px 18px">
+      <div class="s-brand">🧮 Mathmade Easy</div>
+      <div class="s-sub">Teacher Portal</div>
+    </div>
+    <nav class="t-nav" id="t-drawer-nav">
+      <div class="t-nav-label">Main</div>
+      <button class="nav-btn active" onclick="tNav('overview',this);closeTDrawer()"><span class="nav-ic">📊</span> Overview</button>
+      <button class="nav-btn" onclick="tNav('students',this);closeTDrawer()"><span class="nav-ic">👨‍🎓</span> My Students</button>
+      <button class="nav-btn" onclick="tNav('schedule',this);closeTDrawer()"><span class="nav-ic">📅</span> Schedule</button>
+      <div class="t-nav-label">Academics</div>
+      <button class="nav-btn" onclick="tNav('homework',this);closeTDrawer()"><span class="nav-ic">📝</span> Homework</button>
+      <button class="nav-btn" onclick="tNav('announcements',this);closeTDrawer()"><span class="nav-ic">📣</span> Announcements</button>
+      <button class="nav-btn" onclick="tNav('resources',this);closeTDrawer()"><span class="nav-ic">📂</span> Resources</button>
+      <div class="t-nav-label">Finance</div>
+      <button class="nav-btn" onclick="tNav('earnings',this);closeTDrawer()"><span class="nav-ic">💰</span> Earnings</button>
+      <div class="t-nav-label">Admin</div>
+      <button class="nav-btn" onclick="tNav('resets',this);closeTDrawer()"><span class="nav-ic">🔑</span> Password Resets <span class="nav-badge" id="reset-badge-drawer" style="display:none">0</span></button>
+      <div class="t-nav-label">Reports</div>
+      <button class="nav-btn" onclick="tNav('performance',this);closeTDrawer()"><span class="nav-ic">📈</span> Performance</button>
+    </nav>
+    <div class="t-sidebar-foot">
+      <div class="t-profile-mini">
+        <div class="avatar" id="t-av-drawer" style="background:rgba(124,111,239,.2);color:var(--accent-h)">?</div>
+        <div class="tp-info"><div class="tp-name" id="t-name-drawer">Teacher</div><div class="tp-role">Math Instructor</div></div>
+        <button class="t-logout" onclick="doLogout()" title="Logout">⇥</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile top bar -->
+  <div class="mob-topbar" id="t-topbar">
+    <div class="mt-brand">🧮 Mathmade Easy</div>
+    <div class="mt-right">
+      <span id="t-topbar-title" style="font-size:.82rem;color:var(--text2);font-weight:600">Overview</span>
+      <button class="mob-menu-btn" onclick="openTDrawer()">☰</button>
+    </div>
+  </div>
+
+  <!-- Mobile bottom nav (teacher - 5 key sections) -->
+  <div class="mob-nav" id="t-mob-nav">
+    <div class="mob-nav-inner">
+      <button class="mob-nav-btn active" onclick="tNav('overview',this)" data-section="overview">
+        <span class="mn-ic">📊</span><span class="mn-lbl">Home</span>
+      </button>
+      <button class="mob-nav-btn" onclick="tNav('students',this)" data-section="students">
+        <span class="mn-ic">👨‍🎓</span><span class="mn-lbl">Students</span>
+      </button>
+      <button class="mob-nav-btn" onclick="tNav('schedule',this)" data-section="schedule">
+        <span class="mn-ic">📅</span><span class="mn-lbl">Schedule</span>
+      </button>
+      <button class="mob-nav-btn" onclick="tNav('earnings',this)" data-section="earnings">
+        <span class="mn-ic">💰</span><span class="mn-lbl">Earnings</span>
+      </button>
+      <button class="mob-nav-btn" onclick="openTDrawer()">
+        <span class="mn-ic">☰</span><span class="mn-lbl">More</span>
+        <span class="mob-nav-badge" id="reset-badge-mob" style="display:none">!</span>
+      </button>
+    </div>
+  </div>
 
   <!-- Main -->
   <main class="t-main">
@@ -688,6 +924,67 @@ tr:hover td{background:rgba(124,111,239,.04);}
       <button id="s-back-btn" class="btn btn-ghost btn-full" style="margin-top:8px;font-size:.8rem;display:none" onclick="routeTo('teacher')">← Back to Dashboard</button>
     </div>
   </aside>
+
+  <!-- Mobile drawer overlay -->
+  <div class="mob-drawer-overlay" id="s-drawer-overlay" onclick="closeSDrawer()"></div>
+  <!-- Mobile student drawer -->
+  <div class="mob-drawer" id="s-drawer">
+    <div class="s-sidebar-logo" style="padding:20px 18px 18px;border-bottom:1px solid var(--border)">
+      <div class="s-brand">🧮 Mathmade Easy</div>
+    </div>
+    <nav class="s-nav" style="padding:12px 10px">
+      <button class="s-nav-btn active" onclick="sNav('home',this);closeSDrawer()"><span class="sn-ic">🏠</span> Home</button>
+      <button class="s-nav-btn" onclick="sNav('classes',this);closeSDrawer()"><span class="sn-ic">📅</span> My Classes</button>
+      <button class="s-nav-btn" onclick="sNav('progress',this);closeSDrawer()"><span class="sn-ic">📈</span> My Progress</button>
+      <button class="s-nav-btn" onclick="sNav('homework',this);closeSDrawer()"><span class="sn-ic">📝</span> Homework</button>
+      <button class="s-nav-btn" onclick="sNav('badges',this);closeSDrawer()"><span class="sn-ic">🏆</span> Badges</button>
+      <button class="s-nav-btn" onclick="sNav('leaderboard',this);closeSDrawer()"><span class="sn-ic">🥇</span> Leaderboard</button>
+      <button class="s-nav-btn" onclick="sNav('resources',this);closeSDrawer()"><span class="sn-ic">📂</span> Resources</button>
+      <button class="s-nav-btn" onclick="sNav('announcements',this);closeSDrawer()"><span class="sn-ic">📣</span> Announcements</button>
+      <button class="s-nav-btn" onclick="sNav('profile',this);closeSDrawer()"><span class="sn-ic">👤</span> Profile</button>
+    </nav>
+    <div class="s-sidebar-foot" style="padding:14px 12px;border-top:1px solid var(--border)">
+      <div class="s-profile-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div class="avatar" id="s-av-drawer" style="background:rgba(124,111,239,.2);color:var(--accent-h)">?</div>
+          <div><div style="font-weight:700;font-size:.88rem" id="s-name-drawer">Student</div><div style="font-size:.72rem;color:var(--text3)" id="s-course-drawer">—</div></div>
+        </div>
+        <div style="font-size:.78rem;color:var(--accent-h);font-weight:600" id="s-pts-drawer">0 Points</div>
+      </div>
+      <button class="btn btn-ghost btn-full" style="margin-top:10px;font-size:.8rem" onclick="doLogout()">⇥ Logout</button>
+      <button id="s-back-btn-drawer" class="btn btn-ghost btn-full" style="margin-top:8px;font-size:.8rem;display:none" onclick="routeTo('teacher')">← Back to Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Mobile top bar -->
+  <div class="mob-topbar" id="s-topbar">
+    <div class="mt-brand">🧮 Mathmade Easy</div>
+    <div class="mt-right">
+      <span id="s-topbar-title" style="font-size:.82rem;color:var(--text2);font-weight:600">Home</span>
+      <button class="mob-menu-btn" onclick="openSDrawer()">☰</button>
+    </div>
+  </div>
+
+  <!-- Mobile bottom nav (student - 5 key sections) -->
+  <div class="mob-nav" id="s-mob-nav">
+    <div class="mob-nav-inner">
+      <button class="mob-nav-btn active" onclick="sNav('home',this)" data-section="home">
+        <span class="mn-ic">🏠</span><span class="mn-lbl">Home</span>
+      </button>
+      <button class="mob-nav-btn" onclick="sNav('classes',this)" data-section="classes">
+        <span class="mn-ic">📅</span><span class="mn-lbl">Classes</span>
+      </button>
+      <button class="mob-nav-btn" onclick="sNav('homework',this)" data-section="homework">
+        <span class="mn-ic">📝</span><span class="mn-lbl">Homework</span>
+      </button>
+      <button class="mob-nav-btn" onclick="sNav('leaderboard',this)" data-section="leaderboard">
+        <span class="mn-ic">🥇</span><span class="mn-lbl">Ranks</span>
+      </button>
+      <button class="mob-nav-btn" onclick="openSDrawer()">
+        <span class="mn-ic">☰</span><span class="mn-lbl">More</span>
+      </button>
+    </div>
+  </div>
 
   <main class="s-main">
 
@@ -1283,6 +1580,7 @@ async function initTeacher(){
     document.getElementById('t-av').style.background=`${t.color||'#7c6fef'}22`;
     document.getElementById('t-av').style.color=t.color||'#7c6fef';
     document.getElementById('t-name').textContent=t.name||'Teacher';
+    syncMobileTeacherProfile(t);
     const hr=new Date().getHours();
     const gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
     document.getElementById('t-greeting').textContent=gr+', '+(t.name||'Teacher')+' 👋';
@@ -1294,19 +1592,39 @@ async function initTeacher(){
   routeTo('teacher');
 }
 
+/* Section title map for mobile topbar */
+const T_TITLES = {
+  overview:'Overview', students:'My Students', schedule:'Schedule',
+  homework:'Homework', announcements:'Announcements', resources:'Resources',
+  earnings:'Earnings', performance:'Performance', resets:'Password Resets'
+};
+
 function tNav(section, el){
-  document.querySelectorAll('.dash-page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tp-'+section).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#page-teacher .dash-page').forEach(p=>p.classList.remove('active'));
+  const sec = document.getElementById('tp-'+section);
+  if(sec) sec.classList.add('active');
+
+  /* Sync desktop sidebar */
+  document.querySelectorAll('.t-sidebar .nav-btn, #t-drawer .nav-btn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
+
+  /* Sync mobile bottom nav */
+  document.querySelectorAll('#t-mob-nav .mob-nav-btn').forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('data-section')===section);
+  });
+
+  /* Update mobile topbar title */
+  const titleEl = document.getElementById('t-topbar-title');
+  if(titleEl) titleEl.textContent = T_TITLES[section] || section;
+
   /* Lazy-build on first view */
-  if(section==='schedule')   { buildWeekCal(); buildSchedTable(); }
-  if(section==='homework')   buildTHW();
+  if(section==='schedule')      { buildWeekCal(); buildSchedTable(); }
+  if(section==='homework')      buildTHW();
   if(section==='announcements') buildTAnn();
-  if(section==='resources')  buildTRes();
-  if(section==='earnings')   buildEarnings();
-  if(section==='performance') buildPerf();
-  if(section==='resets')     fetchAndBuildResets();
+  if(section==='resources')     buildTRes();
+  if(section==='earnings')      buildEarnings();
+  if(section==='performance')   buildPerf();
+  if(section==='resets')        fetchAndBuildResets();
 }
 
 function buildTeacherAll(){
@@ -1754,6 +2072,7 @@ async function initStudent(){
 function initStudentUI(s){
   if(!s) return;
   const av=s.avatar||'?'; const color=s.color||'#7c6fef';
+  syncMobileStudentProfile(s);
   /* Sidebar profile */
   ['s-av','s-av2','s-av3'].forEach(id=>{
     const el=document.getElementById(id);
@@ -1784,11 +2103,29 @@ function initStudentUI(s){
   buildSProfile(s);
 }
 
+const S_TITLES = {
+  home:'Home', classes:'My Classes', progress:'My Progress',
+  homework:'Homework', badges:'Badges', leaderboard:'Leaderboard',
+  resources:'Resources', announcements:'Announcements', profile:'Profile'
+};
+
 function sNav(section,el){
   document.querySelectorAll('#page-student .dash-page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('sp-'+section).classList.add('active');
-  document.querySelectorAll('.s-nav-btn').forEach(b=>b.classList.remove('active'));
+  const sec = document.getElementById('sp-'+section);
+  if(sec) sec.classList.add('active');
+
+  /* Sync desktop + drawer sidebar */
+  document.querySelectorAll('.s-sidebar .s-nav-btn, #s-drawer .s-nav-btn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
+
+  /* Sync mobile bottom nav */
+  document.querySelectorAll('#s-mob-nav .mob-nav-btn').forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('data-section')===section);
+  });
+
+  /* Update mobile topbar title */
+  const titleEl = document.getElementById('s-topbar-title');
+  if(titleEl) titleEl.textContent = S_TITLES[section] || section;
 }
 </script>
 
@@ -2160,6 +2497,124 @@ async function declineResetById(id){
 }
 
 /* tNav resets section is handled inside the main tNav function */
+</script>
+
+<!-- ============================================================
+  MOBILE DRAWER & RESPONSIVE HELPERS
+============================================================ -->
+<script>
+
+/* ── Teacher drawer ── */
+function openTDrawer(){
+  document.getElementById('t-drawer').classList.add('open');
+  document.getElementById('t-drawer-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeTDrawer(){
+  document.getElementById('t-drawer').classList.remove('open');
+  document.getElementById('t-drawer-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── Student drawer ── */
+function openSDrawer(){
+  document.getElementById('s-drawer').classList.add('open');
+  document.getElementById('s-drawer-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSDrawer(){
+  document.getElementById('s-drawer').classList.remove('open');
+  document.getElementById('s-drawer-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* Close drawers on ESC */
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    closeTDrawer();
+    closeSDrawer();
+  }
+});
+
+/* ── Sync mobile profile info when teacher or student loads ── */
+function syncMobileTeacherProfile(t){
+  const av = initials(t.name||'T');
+  const color = t.color||'#7c6fef';
+  const drawerAv = document.getElementById('t-av-drawer');
+  if(drawerAv){ drawerAv.textContent=av; drawerAv.style.background=color+'22'; drawerAv.style.color=color; }
+  const drawerName = document.getElementById('t-name-drawer');
+  if(drawerName) drawerName.textContent = t.name||'Teacher';
+}
+
+function syncMobileStudentProfile(s){
+  const av = s.avatar||'?';
+  const color = s.color||'#7c6fef';
+  ['s-av-drawer'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){ el.textContent=av; el.style.background=color+'22'; el.style.color=color; }
+  });
+  const nameD=document.getElementById('s-name-drawer');
+  if(nameD) nameD.textContent=s.name||'Student';
+  const courseD=document.getElementById('s-course-drawer');
+  if(courseD) courseD.textContent=s.course||'—';
+  const ptsD=document.getElementById('s-pts-drawer');
+  if(ptsD) ptsD.textContent=(s.points||0)+' Points';
+
+  /* Back to dashboard button in drawer */
+  const backD=document.getElementById('s-back-btn-drawer');
+  const backMain=document.getElementById('s-back-btn');
+  if(backD && backMain) backD.style.display=backMain.style.display;
+}
+
+/* ── Update reset badge on ALL locations (sidebar, drawer, mob nav) ── */
+function updateResetBadge(count){
+  ['reset-badge','reset-badge-drawer','reset-badge-mob'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    if(count>0){
+      el.textContent=count;
+      el.style.display='inline-block';
+    } else {
+      el.style.display='none';
+    }
+  });
+}
+
+/* Patch fetchAndBuildResets to use updateResetBadge */
+const _origFetch = fetchAndBuildResets;
+async function fetchAndBuildResets(){
+  const {db,collection,getDocs,query,where} = window._FB;
+  const snap = await getDocs(query(collection(db,'password_resets'), where('status','==','pending')));
+  const resets = snap.docs.map(d=>({...d.data(),id:d.id}));
+  updateResetBadge(resets.length);
+
+  const el = document.getElementById('t-reset-list');
+  if(!el) return;
+
+  if(!resets.length){
+    el.innerHTML = '<div class="empty"><div class="empty-icon">&#x1F511;</div><p>No pending password reset requests.</p></div>';
+    return;
+  }
+
+  el.innerHTML = resets.map(r=>`
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:12px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:13px">
+          <div style="font-size:1.8rem">&#x1F511;</div>
+          <div>
+            <div style="font-weight:700;font-size:.92rem">${r.studentName||'Unknown'}</div>
+            <div style="font-size:.76rem;color:var(--text3);margin-top:2px">${r.studentEmail||''}</div>
+            <div style="font-size:.72rem;color:var(--text3);margin-top:2px">Requested: ${r.createdAt?new Date(r.createdAt).toLocaleString():''}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-green btn-sm" onclick="openResetApprove('${r.id}','${r.studentUid}','${r.studentName}','${r.studentEmail}')">&#x2713; Set Password</button>
+          <button class="btn btn-danger btn-sm" onclick="declineResetById('${r.id}')">&#x2717; Decline</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
 </script>
 
 <!-- ============================================================
