@@ -535,6 +535,9 @@ tr:hover td{background:rgba(124,111,239,.04);}
       <div class="t-nav-label">Finance</div>
       <button class="nav-btn" onclick="tNav('earnings',this)"><span class="nav-ic">💰</span> Earnings</button>
       <div class="t-nav-label">Reports</div>
+      <div class="t-nav-label">Admin</div>
+      <button class="nav-btn" onclick="tNav('resets',this)"><span class="nav-ic">🔑</span> Password Resets <span class="nav-badge" id="reset-badge" style="display:none">0</span></button>
+      <div class="t-nav-label">Reports</div>
       <button class="nav-btn" onclick="tNav('performance',this)"><span class="nav-ic">📈</span> Performance</button>
     </nav>
     <div class="t-sidebar-foot">
@@ -604,15 +607,6 @@ tr:hover td{background:rgba(124,111,239,.04);}
       </div>
     </div>
 
-    <!-- ── PASSWORD RESETS ── -->
-    <div id="tp-resets" class="dash-page">
-      <div class="sec-header">
-        <div><h2>&#x1F511; Password Reset Requests</h2><p>Review and approve student password reset requests.</p></div>
-      </div>
-      <div id="t-reset-list">
-        <div class="empty"><div class="empty-icon">&#x1F511;</div><p>No pending password reset requests.</p></div>
-      </div>
-    </div>
 
     <!-- ── HOMEWORK ── -->
     <div id="tp-homework" class="dash-page">
