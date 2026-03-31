@@ -26,11 +26,7 @@ const firebaseConfig = {
 
 const TEACHER_CODE = "MATHMADE EASY";
 
-window._EMAILJS = {
-  publicKey:   "",
-  serviceId:   "",
-  templateId:  ""
-};
+window._EMAILJS = { publicKey:"", serviceId:"", templateId:"" };
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -91,6 +87,12 @@ onAuthStateChanged(auth, async (user) => {
   --r:    14px;
   --r-lg: 20px;
   --r-xl: 28px;
+  /* Free schedule specific */
+  --fs-class:   #ef4444;
+  --fs-demo:    #f97316;
+  --fs-free-slot: #22c55e;
+  --fs-free-sched: #d8b4fe;
+  --fs-request: #facc15;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -123,107 +125,40 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 @media(min-width:769px){ #toast { bottom:28px; } }
 
-/* ═══════════════════════════════════════════════
-   🔔 PRE-CLASS ALERT BANNER — NEW FEATURE
-   Slides in from top 5 minutes before class
-═══════════════════════════════════════════════ */
 #preclass-alert {
-  display:none;
-  position:fixed;
-  top:0; left:0; right:0;
-  z-index:9997;
+  display:none; position:fixed; top:0; left:0; right:0; z-index:9997;
   background:linear-gradient(135deg, #1a1035, #0d1f1a);
-  border-bottom:2px solid var(--green);
-  padding:0;
+  border-bottom:2px solid var(--green); padding:0;
   box-shadow:0 4px 32px rgba(61,214,140,.25);
-  transform:translateY(-100%);
-  transition:.4s cubic-bezier(.34,1.1,.64,1);
+  transform:translateY(-100%); transition:.4s cubic-bezier(.34,1.1,.64,1);
 }
-#preclass-alert.show {
-  display:block;
-  transform:translateY(0);
-}
-.preclass-inner {
-  max-width:900px;
-  margin:0 auto;
-  padding:16px 20px;
-  display:flex;
-  align-items:center;
-  gap:16px;
-  flex-wrap:wrap;
-}
-.preclass-pulse {
-  width:14px; height:14px;
-  border-radius:50%;
-  background:var(--green);
-  flex-shrink:0;
-  box-shadow:0 0 0 0 rgba(61,214,140,.6);
-  animation:pulse-ring 1.4s ease infinite;
-}
+#preclass-alert.show { display:block; transform:translateY(0); }
+.preclass-inner { max-width:900px; margin:0 auto; padding:16px 20px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.preclass-pulse { width:14px; height:14px; border-radius:50%; background:var(--green);
+  flex-shrink:0; box-shadow:0 0 0 0 rgba(61,214,140,.6); animation:pulse-ring 1.4s ease infinite; }
 @keyframes pulse-ring {
-  0%   { box-shadow:0 0 0 0 rgba(61,214,140,.6); }
-  70%  { box-shadow:0 0 0 10px rgba(61,214,140,0); }
-  100% { box-shadow:0 0 0 0 rgba(61,214,140,0); }
+  0% { box-shadow:0 0 0 0 rgba(61,214,140,.6); }
+  70%{ box-shadow:0 0 0 10px rgba(61,214,140,0); }
+  100%{ box-shadow:0 0 0 0 rgba(61,214,140,0); }
 }
 .preclass-text { flex:1; min-width:0; }
 .preclass-text strong { font-size:.95rem; color:var(--text); }
 .preclass-text span   { font-size:.8rem;  color:var(--text2); margin-left:8px; }
-.preclass-countdown {
-  font-family:'JetBrains Mono',monospace;
-  font-size:1.1rem;
-  font-weight:700;
-  color:var(--green);
-  background:rgba(61,214,140,.1);
-  border:1px solid rgba(61,214,140,.3);
-  border-radius:8px;
-  padding:6px 14px;
-  min-width:80px;
-  text-align:center;
-}
-.preclass-join {
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 20px;
-  background:var(--green);
-  color:#000;
-  font-weight:800;
-  font-size:.88rem;
-  border-radius:10px;
-  text-decoration:none;
-  transition:.18s;
-  flex-shrink:0;
-}
+.preclass-countdown { font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:700;
+  color:var(--green); background:rgba(61,214,140,.1); border:1px solid rgba(61,214,140,.3);
+  border-radius:8px; padding:6px 14px; min-width:80px; text-align:center; }
+.preclass-join { display:inline-flex; align-items:center; gap:8px; padding:10px 20px;
+  background:var(--green); color:#000; font-weight:800; font-size:.88rem;
+  border-radius:10px; text-decoration:none; transition:.18s; flex-shrink:0; }
 .preclass-join:hover { background:#4aeaa0; transform:scale(1.03); }
-.preclass-close {
-  background:none;
-  border:none;
-  color:var(--text3);
-  font-size:1.2rem;
-  cursor:pointer;
-  padding:4px;
-  border-radius:6px;
-  transition:.15s;
-  flex-shrink:0;
-}
+.preclass-close { background:none; border:none; color:var(--text3); font-size:1.2rem;
+  cursor:pointer; padding:4px; border-radius:6px; transition:.15s; flex-shrink:0; }
 .preclass-close:hover { color:var(--text); background:var(--surface2); }
 
-/* ═══════════════════════════════════════════════
-   🔔 NOTIFICATION PERMISSION BANNER
-═══════════════════════════════════════════════ */
-#notif-banner {
-  display:none;
-  background:rgba(124,111,239,.12);
-  border:1px solid rgba(124,111,239,.3);
-  border-radius:12px;
-  padding:12px 16px;
-  margin-bottom:18px;
-  font-size:.82rem;
-  color:var(--text2);
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
+#notif-banner { display:none; background:rgba(124,111,239,.12); border:1px solid rgba(124,111,239,.3);
+  border-radius:12px; padding:12px 16px; margin-bottom:18px; font-size:.82rem; color:var(--text2);
+  align-items:center; gap:12px; flex-wrap:wrap; }
 #notif-banner.show { display:flex; }
 #notif-banner strong { color:var(--accent-h); }
 </style>
@@ -333,26 +268,23 @@ tr:hover td { background:rgba(124,111,239,.04); }
 </style>
 
 <style>
+/* ── LOGIN PAGE ── */
 #page-login { display:none; align-items:center; justify-content:center; position:relative; overflow:hidden; background:var(--bg); min-height:100vh; }
 #page-login.active { display:flex; }
-
 .login-bg-mesh { position:absolute; inset:0; background:
   radial-gradient(ellipse 80% 60% at 15% 40%, rgba(124,111,239,.14) 0%, transparent 60%),
   radial-gradient(ellipse 60% 50% at 85% 20%, rgba(244,114,182,.09) 0%, transparent 55%),
   radial-gradient(ellipse 50% 40% at 55% 85%, rgba(61,214,140,.08) 0%, transparent 50%),
   radial-gradient(ellipse 40% 30% at 30% 75%, rgba(34,211,238,.07) 0%, transparent 45%); }
 .login-dots { position:absolute; inset:0; background-image:radial-gradient(circle, rgba(124,111,239,.08) 1px, transparent 1px); background-size:36px 36px; }
-
 .login-card { position:relative; z-index:1; width:440px; max-width:94vw; background:var(--surface);
   border:1px solid var(--border2); border-radius:var(--r-xl); padding:44px 40px;
   box-shadow:0 0 0 1px rgba(124,111,239,.1), 0 32px 80px rgba(0,0,0,.5); }
-
 .brand-logo   { text-align:center; margin-bottom:32px; }
 .brand-name   { font-size:1.9rem; font-weight:900;
   background:linear-gradient(135deg,#a78bfa,#7c6fef,#f472b6);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-.02em; }
 .brand-tag    { font-size:.78rem; color:var(--text3); margin-top:4px; letter-spacing:.12em; text-transform:uppercase; }
-
 .role-pick-label { font-size:.74rem; font-weight:600; color:var(--text3); letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
 .role-grid   { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:26px; }
 .role-card   { padding:18px 14px; border-radius:14px; border:2px solid var(--border); background:var(--surface2); cursor:pointer; transition:.18s; text-align:center; }
@@ -361,25 +293,23 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .role-card .r-icon { font-size:1.7rem; margin-bottom:7px; }
 .role-card .r-name { font-weight:700; font-size:.88rem; }
 .role-card .r-desc { font-size:.7rem; color:var(--text3); margin-top:3px; }
-
 .login-fields  { display:flex; flex-direction:column; gap:13px; margin-bottom:18px; }
 .login-field   { display:flex; flex-direction:column; gap:6px; }
 .login-field label { font-size:.74rem; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.07em; }
 .login-field input { padding:12px 15px; background:var(--surface2); border:1.5px solid var(--border);
   border-radius:11px; color:var(--text); font-size:.92rem; font-family:'Outfit',sans-serif; outline:none; transition:.18s; }
 .login-field input:focus { border-color:var(--accent); background:var(--surface3); }
-
 .login-submit { width:100%; padding:14px; background:linear-gradient(135deg,var(--accent),#9b91f5);
   border:none; border-radius:12px; color:#fff; font-family:'Outfit',sans-serif;
   font-size:.95rem; font-weight:700; cursor:pointer; transition:.18s; letter-spacing:.02em; }
 .login-submit:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(124,111,239,.4); }
-
 .login-footer { text-align:center; margin-top:16px; font-size:.8rem; color:var(--text3); }
 .login-footer a { color:var(--accent-h); cursor:pointer; font-weight:600; }
 .login-footer a:hover { text-decoration:underline; }
 </style>
 
 <style>
+/* ── TEACHER DASHBOARD ── */
 #page-teacher { display:none; min-height:100vh; background:var(--bg); }
 #page-teacher.active { display:grid; grid-template-columns:252px 1fr; min-height:100vh; }
 
@@ -389,7 +319,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .t-sidebar-logo .s-brand { font-size:1.1rem; font-weight:900;
   background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .t-sidebar-logo .s-sub   { font-size:.69rem; color:var(--text3); letter-spacing:.1em; text-transform:uppercase; margin-top:2px; }
-
 .t-nav       { flex:1; padding:12px 8px; overflow-y:auto; }
 .t-nav-label { font-size:.67rem; font-weight:700; color:var(--text3); letter-spacing:.12em; text-transform:uppercase; padding:10px 12px 4px; }
 .nav-btn     { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; border:none;
@@ -399,14 +328,12 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .nav-btn.active { background:rgba(124,111,239,.15); color:var(--accent-h); font-weight:600; }
 .nav-btn .nav-ic    { font-size:.95rem; width:18px; text-align:center; flex-shrink:0; }
 .nav-btn .nav-badge { margin-left:auto; background:var(--red); color:#fff; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:99px; }
-
 .t-sidebar-foot  { padding:14px 12px; border-top:1px solid var(--border); }
 .t-profile-mini  { display:flex; align-items:center; gap:10px; padding:9px 10px; background:var(--surface2); border-radius:11px; }
 .t-profile-mini .tp-name { font-weight:700; font-size:.84rem; }
 .t-profile-mini .tp-role { font-size:.69rem; color:var(--text3); }
 .t-logout { background:none; border:none; color:var(--text3); cursor:pointer; font-size:1.1rem; margin-left:auto; padding:4px; border-radius:6px; transition:.15s; }
 .t-logout:hover { color:var(--red); }
-
 .t-main { overflow-y:auto; padding:30px 34px; min-height:100vh; }
 
 .week-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:10px; margin-bottom:24px; }
@@ -431,10 +358,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .earn-lbl        { font-size:.67rem; color:var(--text3); }
 .earn-val        { font-size:.7rem; font-weight:600; color:var(--text2); }
 .income-list     { display:flex; flex-direction:column; gap:10px; max-height:260px; overflow-y:auto; }
-
-.report-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px; margin-bottom:14px; }
-.report-head { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; align-items:center; }
-
 .hw-list  { display:flex; flex-direction:column; gap:12px; }
 .hw-card  { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
 .hw-card-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; gap:10px; flex-wrap:wrap; }
@@ -461,12 +384,14 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .res-type.video { background:rgba(244,114,182,.12); color:var(--pink); }
 .res-type.link  { background:rgba(34,211,238,.12);  color:var(--cyan); }
 .res-type.note  { background:rgba(124,111,239,.12); color:var(--accent-h); }
+.report-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px; margin-bottom:14px; }
+.report-head { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; align-items:center; }
 </style>
 
 <style>
+/* ── STUDENT SIDEBAR ── */
 #page-student { display:none; min-height:100vh; background:var(--bg); }
 #page-student.active { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
-
 .s-sidebar { background:var(--surface); border-right:1px solid var(--border);
   display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto; }
 .s-sidebar-logo { padding:20px 18px; border-bottom:1px solid var(--border); }
@@ -479,15 +404,14 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .s-nav-btn:hover  { background:var(--surface2); color:var(--text); }
 .s-nav-btn.active { background:rgba(124,111,239,.15); color:var(--accent-h); font-weight:600; }
 .s-nav-btn .sn-ic { font-size:.95rem; width:18px; text-align:center; flex-shrink:0; }
+.s-nav-btn .nav-badge { margin-left:auto; background:var(--red); color:#fff; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:99px; }
 .s-sidebar-foot { padding:14px 12px; border-top:1px solid var(--border); }
 .s-profile-card { background:linear-gradient(135deg,rgba(124,111,239,.15),rgba(244,114,182,.08));
   border:1px solid var(--border2); border-radius:13px; padding:13px 12px; }
 .s-profile-card .sp-name   { font-weight:700; font-size:.88rem; }
 .s-profile-card .sp-course { font-size:.72rem; color:var(--text3); margin-top:2px; }
 .s-profile-card .sp-pts    { font-size:.78rem; color:var(--accent-h); font-weight:600; margin-top:7px; }
-
 .s-main { overflow-y:auto; padding:26px 30px; min-height:100vh; }
-
 .welcome-banner { background:linear-gradient(135deg,rgba(124,111,239,.18),rgba(244,114,182,.1),rgba(61,214,140,.06));
   border:1px solid var(--border2); border-radius:var(--r-xl); padding:24px 26px;
   display:flex; align-items:center; gap:18px; margin-bottom:24px; position:relative; overflow:hidden; }
@@ -498,12 +422,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
   background:rgba(124,111,239,.1); flex-shrink:0; }
 .level-ring .lr-num { font-size:1.25rem; font-weight:900; color:var(--accent-h); line-height:1; }
 .level-ring .lr-lbl { font-size:.52rem; color:var(--text3); letter-spacing:.06em; }
-
 .s-stats  { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:26px; }
 .s-stat   { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:16px; text-align:center; }
 .s-stat .val { font-size:1.7rem; font-weight:800; line-height:1; }
 .s-stat .lbl { font-size:.73rem; color:var(--text2); margin-top:4px; }
-
 .skill-list  { display:flex; flex-direction:column; gap:13px; }
 .skill-item .sk-head { display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:5px; }
 .skill-item .sk-head span:last-child { color:var(--text3); }
@@ -514,7 +436,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .sk-calc    { background:linear-gradient(90deg,var(--pink),var(--orange)); }
 .sk-trig    { background:linear-gradient(90deg,var(--yellow),var(--orange)); }
 .sk-stats   { background:linear-gradient(90deg,var(--cyan),var(--accent)); }
-
 .pts-log  { display:flex; flex-direction:column; gap:9px; max-height:240px; overflow-y:auto; }
 .pts-row  { display:flex; align-items:center; gap:12px; padding:10px 13px; background:var(--surface2); border-radius:11px; }
 .pts-ic   { font-size:1.1rem; width:28px; text-align:center; }
@@ -523,7 +444,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .pts-val  { margin-left:auto; font-weight:800; font-size:.9rem; }
 .pts-val.pos { color:var(--green); }
 .pts-val.neg { color:var(--red); }
-
 .class-list { display:flex; flex-direction:column; gap:10px; }
 .class-item { display:flex; align-items:flex-start; gap:14px; padding:14px 16px;
   background:var(--surface2); border-radius:13px; border-left:4px solid var(--accent); }
@@ -542,7 +462,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .ci-link.meet   { color:var(--green); background:rgba(61,214,140,.1); }
 .ci-link.teams  { color:#6264A7; background:rgba(98,100,167,.1); }
 .ci-right { flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-
 .badge-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:13px; }
 .badge-card { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 12px; text-align:center; transition:.18s; }
 .badge-card:hover   { border-color:var(--border2); transform:translateY(-2px); }
@@ -551,7 +470,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .badge-icon { font-size:2.2rem; margin-bottom:8px; }
 .badge-name { font-size:.76rem; font-weight:700; }
 .badge-desc { font-size:.68rem; color:var(--text3); margin-top:3px; }
-
 .lb-list { display:flex; flex-direction:column; gap:8px; }
 .lb-row  { display:flex; align-items:center; gap:13px; padding:12px 15px; background:var(--surface2); border-radius:12px; transition:.18s; }
 .lb-row:hover { background:var(--surface3); }
@@ -561,7 +479,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .lb-rank.silver { color:#c0c0c0; }
 .lb-rank.bronze { color:#cd7f32; }
 .lb-pts   { margin-left:auto; font-weight:800; color:var(--accent-h); }
-
 .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .info-box  { background:var(--surface2); border-radius:11px; padding:13px 15px; }
 .info-box .ib-lbl { font-size:.71rem; color:var(--text3); text-transform:uppercase; letter-spacing:.07em; margin-bottom:3px; }
@@ -569,6 +486,167 @@ tr:hover td { background:rgba(124,111,239,.04); }
 </style>
 
 <style>
+/* ════════════════════════════════════════════════════════
+   🗓 FREE SCHEDULE SYSTEM — TEACHER & STUDENT VIEWS
+   Inspired by the Spayee/tutoring platform UI in images
+════════════════════════════════════════════════════════ */
+
+/* ── Legend ── */
+.fs-legend {
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  padding:14px 20px; background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; margin-bottom:24px; font-size:.8rem; color:var(--text2);
+}
+.fs-legend-item { display:flex; align-items:center; gap:7px; font-weight:500; }
+.fs-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+.fs-dot-class   { background:#ef4444; }
+.fs-dot-free    { background:#22c55e; }
+.fs-dot-sched   { background:rgba(216,180,254,.7); border:1px solid rgba(216,180,254,.4); }
+.fs-dot-request { background:#facc15; }
+
+/* ── Day filter bar ── */
+.fs-filter-bar {
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:20px;
+}
+.fs-day-filter {
+  padding:7px 16px; border:1.5px solid var(--border); border-radius:99px;
+  background:var(--surface2); color:var(--text2); font-family:'Outfit',sans-serif;
+  font-size:.8rem; font-weight:600; cursor:pointer; transition:.15s; white-space:nowrap;
+}
+.fs-day-filter:hover  { border-color:var(--accent-h); color:var(--accent-h); }
+.fs-day-filter.active { border-color:var(--accent); background:rgba(124,111,239,.15); color:var(--accent-h); }
+.fs-day-select {
+  padding:8px 14px; background:var(--surface2); border:1.5px solid var(--border);
+  border-radius:10px; color:var(--text); font-family:'Outfit',sans-serif;
+  font-size:.8rem; font-weight:600; cursor:pointer; outline:none; min-width:130px;
+}
+
+/* ── Day block ── */
+.fs-day-block { margin-bottom:20px; }
+.fs-day-title {
+  font-size:1rem; font-weight:800; margin-bottom:12px; padding-bottom:8px;
+  border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;
+}
+.fs-day-title .fsd-count {
+  font-size:.72rem; font-weight:600; color:var(--text3);
+  background:var(--surface2); padding:2px 9px; border-radius:99px;
+}
+.fs-slots-row { display:flex; flex-wrap:wrap; gap:8px; }
+
+/* ── Single slot chip ── */
+.fs-slot-chip {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 14px;
+  background:var(--surface2); border:1.5px solid var(--border);
+  border-radius:10px; font-size:.8rem; font-weight:600; color:var(--text);
+  cursor:default; transition:.18s; position:relative;
+}
+.fs-slot-chip .fs-chip-time { color:var(--text); font-weight:700; }
+.fs-slot-chip .fs-chip-del {
+  display:flex; align-items:center; justify-content:center;
+  width:18px; height:18px; border-radius:50%; background:var(--surface3);
+  border:none; color:var(--text3); cursor:pointer; font-size:.75rem;
+  transition:.15s; flex-shrink:0;
+}
+.fs-slot-chip .fs-chip-del:hover { background:rgba(248,113,113,.2); color:var(--red); }
+
+/* ── Teacher "Add Schedule" panel ── */
+.fs-add-panel {
+  background:var(--surface2); border:1.5px dashed var(--border2);
+  border-radius:14px; padding:18px 20px; margin-top:20px;
+  display:none;
+}
+.fs-add-panel.open { display:block; }
+.fs-add-grid { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:12px; align-items:flex-end; }
+
+/* ── Student view: request button on slot ── */
+.fs-slot-chip.requestable {
+  cursor:pointer; border-color:rgba(61,214,140,.3);
+}
+.fs-slot-chip.requestable:hover {
+  border-color:var(--green); background:rgba(61,214,140,.06);
+  transform:translateY(-2px); box-shadow:0 4px 18px rgba(61,214,140,.12);
+}
+.fs-slot-chip.requested {
+  border-color:rgba(251,191,36,.4); background:rgba(251,191,36,.06);
+  cursor:default; transform:none;
+}
+.fs-slot-chip.booked {
+  border-color:rgba(239,68,68,.3); background:rgba(239,68,68,.05);
+  opacity:.6; cursor:not-allowed;
+}
+
+/* ── Calendar view (big grid) ── */
+.fs-cal-wrapper {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+  overflow:hidden;
+}
+.fs-cal-header {
+  display:grid; grid-template-columns:60px repeat(7,1fr);
+  border-bottom:1px solid var(--border);
+}
+.fs-cal-day-col {
+  padding:12px 10px; font-size:.76rem; font-weight:700; text-align:center;
+  border-left:1px solid var(--border); color:var(--text2);
+}
+.fs-cal-day-col.today { color:var(--accent-h); background:rgba(124,111,239,.07); }
+.fs-cal-body { position:relative; display:grid; grid-template-columns:60px repeat(7,1fr); }
+.fs-cal-time-col { display:flex; flex-direction:column; }
+.fs-time-label {
+  height:52px; display:flex; align-items:flex-start; justify-content:flex-end;
+  padding:6px 8px 0; font-size:.65rem; color:var(--text3); font-family:'JetBrains Mono',monospace;
+}
+.fs-cal-col { border-left:1px solid var(--border); display:flex; flex-direction:column; position:relative; }
+.fs-cal-cell { height:52px; border-bottom:1px solid rgba(46,47,74,.5); }
+.fs-cal-cell:last-child { border-bottom:none; }
+
+/* ── Events in calendar ── */
+.fs-event {
+  position:absolute; left:3px; right:3px;
+  border-radius:7px; padding:4px 7px; font-size:.68rem; font-weight:600;
+  overflow:hidden; cursor:pointer; z-index:2; transition:.15s;
+}
+.fs-event:hover { filter:brightness(1.15); transform:scale(1.02); }
+.fs-event-class  { background:rgba(239,68,68,.8); color:#fff; border-left:3px solid #dc2626; }
+.fs-event-free   { background:rgba(34,197,94,.15); color:var(--green); border:1.5px solid rgba(34,197,94,.4); }
+.fs-event-sched  { background:rgba(216,180,254,.15); color:var(--accent-h); border:1.5px dashed rgba(216,180,254,.4); }
+.fs-event-req    { background:rgba(250,204,21,.15); color:var(--yellow); border:1.5px solid rgba(250,204,21,.4); }
+
+/* ── Requests list (teacher view) ── */
+.fs-req-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; display:flex;
+  align-items:center; gap:14px; flex-wrap:wrap;
+}
+.fs-req-card .fsr-info { flex:1; min-width:0; }
+.fs-req-card .fsr-name { font-weight:700; font-size:.9rem; }
+.fs-req-card .fsr-meta { font-size:.76rem; color:var(--text3); margin-top:3px; }
+.fs-req-card .fsr-actions { display:flex; gap:8px; flex-shrink:0; }
+
+/* ── Week nav ── */
+.fs-week-nav {
+  display:flex; align-items:center; gap:12px;
+}
+.fs-week-nav button {
+  width:32px; height:32px; border:1px solid var(--border); background:var(--surface2);
+  color:var(--text2); border-radius:8px; cursor:pointer; transition:.15s;
+  display:flex; align-items:center; justify-content:center; font-size:1rem;
+}
+.fs-week-nav button:hover { border-color:var(--accent); color:var(--accent); }
+.fs-week-nav .fw-label { font-size:.86rem; font-weight:700; color:var(--text); min-width:180px; text-align:center; }
+.fs-tab-row { display:flex; background:var(--surface2); border-radius:12px; padding:4px; gap:3px; margin-bottom:22px; }
+.fs-tab { flex:1; padding:9px 14px; border:none; background:none; color:var(--text2);
+  font-family:'Outfit',sans-serif; font-size:.82rem; font-weight:600; cursor:pointer;
+  border-radius:9px; transition:.15s; }
+.fs-tab.active { background:var(--accent); color:#fff; }
+
+/* ── Request badge on student nav ── */
+.s-req-badge { background:var(--yellow); color:#000; font-size:.62rem; font-weight:800;
+  padding:2px 6px; border-radius:99px; margin-left:auto; }
+</style>
+
+<style>
+/* ── Mobile drawer + navigation ── */
 .mob-nav { display:none; position:fixed; bottom:0; left:0; right:0; z-index:400;
   background:var(--surface); border-top:1px solid var(--border);
   padding:5px 0 env(safe-area-inset-bottom, 5px); }
@@ -581,7 +659,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .mob-nav-btn.active  { color:var(--accent-h); }
 .mob-nav-badge { position:absolute; top:3px; right:6px; background:var(--red); color:#fff;
   font-size:.58rem; font-weight:700; padding:1px 5px; border-radius:99px; min-width:14px; text-align:center; }
-
 .mob-topbar { display:none; align-items:center; justify-content:space-between;
   padding:13px 16px; background:var(--surface); border-bottom:1px solid var(--border);
   position:sticky; top:0; z-index:300; }
@@ -589,7 +666,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
   background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .mob-topbar .mt-right  { display:flex; align-items:center; gap:8px; }
 .mob-menu-btn { background:none; border:none; color:var(--text2); font-size:1.3rem; cursor:pointer; padding:4px; }
-
 .mob-drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:450; backdrop-filter:blur(3px); }
 .mob-drawer-overlay.open { display:block; }
 .mob-drawer { position:fixed; left:-280px; top:0; bottom:0; width:280px; background:var(--surface);
@@ -605,8 +681,8 @@ tr:hover td { background:rgba(124,111,239,.04); }
   .s-stats              { grid-template-columns:repeat(2,1fr); }
   .earnings-grid        { grid-template-columns:1fr; }
   .info-grid            { grid-template-columns:1fr 1fr; }
+  .fs-add-grid          { grid-template-columns:1fr 1fr; }
 }
-
 @media(max-width:768px){
   #page-teacher.active, #page-student.active { display:flex; flex-direction:column; }
   .t-sidebar, .s-sidebar { display:none; }
@@ -637,28 +713,21 @@ tr:hover td { background:rgba(124,111,239,.04); }
   .badge-grid { grid-template-columns:repeat(2,1fr); }
   .week-grid  { grid-template-columns:repeat(2,1fr); gap:8px; }
   .report-head { grid-template-columns:1fr; gap:12px; }
-  #sp-profile > div { grid-template-columns:1fr !important; }
   .modal-overlay { align-items:flex-end; }
   .modal-box { width:100%; max-width:100%; border-radius:24px 24px 0 0; padding:24px 18px; max-height:90vh; border-bottom:none; }
   .confirm-box { width:100%; max-width:100%; border-radius:24px 24px 0 0; padding:26px 20px; }
   .modal-footer .btn { flex:1; min-width:110px; justify-content:center; }
   .welcome-banner { flex-wrap:wrap; gap:12px; padding:18px 16px; }
   .welcome-banner h2 { font-size:1.15rem; }
-  .level-ring { margin-left:0; }
-  .class-item { flex-wrap:wrap; }
-  .ci-right   { flex-direction:row; align-items:center; width:100%; justify-content:flex-start; }
-  .earn-bar-chart { height:96px; }
-  .preclass-inner { padding:12px 14px; gap:10px; }
-  .preclass-text strong { font-size:.84rem; }
+  .fs-cal-header, .fs-cal-body { grid-template-columns:48px repeat(7,1fr); }
+  .fs-add-grid { grid-template-columns:1fr; }
+  .fs-week-nav .fw-label { min-width:130px; font-size:.78rem; }
 }
-
 @media(max-width:390px){
   .stat-grid  { grid-template-columns:1fr; }
   .login-card { padding:26px 16px; }
   .brand-name { font-size:1.35rem; }
   .res-grid   { grid-template-columns:1fr; }
-  .mob-nav-btn{ min-width:42px; padding:5px 6px; }
-  .mob-nav-btn .mn-lbl { font-size:.55rem; }
 }
 </style>
 
@@ -667,16 +736,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .reg-tab     { flex:1; padding:9px; border:none; background:none; border-radius:8px; color:var(--text2);
   font-family:'Outfit',sans-serif; font-size:.83rem; font-weight:600; cursor:pointer; transition:.18s; }
 .reg-tab.active { background:var(--accent); color:#fff; }
-
-/* ── Meet link display box in schedule modal ── */
-.meet-link-display {
-  display:none;
-  background:rgba(61,214,140,.07);
-  border:1px solid rgba(61,214,140,.25);
-  border-radius:11px;
-  padding:12px 14px;
-  margin-top:4px;
-}
+.meet-link-display { display:none; background:rgba(61,214,140,.07); border:1px solid rgba(61,214,140,.25); border-radius:11px; padding:12px 14px; margin-top:4px; }
 .meet-link-display.show { display:block; }
 .meet-link-display .mld-label { font-size:.7rem; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
 .meet-link-display .mld-url   { font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text); word-break:break-all; }
@@ -685,7 +745,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 </head>
 <body>
 
-<!-- Pre-class alert banner (slides down from top) -->
 <div id="preclass-alert">
   <div class="preclass-inner">
     <div class="preclass-pulse"></div>
@@ -695,13 +754,12 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
     <div class="preclass-countdown" id="preclass-countdown">5:00</div>
     <a href="#" id="preclass-join-btn" target="_blank" class="preclass-join">🚀 Join Now</a>
-    <button class="preclass-close" onclick="dismissPreclassAlert()" title="Dismiss">✕</button>
+    <button class="preclass-close" onclick="dismissPreclassAlert()">✕</button>
   </div>
 </div>
 
 <div id="spinner"><div class="spin-ring"></div><p id="spin-msg">Loading...</p></div>
 <div id="toast"></div>
-
 
 <!-- LOGIN PAGE -->
 <div id="page-login" class="page active">
@@ -744,17 +802,21 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
     <nav class="t-nav">
       <div class="t-nav-label">Main</div>
-      <button class="nav-btn active" onclick="tNav('overview',this)">     <span class="nav-ic">📊</span> Overview</button>
-      <button class="nav-btn" onclick="tNav('students',this)">            <span class="nav-ic">👨‍🎓</span> My Students</button>
-      <button class="nav-btn" onclick="tNav('schedule',this)">            <span class="nav-ic">📅</span> Schedule</button>
+      <button class="nav-btn active" onclick="tNav('overview',this)"><span class="nav-ic">📊</span> Overview</button>
+      <button class="nav-btn" onclick="tNav('students',this)"><span class="nav-ic">👨‍🎓</span> My Students</button>
+      <button class="nav-btn" onclick="tNav('schedule',this)"><span class="nav-ic">📅</span> Schedule</button>
+      <button class="nav-btn" onclick="tNav('freeschedule',this)">
+        <span class="nav-ic">🗓</span> Free Schedule
+        <span class="nav-badge" id="fs-req-badge" style="display:none">0</span>
+      </button>
       <div class="t-nav-label">Academics</div>
-      <button class="nav-btn" onclick="tNav('homework',this)">            <span class="nav-ic">📝</span> Homework</button>
-      <button class="nav-btn" onclick="tNav('announcements',this)">       <span class="nav-ic">📣</span> Announcements</button>
-      <button class="nav-btn" onclick="tNav('resources',this)">           <span class="nav-ic">📂</span> Resources</button>
+      <button class="nav-btn" onclick="tNav('homework',this)"><span class="nav-ic">📝</span> Homework</button>
+      <button class="nav-btn" onclick="tNav('announcements',this)"><span class="nav-ic">📣</span> Announcements</button>
+      <button class="nav-btn" onclick="tNav('resources',this)"><span class="nav-ic">📂</span> Resources</button>
       <div class="t-nav-label">Finance</div>
-      <button class="nav-btn" onclick="tNav('earnings',this)">            <span class="nav-ic">💰</span> Earnings</button>
+      <button class="nav-btn" onclick="tNav('earnings',this)"><span class="nav-ic">💰</span> Earnings</button>
       <div class="t-nav-label">Reports</div>
-      <button class="nav-btn" onclick="tNav('performance',this)">         <span class="nav-ic">📈</span> Performance</button>
+      <button class="nav-btn" onclick="tNav('performance',this)"><span class="nav-ic">📈</span> Performance</button>
       <div class="t-nav-label">Admin</div>
       <button class="nav-btn" onclick="tNav('resets',this)">
         <span class="nav-ic">🔑</span> Password Resets
@@ -765,7 +827,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="t-profile-mini">
         <div class="avatar" id="t-av" style="background:rgba(124,111,239,.2);color:var(--accent-h)">?</div>
         <div><div class="tp-name" id="t-name">Teacher</div><div class="tp-role">Math Instructor</div></div>
-        <button class="t-logout" onclick="doLogout()" title="Logout">⇥</button>
+        <button class="t-logout" onclick="doLogout()">⇥</button>
       </div>
     </div>
   </aside>
@@ -780,6 +842,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <button class="nav-btn active" onclick="tNav('overview',this);closeTDrawer()"><span class="nav-ic">📊</span> Overview</button>
       <button class="nav-btn" onclick="tNav('students',this);closeTDrawer()"><span class="nav-ic">👨‍🎓</span> My Students</button>
       <button class="nav-btn" onclick="tNav('schedule',this);closeTDrawer()"><span class="nav-ic">📅</span> Schedule</button>
+      <button class="nav-btn" onclick="tNav('freeschedule',this);closeTDrawer()"><span class="nav-ic">🗓</span> Free Schedule</button>
       <div class="t-nav-label">Academics</div>
       <button class="nav-btn" onclick="tNav('homework',this);closeTDrawer()"><span class="nav-ic">📝</span> Homework</button>
       <button class="nav-btn" onclick="tNav('announcements',this);closeTDrawer()"><span class="nav-ic">📣</span> Announcements</button>
@@ -814,22 +877,19 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <div class="mob-nav-inner">
       <button class="mob-nav-btn active" onclick="tNav('overview',this)" data-section="overview"><span class="mn-ic">📊</span><span class="mn-lbl">Home</span></button>
       <button class="mob-nav-btn" onclick="tNav('students',this)" data-section="students"><span class="mn-ic">👨‍🎓</span><span class="mn-lbl">Students</span></button>
-      <button class="mob-nav-btn" onclick="tNav('schedule',this)" data-section="schedule"><span class="mn-ic">📅</span><span class="mn-lbl">Schedule</span></button>
+      <button class="mob-nav-btn" onclick="tNav('freeschedule',this)" data-section="freeschedule"><span class="mn-ic">🗓</span><span class="mn-lbl">Free Time</span></button>
       <button class="mob-nav-btn" onclick="tNav('earnings',this)" data-section="earnings"><span class="mn-ic">💰</span><span class="mn-lbl">Earnings</span></button>
-      <button class="mob-nav-btn" onclick="openTDrawer()">
-        <span class="mn-ic">☰</span><span class="mn-lbl">More</span>
-        <span class="mob-nav-badge" id="reset-badge-m" style="display:none">!</span>
-      </button>
+      <button class="mob-nav-btn" onclick="openTDrawer()"><span class="mn-ic">☰</span><span class="mn-lbl">More</span></button>
     </div>
   </div>
 
   <main class="t-main">
+    <!-- Overview -->
     <div id="tp-overview" class="dash-page active">
       <div class="sec-header">
         <div><h2 id="t-greeting">Good day 👋</h2><p>Your academy at a glance.</p></div>
         <button class="btn btn-primary" onclick="tNav('schedule',null);openScheduleModal()">＋ New Class</button>
       </div>
-      <!-- Notification permission banner -->
       <div id="notif-banner">
         <span style="font-size:1.2rem">🔔</span>
         <div style="flex:1"><strong>Enable class reminders</strong> — get browser notifications 5 min before every class starts.</div>
@@ -847,6 +907,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
+    <!-- Students -->
     <div id="tp-students" class="dash-page">
       <div class="sec-header">
         <div><h2>My Students</h2><p id="stu-count-lbl">All enrolled students</p></div>
@@ -861,6 +922,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
+    <!-- Schedule -->
     <div id="tp-schedule" class="dash-page">
       <div class="sec-header">
         <div><h2>Weekly Schedule</h2><p>This week's class calendar.</p></div>
@@ -874,6 +936,118 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════
+         🗓  FREE SCHEDULE PAGE — TEACHER
+    ═══════════════════════════════════════════ -->
+    <div id="tp-freeschedule" class="dash-page">
+      <div class="sec-header">
+        <div>
+          <h2>🗓 Free Schedule</h2>
+          <p>Set your available time slots. Students can see these and request classes.</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-danger btn-sm" onclick="deleteAllFreeSlots()">🗑 Delete All</button>
+          <button class="btn btn-primary" onclick="toggleFsAddPanel()">＋ Add Schedule</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="fs-tab-row">
+        <button class="fs-tab active" onclick="fsSwitchTab('slots',this)">📋 List View</button>
+        <button class="fs-tab" onclick="fsSwitchTab('calendar',this)">📅 Calendar View</button>
+        <button class="fs-tab" onclick="fsSwitchTab('requests',this)">
+          📨 Requests
+          <span id="t-fs-req-count" style="background:var(--yellow);color:#000;font-size:.65rem;font-weight:800;padding:1px 6px;border-radius:99px;margin-left:5px;display:none">0</span>
+        </button>
+      </div>
+
+      <!-- Add Schedule Panel -->
+      <div id="fs-add-panel" class="fs-add-panel">
+        <div style="font-size:.88rem;font-weight:700;margin-bottom:14px;color:var(--text2)">➕ Add New Free Time Slot</div>
+        <div class="fs-add-grid">
+          <div class="input-group">
+            <label>Day</label>
+            <select id="fs-day">
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Start Time</label>
+            <input type="time" id="fs-start" value="09:00">
+          </div>
+          <div class="input-group">
+            <label>End Time</label>
+            <input type="time" id="fs-end" value="10:00">
+          </div>
+          <div class="input-group">
+            <label>Repeats</label>
+            <select id="fs-repeat">
+              <option value="weekly">Weekly</option>
+              <option value="once">Once</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="addFreeSlot()">✓ Add Slot</button>
+          <button class="btn btn-ghost" onclick="toggleFsAddPanel()">Cancel</button>
+        </div>
+        <div class="msg-err" id="fs-add-err" style="margin-top:10px"></div>
+      </div>
+
+      <!-- Legend -->
+      <div class="fs-legend">
+        <div class="fs-legend-item"><div class="fs-dot fs-dot-free"></div> Free Slot (available)</div>
+        <div class="fs-legend-item"><div class="fs-dot fs-dot-class"></div> Booked / Class</div>
+        <div class="fs-legend-item"><div class="fs-dot fs-dot-request"></div> Requested by Student</div>
+        <div class="fs-legend-item"><div class="fs-dot fs-dot-sched"></div> Free Schedule (recurring)</div>
+      </div>
+
+      <!-- List View -->
+      <div id="fs-tab-slots">
+        <!-- Day filter -->
+        <div class="fs-filter-bar" id="fs-day-filters">
+          <span style="font-size:.78rem;color:var(--text3);font-weight:600">Show only:</span>
+          <button class="fs-day-filter active" onclick="fsDayFilter('All',this)">All Days</button>
+          <button class="fs-day-filter" onclick="fsDayFilter('Monday',this)">Mon</button>
+          <button class="fs-day-filter" onclick="fsDayFilter('Tuesday',this)">Tue</button>
+          <button class="fs-day-filter" onclick="fsDayFilter('Wednesday',this)">Wed</button>
+          <button class="fs-day-filter" onclick="fsDayFilter('Thursday',this)">Thu</button>
+          <button class="fs-day-filter" onclick="fsDayFilter('Friday',this)">Fri</button>
+          <button class="fs-day-filter" onclick="fsDayFilter('Saturday',this)">Sat</button>
+          <button class="fs-day-filter" onclick="fsDayFilter('Sunday',this)">Sun</button>
+        </div>
+        <div id="fs-slots-container"></div>
+      </div>
+
+      <!-- Calendar View -->
+      <div id="fs-tab-calendar" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+          <div class="fs-week-nav">
+            <button onclick="fsWeekNav(-1)">←</button>
+            <div class="fw-label" id="fs-week-label">—</div>
+            <button onclick="fsWeekNav(1)">→</button>
+            <button class="btn btn-ghost btn-sm" onclick="fsWeekNav(0)">Today</button>
+          </div>
+        </div>
+        <div class="fs-cal-wrapper" id="fs-calendar"></div>
+      </div>
+
+      <!-- Requests View -->
+      <div id="fs-tab-requests" style="display:none">
+        <div style="margin-bottom:16px;font-size:.88rem;color:var(--text2)">
+          Students can request a class during your free slots. Approve to auto-schedule.
+        </div>
+        <div id="fs-requests-list"></div>
+      </div>
+    </div>
+
+    <!-- Homework -->
     <div id="tp-homework" class="dash-page">
       <div class="sec-header">
         <div><h2>Homework</h2><p>Assign and track work for your students.</p></div>
@@ -882,6 +1056,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="hw-list" id="t-hw-list"></div>
     </div>
 
+    <!-- Announcements -->
     <div id="tp-announcements" class="dash-page">
       <div class="sec-header">
         <div><h2>Announcements</h2><p>Post updates visible to all students.</p></div>
@@ -890,6 +1065,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="ann-list" id="t-ann-list"></div>
     </div>
 
+    <!-- Resources -->
     <div id="tp-resources" class="dash-page">
       <div class="sec-header">
         <div><h2>Resources</h2><p>Share study materials, videos, and links.</p></div>
@@ -898,6 +1074,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="res-grid" id="t-res-grid"></div>
     </div>
 
+    <!-- Earnings -->
     <div id="tp-earnings" class="dash-page">
       <div class="sec-header"><div><h2>Earnings</h2><p>Revenue from all scheduled classes.</p></div></div>
       <div class="stat-grid" id="earn-stats"></div>
@@ -907,11 +1084,13 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
+    <!-- Performance -->
     <div id="tp-performance" class="dash-page">
       <div class="sec-header"><div><h2>Student Performance</h2><p>Track each student's learning journey.</p></div></div>
       <div id="perf-cards"></div>
     </div>
 
+    <!-- Password Resets -->
     <div id="tp-resets" class="dash-page">
       <div class="sec-header">
         <div><h2>🔑 Password Reset Requests</h2><p>Review and approve student reset requests.</p></div>
@@ -927,15 +1106,19 @@ tr:hover td { background:rgba(124,111,239,.04); }
   <aside class="s-sidebar">
     <div class="s-sidebar-logo"><div class="s-brand">🧮 Mathmade Easy</div></div>
     <nav class="s-nav">
-      <button class="s-nav-btn active" onclick="sNav('home',this)">        <span class="sn-ic">🏠</span> Home</button>
-      <button class="s-nav-btn" onclick="sNav('classes',this)">            <span class="sn-ic">📅</span> My Classes</button>
-      <button class="s-nav-btn" onclick="sNav('progress',this)">           <span class="sn-ic">📈</span> My Progress</button>
-      <button class="s-nav-btn" onclick="sNav('homework',this)">           <span class="sn-ic">📝</span> Homework</button>
-      <button class="s-nav-btn" onclick="sNav('badges',this)">             <span class="sn-ic">🏆</span> Badges</button>
-      <button class="s-nav-btn" onclick="sNav('leaderboard',this)">        <span class="sn-ic">🥇</span> Leaderboard</button>
-      <button class="s-nav-btn" onclick="sNav('resources',this)">          <span class="sn-ic">📂</span> Resources</button>
-      <button class="s-nav-btn" onclick="sNav('announcements',this)">      <span class="sn-ic">📣</span> Announcements</button>
-      <button class="s-nav-btn" onclick="sNav('profile',this)">            <span class="sn-ic">👤</span> Profile</button>
+      <button class="s-nav-btn active" onclick="sNav('home',this)"><span class="sn-ic">🏠</span> Home</button>
+      <button class="s-nav-btn" onclick="sNav('classes',this)"><span class="sn-ic">📅</span> My Classes</button>
+      <button class="s-nav-btn" onclick="sNav('freeschedule',this)">
+        <span class="sn-ic">🗓</span> Book a Class
+        <span class="s-req-badge" id="s-req-badge" style="display:none">!</span>
+      </button>
+      <button class="s-nav-btn" onclick="sNav('progress',this)"><span class="sn-ic">📈</span> My Progress</button>
+      <button class="s-nav-btn" onclick="sNav('homework',this)"><span class="sn-ic">📝</span> Homework</button>
+      <button class="s-nav-btn" onclick="sNav('badges',this)"><span class="sn-ic">🏆</span> Badges</button>
+      <button class="s-nav-btn" onclick="sNav('leaderboard',this)"><span class="sn-ic">🥇</span> Leaderboard</button>
+      <button class="s-nav-btn" onclick="sNav('resources',this)"><span class="sn-ic">📂</span> Resources</button>
+      <button class="s-nav-btn" onclick="sNav('announcements',this)"><span class="sn-ic">📣</span> Announcements</button>
+      <button class="s-nav-btn" onclick="sNav('profile',this)"><span class="sn-ic">👤</span> Profile</button>
     </nav>
     <div class="s-sidebar-foot">
       <div class="s-profile-card">
@@ -958,6 +1141,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <nav class="s-nav" style="padding:10px 8px">
       <button class="s-nav-btn active" onclick="sNav('home',this);closeSDrawer()"><span class="sn-ic">🏠</span> Home</button>
       <button class="s-nav-btn" onclick="sNav('classes',this);closeSDrawer()"><span class="sn-ic">📅</span> My Classes</button>
+      <button class="s-nav-btn" onclick="sNav('freeschedule',this);closeSDrawer()"><span class="sn-ic">🗓</span> Book a Class</button>
       <button class="s-nav-btn" onclick="sNav('progress',this);closeSDrawer()"><span class="sn-ic">📈</span> My Progress</button>
       <button class="s-nav-btn" onclick="sNav('homework',this);closeSDrawer()"><span class="sn-ic">📝</span> Homework</button>
       <button class="s-nav-btn" onclick="sNav('badges',this);closeSDrawer()"><span class="sn-ic">🏆</span> Badges</button>
@@ -991,13 +1175,14 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <div class="mob-nav-inner">
       <button class="mob-nav-btn active" onclick="sNav('home',this)" data-section="home"><span class="mn-ic">🏠</span><span class="mn-lbl">Home</span></button>
       <button class="mob-nav-btn" onclick="sNav('classes',this)" data-section="classes"><span class="mn-ic">📅</span><span class="mn-lbl">Classes</span></button>
+      <button class="mob-nav-btn" onclick="sNav('freeschedule',this)" data-section="freeschedule"><span class="mn-ic">🗓</span><span class="mn-lbl">Book</span></button>
       <button class="mob-nav-btn" onclick="sNav('homework',this)" data-section="homework"><span class="mn-ic">📝</span><span class="mn-lbl">HW</span></button>
-      <button class="mob-nav-btn" onclick="sNav('leaderboard',this)" data-section="leaderboard"><span class="mn-ic">🥇</span><span class="mn-lbl">Ranks</span></button>
       <button class="mob-nav-btn" onclick="openSDrawer()"><span class="mn-ic">☰</span><span class="mn-lbl">More</span></button>
     </div>
   </div>
 
   <main class="s-main">
+    <!-- Home -->
     <div id="sp-home" class="dash-page active">
       <div class="welcome-banner">
         <div class="avatar avatar-lg" id="s-av2" style="background:rgba(124,111,239,.2);color:var(--accent-h)">?</div>
@@ -1007,7 +1192,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
         </div>
         <div class="level-ring"><span class="lr-num" id="s-level">1</span><span class="lr-lbl">LEVEL</span></div>
       </div>
-      <!-- Notification permission banner for student -->
       <div id="notif-banner-s" style="display:none;background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:.82rem;color:var(--text2);align-items:center;gap:12px;flex-wrap:wrap">
         <span style="font-size:1.2rem">🔔</span>
         <div style="flex:1"><strong style="color:var(--green)">Enable class reminders</strong> — get notified 5 min before your class starts.</div>
@@ -1023,11 +1207,54 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
+    <!-- Classes -->
     <div id="sp-classes" class="dash-page">
       <div class="sec-header"><div><h2>My Classes</h2><p>All your scheduled sessions with join links.</p></div></div>
       <div class="class-list" id="s-class-list"></div>
     </div>
 
+    <!-- ═══════════════════════════════════════════
+         🗓  FREE SCHEDULE PAGE — STUDENT
+    ═══════════════════════════════════════════ -->
+    <div id="sp-freeschedule" class="dash-page">
+      <div class="sec-header">
+        <div>
+          <h2>🗓 Book a Class</h2>
+          <p>Browse your teacher's available time slots and request a session.</p>
+        </div>
+      </div>
+
+      <!-- Info banner -->
+      <div style="background:rgba(61,214,140,.07);border:1px solid rgba(61,214,140,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:1.3rem;flex-shrink:0">💡</span>
+        <div style="font-size:.83rem;color:var(--text2);line-height:1.6">
+          Click any <strong style="color:var(--green)">green slot</strong> below to request a class during that time. Your teacher will review and confirm your booking.
+          <br>Slots marked in <strong style="color:var(--yellow)">yellow</strong> are already requested by you.
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="fs-legend" style="margin-bottom:18px">
+        <div class="fs-legend-item"><div class="fs-dot fs-dot-free"></div> Available — click to request</div>
+        <div class="fs-legend-item"><div class="fs-dot fs-dot-request"></div> Requested by you</div>
+        <div class="fs-legend-item"><div class="fs-dot" style="background:rgba(248,113,113,.5)"></div> Already booked</div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="fs-tab-row">
+        <button class="fs-tab active" onclick="sFsSwitchTab('slots',this)">📋 Available Slots</button>
+        <button class="fs-tab" onclick="sFsSwitchTab('my-requests',this)">📨 My Requests</button>
+      </div>
+
+      <div id="s-fs-tab-slots">
+        <div id="s-fs-slots-container"></div>
+      </div>
+      <div id="s-fs-tab-my-requests" style="display:none">
+        <div id="s-fs-my-requests-list"></div>
+      </div>
+    </div>
+
+    <!-- Progress -->
     <div id="sp-progress" class="dash-page">
       <div class="sec-header"><div><h2>My Progress</h2><p>Track how far you've come.</p></div></div>
       <div class="stat-grid" id="s-prog-stats"></div>
@@ -1037,31 +1264,37 @@ tr:hover td { background:rgba(124,111,239,.04); }
         <div class="pts-log" id="s-pts-log2" style="max-height:320px"></div></div>
     </div>
 
+    <!-- Homework -->
     <div id="sp-homework" class="dash-page">
       <div class="sec-header"><div><h2>Homework</h2><p>Assignments from your teacher.</p></div></div>
       <div class="hw-list" id="s-hw-list"></div>
     </div>
 
+    <!-- Badges -->
     <div id="sp-badges" class="dash-page">
       <div class="sec-header"><div><h2>Badges &amp; Achievements</h2><p>Earn badges by completing milestones!</p></div></div>
       <div class="badge-grid" id="s-badge-grid"></div>
     </div>
 
+    <!-- Leaderboard -->
     <div id="sp-leaderboard" class="dash-page">
       <div class="sec-header"><div><h2>Leaderboard</h2><p>See how you rank among all students.</p></div></div>
       <div class="lb-list" id="s-lb-list"></div>
     </div>
 
+    <!-- Resources -->
     <div id="sp-resources" class="dash-page">
       <div class="sec-header"><div><h2>Resources</h2><p>Study materials shared by your teacher.</p></div></div>
       <div class="res-grid" id="s-res-grid"></div>
     </div>
 
+    <!-- Announcements -->
     <div id="sp-announcements" class="dash-page">
       <div class="sec-header"><div><h2>Announcements</h2><p>Updates from your teacher.</p></div></div>
       <div class="ann-list" id="s-ann-list"></div>
     </div>
 
+    <!-- Profile -->
     <div id="sp-profile" class="dash-page">
       <div class="sec-header"><div><h2>My Profile</h2><p>Your personal details.</p></div></div>
       <div style="display:grid;grid-template-columns:260px 1fr;gap:18px;align-items:start">
@@ -1080,9 +1313,9 @@ tr:hover td { background:rgba(124,111,239,.04); }
 </div>
 
 
-<!-- ── MODALS ── -->
+<!-- ═══════ MODALS ═══════ -->
 
-<!-- Schedule Modal — now with auto-generated meet link display -->
+<!-- Schedule Modal -->
 <div class="modal-overlay" id="sched-modal">
   <div class="modal-box">
     <h3>📅 Create New Schedule</h3>
@@ -1109,32 +1342,28 @@ tr:hover td { background:rgba(124,111,239,.04); }
           <option value="In-Person">In-Person</option>
         </select>
       </div>
-
-      <!-- Auto-generated link display (read-only, shown for Meet/Zoom/Teams) -->
       <div class="input-group full" id="auto-link-wrap">
         <label>Meeting Link <span style="color:var(--green);font-size:.7rem">✦ Auto-Generated</span></label>
         <div class="meet-link-display show" id="auto-link-display">
           <div class="mld-label">🟢 Google Meet Link — Generated automatically</div>
           <div class="mld-url" id="auto-link-url">Generating...</div>
-          <div class="mld-note">This link will be emailed to both you and the student immediately, and again 5 minutes before class.</div>
+          <div class="mld-note">This link will be emailed to the student immediately.</div>
         </div>
-        <!-- Manual override (optional) -->
         <div style="margin-top:8px">
           <label style="font-size:.7rem;color:var(--text3);text-transform:none;letter-spacing:0;font-weight:500;cursor:pointer">
             <input type="checkbox" id="sch-manual-toggle" style="width:auto;accent-color:var(--accent)" onchange="toggleManualLink(this.checked)">
             &nbsp;Use my own link instead
           </label>
         </div>
-        <input type="url" id="sch-link" placeholder="https://zoom.us/j/... or meet.google.com/..." style="display:none;margin-top:8px">
+        <input type="url" id="sch-link" placeholder="https://zoom.us/j/..." style="display:none;margin-top:8px">
       </div>
-
       <div class="input-group"><label>Fee (₹)</label><input type="number" id="sch-fee" value="800"></div>
       <div class="input-group"><label>Topic</label><input type="text" id="sch-topic" placeholder="e.g. Quadratic Equations"></div>
       <div class="input-group full"><label>Notes</label><textarea id="sch-notes" rows="2" placeholder="Any special instructions..."></textarea></div>
       <div class="input-group full">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
           <input type="checkbox" id="sch-notify" checked style="width:auto;accent-color:var(--accent)">
-          📧 Send link + class details to student via email right now
+          📧 Send link + class details to student via email
         </label>
       </div>
     </div>
@@ -1146,6 +1375,39 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
+<!-- Request Class Modal (student) -->
+<div class="modal-overlay" id="req-class-modal">
+  <div class="modal-box" style="width:480px">
+    <h3>📩 Request a Class</h3>
+    <div id="req-slot-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:18px;">
+      <div style="font-weight:700;font-size:.92rem" id="req-slot-display">—</div>
+      <div style="font-size:.78rem;color:var(--text3);margin-top:4px" id="req-slot-sub">—</div>
+    </div>
+    <div class="form-grid">
+      <div class="input-group"><label>Subject you want</label>
+        <select id="req-subj">
+          <option>Algebra</option><option>Geometry</option><option>Calculus</option>
+          <option>Trigonometry</option><option>Statistics</option>
+        </select>
+      </div>
+      <div class="input-group"><label>Preferred Duration</label>
+        <select id="req-dur">
+          <option>30 min</option><option>45 min</option><option selected>60 min</option><option>90 min</option>
+        </select>
+      </div>
+      <div class="input-group full"><label>Topic / Note for teacher (optional)</label>
+        <textarea id="req-note" rows="2" placeholder="e.g. Need help with quadratic equations..."></textarea>
+      </div>
+    </div>
+    <div class="msg-ok"  id="req-ok"></div>
+    <div class="msg-err" id="req-err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeReqModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitClassRequest()">Send Request 📨</button>
+    </div>
+  </div>
+</div>
+
 <!-- Homework Modal -->
 <div class="modal-overlay" id="hw-modal">
   <div class="modal-box">
@@ -1153,21 +1415,12 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <div class="form-grid">
       <div class="input-group"><label>Title</label><input id="hw-title" type="text" placeholder="e.g. Practice Quadratics"></div>
       <div class="input-group"><label>Subject</label>
-        <select id="hw-subj">
-          <option>Algebra</option><option>Geometry</option><option>Calculus</option>
-          <option>Trigonometry</option><option>Statistics</option>
-        </select>
+        <select id="hw-subj"><option>Algebra</option><option>Geometry</option><option>Calculus</option><option>Trigonometry</option><option>Statistics</option></select>
       </div>
       <div class="input-group"><label>Assign To</label><select id="hw-stu"><option value="all">All Students</option></select></div>
       <div class="input-group"><label>Due Date</label><input type="date" id="hw-due"></div>
       <div class="input-group full"><label>Description</label><textarea id="hw-desc" rows="3" placeholder="Describe the homework..."></textarea></div>
       <div class="input-group full"><label>Resource Link (optional)</label><input type="url" id="hw-link" placeholder="https://..."></div>
-      <div class="input-group full">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="hw-notify" checked style="width:auto;accent-color:var(--accent)">
-          Send email notification to student(s)
-        </label>
-      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeHWModal()">Cancel</button>
@@ -1188,8 +1441,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
       <div class="input-group">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:.82rem;color:var(--text2)">
-          <input type="checkbox" id="ann-notify" checked style="width:auto;accent-color:var(--accent)">
-          Email all students
+          <input type="checkbox" id="ann-notify" checked style="width:auto;accent-color:var(--accent)"> Email all students
         </label>
       </div>
     </div>
@@ -1207,25 +1459,13 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <div class="form-grid">
       <div class="input-group full"><label>Title</label><input id="res-title" type="text" placeholder="e.g. Algebra Cheat Sheet"></div>
       <div class="input-group"><label>Type</label>
-        <select id="res-type">
-          <option value="link">🔗 Link</option><option value="pdf">📄 PDF</option>
-          <option value="video">🎬 Video</option><option value="note">📝 Note</option>
-        </select>
+        <select id="res-type"><option value="link">🔗 Link</option><option value="pdf">📄 PDF</option><option value="video">🎬 Video</option><option value="note">📝 Note</option></select>
       </div>
       <div class="input-group"><label>Subject</label>
-        <select id="res-subj">
-          <option>Algebra</option><option>Geometry</option><option>Calculus</option>
-          <option>Trigonometry</option><option>Statistics</option><option>General</option>
-        </select>
+        <select id="res-subj"><option>Algebra</option><option>Geometry</option><option>Calculus</option><option>Trigonometry</option><option>Statistics</option><option>General</option></select>
       </div>
       <div class="input-group full"><label>URL / Link</label><input id="res-url" type="url" placeholder="https://..."></div>
       <div class="input-group full"><label>Description</label><textarea id="res-desc" rows="2" placeholder="Brief description..."></textarea></div>
-      <div class="input-group full">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:.82rem;color:var(--text2)">
-          <input type="checkbox" id="res-notify" checked style="width:auto;accent-color:var(--accent)">
-          Notify all students by email
-        </label>
-      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeResModal()">Cancel</button>
@@ -1246,29 +1486,29 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <div class="msg-err" id="reg-err"></div>
     <div id="reg-stu-form">
       <div class="form-grid">
-        <div class="input-group"><label>Full Name</label>       <input id="rs-name"   type="text"     placeholder="e.g. Aryan Mehta"></div>
-        <div class="input-group"><label>Age</label>             <input id="rs-age"    type="number"   placeholder="12" min="5" max="25"></div>
-        <div class="input-group"><label>Grade</label>           <input id="rs-grade"  type="text"     placeholder="e.g. 9th"></div>
+        <div class="input-group"><label>Full Name</label><input id="rs-name" type="text" placeholder="e.g. Aryan Mehta"></div>
+        <div class="input-group"><label>Age</label><input id="rs-age" type="number" placeholder="12" min="5" max="25"></div>
+        <div class="input-group"><label>Grade</label><input id="rs-grade" type="text" placeholder="e.g. 9th"></div>
         <div class="input-group"><label>Subject</label>
           <select id="rs-subj"><option>Algebra</option><option>Geometry</option><option>Calculus</option><option>Trigonometry</option><option>Statistics</option></select>
         </div>
-        <div class="input-group"><label>Parent / Guardian</label><input id="rs-parent" type="text"    placeholder="Parent name"></div>
-        <div class="input-group"><label>Contact</label>          <input id="rs-phone"  type="text"    placeholder="+91 98765 43210"></div>
-        <div class="input-group full"><label>Email</label>       <input id="rs-email"  type="email"   placeholder="student@email.com"></div>
-        <div class="input-group"><label>Username</label>         <input id="rs-user"   type="text"    placeholder="username" autocomplete="off"></div>
-        <div class="input-group"><label>Password</label>         <input id="rs-pass"   type="password" placeholder="min 6 chars"></div>
+        <div class="input-group"><label>Parent / Guardian</label><input id="rs-parent" type="text" placeholder="Parent name"></div>
+        <div class="input-group"><label>Contact</label><input id="rs-phone" type="text" placeholder="+91 98765 43210"></div>
+        <div class="input-group full"><label>Email</label><input id="rs-email" type="email" placeholder="student@email.com"></div>
+        <div class="input-group"><label>Username</label><input id="rs-user" type="text" placeholder="username" autocomplete="off"></div>
+        <div class="input-group"><label>Password</label><input id="rs-pass" type="password" placeholder="min 6 chars"></div>
       </div>
     </div>
     <div id="reg-tea-form" style="display:none">
       <div class="form-grid">
-        <div class="input-group full"><label>Full Name</label><input id="rt-name"  type="text"     placeholder="Your name"></div>
-        <div class="input-group full"><label>Email</label>    <input id="rt-email" type="email"    placeholder="teacher@email.com"></div>
-        <div class="input-group"><label>Password</label>      <input id="rt-pass"  type="password" placeholder="min 6 chars"></div>
-        <div class="input-group"><label>Invite Code</label>   <input id="rt-code"  type="password" placeholder="Ask admin"></div>
+        <div class="input-group full"><label>Full Name</label><input id="rt-name" type="text" placeholder="Your name"></div>
+        <div class="input-group full"><label>Email</label><input id="rt-email" type="email" placeholder="teacher@email.com"></div>
+        <div class="input-group"><label>Password</label><input id="rt-pass" type="password" placeholder="min 6 chars"></div>
+        <div class="input-group"><label>Invite Code</label><input id="rt-code" type="password" placeholder="Ask admin"></div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost"   onclick="closeReg()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeReg()">Cancel</button>
       <button class="btn btn-primary" onclick="submitReg()">Create Account ✓</button>
     </div>
   </div>
@@ -1280,7 +1520,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <h3>🔑 Forgot Password</h3>
     <p style="color:var(--text2);font-size:.84rem;margin-bottom:18px;line-height:1.55">
       Enter your registered email. A reset request will be sent to your teacher.
-      Once approved, your new password will appear below.
     </p>
     <div class="input-group" style="margin-bottom:14px">
       <label>Your Email</label>
@@ -1289,12 +1528,11 @@ tr:hover td { background:rgba(124,111,239,.04); }
     <div class="msg-ok"  id="fp-ok"></div>
     <div class="msg-err" id="fp-err"></div>
     <div id="fp-approved-box" style="display:none;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:14px">
-      <div style="font-size:.76rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Your new password (set by teacher)</div>
+      <div style="font-size:.76rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Your new password</div>
       <div id="fp-new-pass-display" style="font-size:1.15rem;font-weight:800;color:var(--green);letter-spacing:.06em;font-family:monospace">—</div>
-      <div style="font-size:.74rem;color:var(--text3);margin-top:8px">Log in with this password, then update it from your profile.</div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost"   onclick="closeForgotPw()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeForgotPw()">Cancel</button>
       <button class="btn btn-primary" id="fp-submit-btn" onclick="submitForgotPw()">Send Request →</button>
     </div>
   </div>
@@ -1309,7 +1547,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <label>New Password</label>
       <input id="reset-new-pass" type="text" placeholder="Enter new password (min 6 chars)" autocomplete="off">
     </div>
-    <div class="msg-warn">⚠️ The password is saved in plain text in Firestore so the student can read it and log in.</div>
+    <div class="msg-warn">⚠️ Password saved in plain text so student can read it and log in.</div>
     <div class="msg-ok"  id="reset-ok"></div>
     <div class="msg-err" id="reset-err"></div>
     <div class="modal-footer">
@@ -1320,49 +1558,72 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- Delete Student Confirm -->
+<!-- Approve Class Request Modal (teacher) -->
+<div class="modal-overlay" id="approve-req-modal">
+  <div class="modal-box" style="width:500px">
+    <h3>✅ Approve Class Request</h3>
+    <div id="approve-req-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:.86rem;color:var(--text2);line-height:1.7"></div>
+    <div class="form-grid">
+      <div class="input-group"><label>Fee (₹)</label><input type="number" id="apr-fee" value="800"></div>
+      <div class="input-group"><label>Platform</label>
+        <select id="apr-plat">
+          <option value="Google Meet">Google Meet</option>
+          <option value="Zoom">Zoom</option>
+          <option value="Microsoft Teams">Microsoft Teams</option>
+          <option value="In-Person">In-Person</option>
+        </select>
+      </div>
+    </div>
+    <div class="msg-ok"  id="apr-ok"></div>
+    <div class="msg-err" id="apr-err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="declineClassRequest()">✗ Decline</button>
+      <button class="btn btn-ghost" onclick="closeApproveReq()">Cancel</button>
+      <button class="btn btn-primary" onclick="approveClassRequest()">✓ Approve &amp; Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm deletes -->
 <div class="modal-overlay" id="del-stu-modal">
   <div class="confirm-box">
     <div class="c-icon">🗑️</div><h3>Remove Student?</h3>
     <p id="del-stu-msg">This will permanently remove this student's profile.</p>
     <div class="confirm-footer">
-      <button class="btn btn-ghost"  onclick="closeDelStu()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeDelStu()">Cancel</button>
       <button class="btn btn-danger" onclick="confirmDelStu()">Yes, Remove</button>
     </div>
   </div>
 </div>
-
-<!-- Delete Schedule Confirm -->
 <div class="modal-overlay" id="del-sch-modal">
   <div class="confirm-box">
     <div class="c-icon">📅</div><h3>Delete Class?</h3>
     <p id="del-sch-msg">This class entry will be permanently deleted.</p>
     <div class="confirm-footer">
-      <button class="btn btn-ghost"  onclick="closeDelSch()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeDelSch()">Cancel</button>
       <button class="btn btn-danger" onclick="confirmDelSch()">Yes, Delete</button>
     </div>
   </div>
 </div>
-
-<!-- Delete Item Confirm -->
 <div class="modal-overlay" id="del-item-modal">
   <div class="confirm-box">
     <div class="c-icon">🗑️</div><h3 id="del-item-title">Delete?</h3>
     <p id="del-item-msg">This will be permanently deleted.</p>
     <div class="confirm-footer">
-      <button class="btn btn-ghost"  onclick="closeDelItem()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeDelItem()">Cancel</button>
       <button class="btn btn-danger" onclick="confirmDelItem()">Yes, Delete</button>
     </div>
   </div>
 </div>
 
 
-<!-- ============================================================
+<!-- ====================================================
   CONSTANTS & STATE
-============================================================ -->
+==================================================== -->
 <script>
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DAYS   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DAYS_FULL = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const COLORS = ['#7c6fef','#f472b6','#3dd68c','#fbbf24','#fd79a8','#22d3ee','#a78bfa','#fb923c'];
 const LEVELS = ['','Beginner','Learner','Problem Solver','Calculator','Mathlete','Expert','Master','Genius','Einstein','Hawking'];
 const BADGE_DEFS = [
@@ -1389,6 +1650,8 @@ window._schedules     = [];
 window._homeworks     = [];
 window._announcements = [];
 window._resources     = [];
+window._freeSlots     = [];   // teacher's free schedule
+window._classRequests = [];   // student class requests
 
 let _pendingDelStuUid  = null;
 let _pendingDelSchId   = null;
@@ -1397,8 +1660,13 @@ let _pendingDelItemCol = null;
 let _currentResetId    = null;
 let _currentResetUid   = null;
 let _regTab = 'student';
+let _fsFilterDay = 'All';
+let _fsCalWeekOffset = 0;
+let _fsCurrentTab = 'slots';
+let _currentApproveReqId = null;
+let _pendingRequestSlot  = null;
 
-/* Pre-class alert state */
+/* Pre-class alert */
 let _preclassAlertActive  = false;
 let _preclassAlertClassId = null;
 let _preclassDismissed    = new Set();
@@ -1407,20 +1675,20 @@ let _preclassCheckInterval = null;
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   UTILITIES
-============================================================ -->
+==================================================== -->
 <script>
-function spin(msg){ document.getElementById('spin-msg').textContent = msg||'Loading...'; document.getElementById('spinner').classList.add('show'); }
+function spin(msg){ document.getElementById('spin-msg').textContent=msg||'Loading...'; document.getElementById('spinner').classList.add('show'); }
 function unspin(){ document.getElementById('spinner').classList.remove('show'); }
 
 let _toastT;
 function toast(msg, ms=2500){
-  const el = document.getElementById('toast');
-  el.textContent = '✅ ' + msg;
+  const el=document.getElementById('toast');
+  el.textContent='✅ '+msg;
   el.classList.add('show');
   clearTimeout(_toastT);
-  _toastT = setTimeout(()=>el.classList.remove('show'), ms);
+  _toastT=setTimeout(()=>el.classList.remove('show'), ms);
 }
 
 function routeTo(page){
@@ -1432,10 +1700,7 @@ function routeTo(page){
 function randColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)]; }
 function initials(name){ return (name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
 function fmtMoney(n){ return '₹'+(n||0).toLocaleString(); }
-function daysLeft(dateStr){
-  const d = new Date(dateStr) - new Date();
-  return Math.ceil(d/(1000*60*60*24));
-}
+function daysLeft(dateStr){ const d=new Date(dateStr)-new Date(); return Math.ceil(d/(1000*60*60*24)); }
 function friendlyErr(msg){
   if(msg.includes('user-not-found')||msg.includes('wrong-password')||msg.includes('invalid-credential')) return 'Invalid email or password.';
   if(msg.includes('email-already-in-use')) return 'Email already registered.';
@@ -1444,406 +1709,222 @@ function friendlyErr(msg){
   return msg;
 }
 function showMsg(id, msg, type='err'){
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.textContent=msg;
-  el.className='msg-'+type;
-  el.style.display='block';
+  const el=document.getElementById(id); if(!el) return;
+  el.textContent=msg; el.className='msg-'+type; el.style.display='block';
 }
 function hideMsg(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
+
+function fmt12(t){
+  if(!t) return '';
+  const [h,m]=t.split(':').map(Number);
+  const ampm=h>=12?'PM':'AM', h12=h%12||12;
+  return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
 </script>
 
 
-<!-- ============================================================
-  ✦ AUTO MEET LINK GENERATION — WORKING VERSION
-============================================================ -->
+<!-- ====================================================
+  AUTO MEET LINK GENERATION
+==================================================== -->
 <script>
-
-/* Generates meeting links */
-
 function generateMeetingLink(platform){
-
-  if(platform === 'In-Person') return null;
-
-  /* Google Meet – always valid */
-  if(platform === 'Google Meet'){
-    return "https://meet.google.com/new";
-  }
-
-  /* Zoom – always valid (opens instant meeting page) */
-  if(platform === 'Zoom'){
-    return "https://zoom.us/start/videomeeting";
-  }
-
-  /* Microsoft Teams – always valid */
-  if(platform === 'Microsoft Teams'){
-    return "https://teams.microsoft.com/_#/l/meeting/new";
-  }
-
+  if(platform==='In-Person') return null;
+  if(platform==='Google Meet') return "https://meet.google.com/new";
+  if(platform==='Zoom') return "https://zoom.us/start/videomeeting";
+  if(platform==='Microsoft Teams') return "https://teams.microsoft.com/_#/l/meeting/new";
   return null;
 }
-
-/* Stores current link */
 let _currentAutoLink = null;
 
-
-/* Runs when platform changes */
 function onPlatformChange(){
-
-  const platform   = document.getElementById('sch-plat').value;
-  const autoWrap   = document.getElementById('auto-link-wrap');
-  const autoDisplay= document.getElementById('auto-link-display');
-  const urlEl      = document.getElementById('auto-link-url');
-  const manualCb   = document.getElementById('sch-manual-toggle');
-  const manualInput= document.getElementById('sch-link');
-
-  if(!autoWrap || !autoDisplay || !urlEl) return;
-
-  if(platform === 'In-Person'){
-    autoWrap.style.display = 'none';
-    _currentAutoLink = null;
-    return;
-  }
-
-  autoWrap.style.display = 'block';
-  autoDisplay.classList.add('show');
-
-  /* reset manual input */
-  if(manualCb) manualCb.checked = false;
-  if(manualInput) manualInput.style.display = 'none';
-
-  /* generate new link every time */
-  _currentAutoLink = generateMeetingLink(platform);
-
-  urlEl.textContent = _currentAutoLink || 'N/A';
-
-  const icons = {
-    'Google Meet':'🟢',
-    'Zoom':'🔵',
-    'Microsoft Teams':'🟣'
-  };
-
-  const labelEl = autoDisplay.querySelector('.mld-label');
-  if(labelEl){
-    labelEl.textContent = `${icons[platform] || '🔗'} ${platform} Link — Generated automatically`;
-  }
+  const platform=document.getElementById('sch-plat').value;
+  const autoWrap=document.getElementById('auto-link-wrap');
+  const autoDisplay=document.getElementById('auto-link-display');
+  const urlEl=document.getElementById('auto-link-url');
+  const manualCb=document.getElementById('sch-manual-toggle');
+  const manualInput=document.getElementById('sch-link');
+  if(!autoWrap||!autoDisplay||!urlEl) return;
+  if(platform==='In-Person'){ autoWrap.style.display='none'; _currentAutoLink=null; return; }
+  autoWrap.style.display='block'; autoDisplay.classList.add('show');
+  if(manualCb) manualCb.checked=false;
+  if(manualInput) manualInput.style.display='none';
+  _currentAutoLink=generateMeetingLink(platform);
+  urlEl.textContent=_currentAutoLink||'N/A';
+  const icons={'Google Meet':'🟢','Zoom':'🔵','Microsoft Teams':'🟣'};
+  const labelEl=autoDisplay.querySelector('.mld-label');
+  if(labelEl) labelEl.textContent=`${icons[platform]||'🔗'} ${platform} Link — Generated automatically`;
 }
 
-
-/* Manual link toggle */
 function toggleManualLink(useManual){
-
-  const autoDisplay = document.getElementById('auto-link-display');
-  const manualInput = document.getElementById('sch-link');
-
-  if(useManual){
-    autoDisplay.classList.remove('show');
-    manualInput.style.display = 'block';
-    manualInput.focus();
-  }else{
-    autoDisplay.classList.add('show');
-    manualInput.style.display = 'none';
-    onPlatformChange();
-  }
+  const autoDisplay=document.getElementById('auto-link-display');
+  const manualInput=document.getElementById('sch-link');
+  if(useManual){ autoDisplay.classList.remove('show'); manualInput.style.display='block'; manualInput.focus(); }
+  else { autoDisplay.classList.add('show'); manualInput.style.display='none'; onPlatformChange(); }
 }
-
-
-/* Refresh when modal opens */
-function refreshAutoLink(){
-  onPlatformChange();
-}
-
+function refreshAutoLink(){ onPlatformChange(); }
 </script>
 
-<!-- ============================================================
-  ✦ PRE-CLASS ALERT SYSTEM — NEW
-  Polls every 30s. If a class starts within 5 min, shows banner.
-  Also fires a browser push notification if permitted.
-============================================================ -->
-<script>
 
-/* Request browser notification permission */
+<!-- ====================================================
+  PRE-CLASS ALERT SYSTEM
+==================================================== -->
+<script>
 async function requestNotifPermission(){
   if(!('Notification' in window)){ toast('Browser notifications not supported.'); return; }
-  const perm = await Notification.requestPermission();
-  if(perm === 'granted'){
-    toast('🔔 Notifications enabled! You\'ll be alerted 5 min before class.');
+  const perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    toast('🔔 Notifications enabled!');
     document.getElementById('notif-banner')?.classList.remove('show');
-    document.getElementById('notif-banner-s') && (document.getElementById('notif-banner-s').style.display = 'none');
-    // Test notification
-    new Notification('Mathmade Easy 🧮', { body:'You\'ll now get class reminders 5 minutes before each session!', icon:'https://via.placeholder.com/64/7c6fef/fff?text=M' });
-  } else {
-    toast('Notification permission denied. You can enable it in browser settings.');
-  }
+    const sB=document.getElementById('notif-banner-s'); if(sB) sB.style.display='none';
+    new Notification('Mathmade Easy 🧮',{body:"You'll now get class reminders 5 minutes before each session!"});
+  } else { toast('Notification permission denied.'); }
 }
-
-/* Show notification permission banners if not yet granted */
 function maybeShowNotifBanner(){
   if(!('Notification' in window)) return;
-  if(Notification.permission === 'default'){
+  if(Notification.permission==='default'){
     document.getElementById('notif-banner')?.classList.add('show');
-    const sB = document.getElementById('notif-banner-s');
-    if(sB) sB.style.display = 'flex';
+    const sB=document.getElementById('notif-banner-s'); if(sB) sB.style.display='flex';
   }
 }
-
-/* Fire a browser push notification */
 function fireBrowserNotif(title, body, link){
-  if(!('Notification' in window)) return;
-  if(Notification.permission !== 'granted') return;
-  const n = new Notification(title, {
-    body,
-    icon:'https://via.placeholder.com/64/7c6fef/fff?text=M',
-    badge:'https://via.placeholder.com/32/3dd68c/000?text=!',
-    tag:'preclass'
-  });
-  if(link) n.onclick = () => { window.open(link,'_blank'); n.close(); };
+  if(!('Notification' in window)||Notification.permission!=='granted') return;
+  const n=new Notification(title,{body,icon:'https://via.placeholder.com/64/7c6fef/fff?text=M',tag:'preclass'});
+  if(link) n.onclick=()=>{ window.open(link,'_blank'); n.close(); };
   setTimeout(()=>n.close(), 30000);
 }
-
-/* Show the in-app pre-class alert banner */
 function showPreclassAlert(cls){
-  _preclassAlertActive  = true;
-  _preclassAlertClassId = cls.id;
-
-  document.getElementById('preclass-title').textContent =
-    `📘 ${cls.course}${cls.topic?' · '+cls.topic:''} — Starting in 5 minutes!`;
-
-  const meta = `${cls.studentName||'Class'} · ${cls.date} at ${cls.time} · ${cls.platform}`;
-  document.getElementById('preclass-meta').textContent = meta;
-
-  const joinBtn = document.getElementById('preclass-join-btn');
-  if(cls.meetingLink){
-    joinBtn.href = cls.meetingLink;
-    joinBtn.style.display = 'inline-flex';
-  } else {
-    joinBtn.style.display = 'none';
-  }
-
+  _preclassAlertActive=true; _preclassAlertClassId=cls.id;
+  document.getElementById('preclass-title').textContent=`📘 ${cls.course}${cls.topic?' · '+cls.topic:''} — Starting in 5 minutes!`;
+  document.getElementById('preclass-meta').textContent=`${cls.studentName||'Class'} · ${cls.date} at ${cls.time} · ${cls.platform}`;
+  const joinBtn=document.getElementById('preclass-join-btn');
+  if(cls.meetingLink){ joinBtn.href=cls.meetingLink; joinBtn.style.display='inline-flex'; }
+  else { joinBtn.style.display='none'; }
   document.getElementById('preclass-alert').classList.add('show');
-
-  /* Start countdown */
   startPreclassCountdown(cls);
 }
-
 function dismissPreclassAlert(){
   document.getElementById('preclass-alert').classList.remove('show');
-  _preclassAlertActive = false;
+  _preclassAlertActive=false;
   if(_preclassAlertClassId) _preclassDismissed.add(_preclassAlertClassId);
 }
-
-/* Live countdown timer */
-let _countdownInterval = null;
+let _countdownInterval=null;
 function startPreclassCountdown(cls){
   clearInterval(_countdownInterval);
-  const classTime = new Date(`${cls.date}T${cls.time}`);
-  _countdownInterval = setInterval(()=>{
-    const diff = classTime - new Date();
-    if(diff <= 0){
-      document.getElementById('preclass-countdown').textContent = '🚀 Now!';
-      clearInterval(_countdownInterval);
-      return;
-    }
-    const m = Math.floor(diff/60000);
-    const s = Math.floor((diff%60000)/1000);
-    document.getElementById('preclass-countdown').textContent =
-      `${m}:${String(s).padStart(2,'0')}`;
+  const classTime=new Date(`${cls.date}T${cls.time}`);
+  _countdownInterval=setInterval(()=>{
+    const diff=classTime-new Date();
+    if(diff<=0){ document.getElementById('preclass-countdown').textContent='🚀 Now!'; clearInterval(_countdownInterval); return; }
+    const m=Math.floor(diff/60000), s=Math.floor((diff%60000)/1000);
+    document.getElementById('preclass-countdown').textContent=`${m}:${String(s).padStart(2,'0')}`;
   }, 1000);
 }
-
-/**
- * checkUpcomingClasses()
- * Runs every 30 seconds. Checks all relevant schedules and:
- * - Shows in-app alert if a class is 4–6 min away
- * - Fires browser notification if class is 4–6 min away (once per class)
- * Relevant schedules = all for teacher, only student's own for student
- */
 function checkUpcomingClasses(){
-  const now = new Date();
-  const schedules = window._schedules || [];
-
-  // Get the uid to filter by for students
-  const studentUid = window._student ? window._student.uid : null;
-
+  const now=new Date(), schedules=window._schedules||[];
+  const studentUid=window._student?window._student.uid:null;
   for(const cls of schedules){
-    if(!cls.date || !cls.time) continue;
-    if(_preclassDismissed.has(cls.id)) continue;
-
-    // Filter: student only sees their own classes
-    if(studentUid && cls.studentUid !== studentUid) continue;
-
-    const classTime = new Date(`${cls.date}T${cls.time}`);
-    const diffMs    = classTime - now;
-    const diffMin   = diffMs / 60000;
-
-    // Window: between 4 and 6 minutes before class
-    if(diffMin > 0 && diffMin <= 6 && diffMin >= 3.5){
-
-      // In-app banner
-      if(!_preclassAlertActive || _preclassAlertClassId !== cls.id){
-        showPreclassAlert(cls);
-      }
-
-      // Browser notification (only once per class)
+    if(!cls.date||!cls.time||_preclassDismissed.has(cls.id)) continue;
+    if(studentUid&&cls.studentUid!==studentUid) continue;
+    const classTime=new Date(`${cls.date}T${cls.time}`);
+    const diffMin=(classTime-now)/60000;
+    if(diffMin>0&&diffMin<=6&&diffMin>=3.5){
+      if(!_preclassAlertActive||_preclassAlertClassId!==cls.id) showPreclassAlert(cls);
       if(!_notifSent.has(cls.id)){
         _notifSent.add(cls.id);
-        const notifTitle = `📅 Class in ~5 min: ${cls.course}`;
-        const notifBody  = `${cls.platform} · ${cls.time}${cls.meetingLink?' — Click to join':''}`;
-        fireBrowserNotif(notifTitle, notifBody, cls.meetingLink);
+        fireBrowserNotif(`📅 Class in ~5 min: ${cls.course}`,`${cls.platform} · ${cls.time}${cls.meetingLink?' — Click to join':''}`,cls.meetingLink);
       }
     }
-
-    // Hide alert if class time passed
-    if(diffMin < 0 && _preclassAlertClassId === cls.id && _preclassAlertActive){
-      dismissPreclassAlert();
-    }
+    if(diffMin<0&&_preclassAlertClassId===cls.id&&_preclassAlertActive) dismissPreclassAlert();
   }
 }
-
-/** Start/stop the pre-class polling loop */
 function startPreclassChecker(){
   clearInterval(_preclassCheckInterval);
-  checkUpcomingClasses(); // immediate first check
-  _preclassCheckInterval = setInterval(checkUpcomingClasses, 30000);
+  checkUpcomingClasses();
+  _preclassCheckInterval=setInterval(checkUpcomingClasses, 30000);
 }
-function stopPreclassChecker(){
-  clearInterval(_preclassCheckInterval);
-  _preclassCheckInterval = null;
-}
+function stopPreclassChecker(){ clearInterval(_preclassCheckInterval); _preclassCheckInterval=null; }
 </script>
 
 
-<!-- ============================================================
-  EMAIL NOTIFICATIONS (EmailJS)
-============================================================ -->
+<!-- ====================================================
+  EMAIL NOTIFICATIONS
+==================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-(function(){
-  const cfg = window._EMAILJS;
-  if(cfg && cfg.publicKey){ emailjs.init(cfg.publicKey); }
-})();
+(function(){ const cfg=window._EMAILJS; if(cfg&&cfg.publicKey) emailjs.init(cfg.publicKey); })();
 
 async function sendEmail(toEmail, toName, subject, body){
-  const cfg = window._EMAILJS;
-  if(!cfg || !cfg.publicKey || !cfg.serviceId || !cfg.templateId){ return; }
-  try {
-    await emailjs.send(cfg.serviceId, cfg.templateId, { to_email:toEmail, to_name:toName, subject, body });
-  } catch(e) { console.warn('Email failed:', e); }
+  const cfg=window._EMAILJS;
+  if(!cfg||!cfg.publicKey||!cfg.serviceId||!cfg.templateId) return;
+  try { await emailjs.send(cfg.serviceId, cfg.templateId, {to_email:toEmail, to_name:toName, subject, body}); }
+  catch(e){ console.warn('Email failed:', e); }
 }
-
 async function sendEmailToAll(subject, bodyFn){
-  for(const s of window._students){
-    if(s.email) await sendEmail(s.email, s.name, subject, bodyFn(s));
-  }
+  for(const s of window._students) if(s.email) await sendEmail(s.email, s.name, subject, bodyFn(s));
 }
-
-/**
- * sendClassLinkEmail(cls, student)
- * Sends the meeting link + class details to student AND teacher.
- * Called immediately when a class is scheduled.
- */
 async function sendClassLinkEmail(cls, student){
-  const linkLine = cls.meetingLink
-    ? `\n🔗 Join Link: ${cls.meetingLink}`
-    : '\n📍 Location: In-Person — no link needed.';
-
-  const body =
-    `Hi ${student.name},\n\n` +
-    `Your upcoming ${cls.course} class has been scheduled:\n\n` +
-    `📅 Date: ${cls.date}\n` +
-    `⏰ Time: ${cls.time}\n` +
-    `⏱ Duration: ${cls.duration}\n` +
-    `📡 Platform: ${cls.platform}` +
-    linkLine + '\n' +
-    (cls.topic ? `📖 Topic: ${cls.topic}\n` : '') +
-    (cls.notes ? `📋 Notes: ${cls.notes}\n` : '') +
-    `\nYou will also receive this link again 5 minutes before the class starts (if you have email notifications enabled).\n\n` +
-    `— Mathmade Easy`;
-
-  await sendEmail(student.email, student.name,
-    `📅 Class Scheduled: ${cls.course} on ${cls.date} at ${cls.time}`, body);
-
-  /* Also email teacher */
-  if(window._teacher && window._teacher.email){
-    const tBody =
-      `Class scheduled successfully!\n\nStudent: ${student.name}\nSubject: ${cls.course}\nDate: ${cls.date}\nTime: ${cls.time}\nDuration: ${cls.duration}\nPlatform: ${cls.platform}` +
-      linkLine + '\n' +
-      (cls.topic ? `Topic: ${cls.topic}\n` : '') +
-      `\n— Mathmade Easy`;
-    await sendEmail(window._teacher.email, window._teacher.name||'Teacher',
-      `📅 New Class: ${cls.course} with ${student.name} on ${cls.date}`, tBody);
-  }
+  const linkLine=cls.meetingLink?`\n🔗 Join Link: ${cls.meetingLink}`:'\n📍 Location: In-Person';
+  const body=`Hi ${student.name},\n\nYour upcoming ${cls.course} class has been scheduled:\n\n📅 Date: ${cls.date}\n⏰ Time: ${cls.time}\n📡 Platform: ${cls.platform}${linkLine}\n${cls.topic?`📖 Topic: ${cls.topic}\n`:''}\n— Mathmade Easy`;
+  await sendEmail(student.email, student.name, `📅 Class Scheduled: ${cls.course} on ${cls.date} at ${cls.time}`, body);
 }
-
-/**
- * sendPreClassReminderEmail(cls, student)
- * Sent 24h before class (simulated via Firestore check on load).
- * Re-sends the meeting link.
- */
-async function sendPreClassReminderEmail(cls, student){
-  const linkLine = cls.meetingLink ? `\n🔗 Join Link: ${cls.meetingLink}` : '';
-  const body =
-    `Hi ${student.name},\n\n` +
-    `Reminder: your ${cls.course} class is tomorrow!\n\n` +
-    `📅 Date: ${cls.date}\n⏰ Time: ${cls.time}\n📡 Platform: ${cls.platform}` +
-    linkLine + '\n\n' +
-    `See you then!\n— Mathmade Easy`;
-  await sendEmail(student.email, student.name,
-    `📅 Reminder: ${cls.course} class tomorrow at ${cls.time}`, body);
-}
-
 async function checkAndSendReminders(){
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate()+1);
-  const tStr = tomorrow.toISOString().split('T')[0];
-  const tmr  = window._schedules.filter(c=>c.date===tStr);
+  const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  const tStr=tomorrow.toISOString().split('T')[0];
+  const tmr=window._schedules.filter(c=>c.date===tStr);
   for(const cls of tmr){
-    const student = window._students.find(s=>s.uid===cls.studentUid);
-    if(student && student.email) await sendPreClassReminderEmail(cls, student);
-    if(window._teacher && window._teacher.email){
-      await sendEmail(window._teacher.email, window._teacher.name||'Teacher',
-        `📅 Tomorrow: ${cls.course} with ${cls.studentName} at ${cls.time}`,
-        `You have a class tomorrow:\nStudent: ${cls.studentName}\nSubject: ${cls.course}\nTime: ${cls.time}\nPlatform: ${cls.platform}${cls.meetingLink?'\nLink: '+cls.meetingLink:''}`
-      );
+    const student=window._students.find(s=>s.uid===cls.studentUid);
+    if(student&&student.email){
+      await sendEmail(student.email, student.name,
+        `📅 Reminder: ${cls.course} class tomorrow at ${cls.time}`,
+        `Hi ${student.name},\n\nReminder: your ${cls.course} class is tomorrow!\n\n📅 ${cls.date} at ${cls.time}\n📡 ${cls.platform}${cls.meetingLink?'\n🔗 '+cls.meetingLink:''}\n\n— Mathmade Easy`);
     }
   }
 }
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   FIREBASE DATA LAYER
-============================================================ -->
+==================================================== -->
 <script>
 async function fetchStudents(){
   const {db,collection,getDocs,query,where}=window._FB;
-  const snap = await getDocs(query(collection(db,'users'),where('role','==','student')));
-  window._students = snap.docs.map(d=>({...d.data(), uid:d.id}));
+  const snap=await getDocs(query(collection(db,'users'),where('role','==','student')));
+  window._students=snap.docs.map(d=>({...d.data(),uid:d.id}));
 }
 async function fetchSchedules(){
   const {db,collection,getDocs}=window._FB;
-  const snap = await getDocs(collection(db,'schedules'));
-  window._schedules = snap.docs.map(d=>({...d.data(), id:d.id}));
+  const snap=await getDocs(collection(db,'schedules'));
+  window._schedules=snap.docs.map(d=>({...d.data(),id:d.id}));
 }
 async function fetchHomeworks(){
   const {db,collection,getDocs}=window._FB;
-  const snap = await getDocs(collection(db,'homeworks'));
-  window._homeworks = snap.docs.map(d=>({...d.data(), id:d.id}));
+  const snap=await getDocs(collection(db,'homeworks'));
+  window._homeworks=snap.docs.map(d=>({...d.data(),id:d.id}));
 }
 async function fetchAnnouncements(){
   const {db,collection,getDocs}=window._FB;
-  const snap = await getDocs(collection(db,'announcements'));
-  window._announcements = snap.docs.map(d=>({...d.data(), id:d.id}))
+  const snap=await getDocs(collection(db,'announcements'));
+  window._announcements=snap.docs.map(d=>({...d.data(),id:d.id}))
     .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
 }
 async function fetchResources(){
   const {db,collection,getDocs}=window._FB;
-  const snap = await getDocs(collection(db,'resources'));
-  window._resources = snap.docs.map(d=>({...d.data(), id:d.id}));
+  const snap=await getDocs(collection(db,'resources'));
+  window._resources=snap.docs.map(d=>({...d.data(),id:d.id}));
+}
+async function fetchFreeSlots(){
+  const {db,collection,getDocs}=window._FB;
+  const snap=await getDocs(collection(db,'free_slots'));
+  window._freeSlots=snap.docs.map(d=>({...d.data(),id:d.id}));
+}
+async function fetchClassRequests(){
+  const {db,collection,getDocs}=window._FB;
+  const snap=await getDocs(collection(db,'class_requests'));
+  window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
 }
 async function addDoc_(col, data){
   const {db,collection,addDoc}=window._FB;
-  const ref = await addDoc(collection(db,col),data);
+  const ref=await addDoc(collection(db,col),data);
   return ref.id;
 }
 async function delDoc_(col, id){
@@ -1855,79 +1936,85 @@ async function updateDoc_(col, id, data){
   await updateDoc(doc(db,col,id), data);
 }
 function setupRealTimeListeners(){
-  const {db,collection,onSnapshot,query,where} = window._FB;
+  const {db,collection,onSnapshot,query,where}=window._FB;
   onSnapshot(query(collection(db,'users'),where('role','==','student')), snap=>{
-    window._students = snap.docs.map(d=>({...d.data(),uid:d.id}));
-    if(window._teacher){ buildTeacherAll(); }
+    window._students=snap.docs.map(d=>({...d.data(),uid:d.id}));
+    if(window._teacher) buildTeacherAll();
   });
   onSnapshot(collection(db,'schedules'), snap=>{
-    window._schedules = snap.docs.map(d=>({...d.data(),id:d.id}));
+    window._schedules=snap.docs.map(d=>({...d.data(),id:d.id}));
     if(window._teacher){ buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); }
     else if(window._student){ buildSClasses(window._student); }
-    checkUpcomingClasses(); // recheck on schedule update
+    checkUpcomingClasses();
   });
   onSnapshot(collection(db,'homeworks'), snap=>{
-    window._homeworks = snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildTHW(); }
-    else if(window._student){ buildSHW(window._student); }
+    window._homeworks=snap.docs.map(d=>({...d.data(),id:d.id}));
+    if(window._teacher) buildTHW();
+    else if(window._student) buildSHW(window._student);
   });
   onSnapshot(collection(db,'announcements'), snap=>{
-    window._announcements = snap.docs.map(d=>({...d.data(),id:d.id}))
+    window._announcements=snap.docs.map(d=>({...d.data(),id:d.id}))
       .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
-    if(window._teacher){ buildTAnn(); }
-    else if(window._student){ buildSAnn(); }
+    if(window._teacher) buildTAnn();
+    else if(window._student) buildSAnn();
   });
   onSnapshot(collection(db,'resources'), snap=>{
-    window._resources = snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildTRes(); }
-    else if(window._student){ buildSRes(); }
+    window._resources=snap.docs.map(d=>({...d.data(),id:d.id}));
+    if(window._teacher) buildTRes();
+    else if(window._student) buildSRes();
+  });
+  onSnapshot(collection(db,'free_slots'), snap=>{
+    window._freeSlots=snap.docs.map(d=>({...d.data(),id:d.id}));
+    if(window._teacher) buildTFreeSchedule();
+    else if(window._student) buildSFreeSchedule(window._student);
+  });
+  onSnapshot(collection(db,'class_requests'), snap=>{
+    window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
+    if(window._teacher){ buildTFsRequests(); updateFsReqBadge(); }
+    else if(window._student){ buildSMyRequests(window._student); updateStudentReqBadge(window._student); }
   });
 }
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   LOGIN / REGISTER / LOGOUT
-============================================================ -->
+==================================================== -->
 <script>
-let _selectedRole = 'teacher';
-
+let _selectedRole='teacher';
 function pickRole(role, el){
-  _selectedRole = role;
+  _selectedRole=role;
   document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('picked'));
   el.classList.add('picked');
-  document.getElementById('l-email').placeholder = role==='teacher' ? 'teacher@email.com' : 'student@email.com';
-  document.getElementById('fp-link-wrap').style.display = role==='student' ? 'block' : 'none';
+  document.getElementById('l-email').placeholder=role==='teacher'?'teacher@email.com':'student@email.com';
+  document.getElementById('fp-link-wrap').style.display=role==='student'?'block':'none';
 }
-
 async function doLogin(){
-  const email = document.getElementById('l-email').value.trim();
-  const pass  = document.getElementById('l-pass').value;
+  const email=document.getElementById('l-email').value.trim(), pass=document.getElementById('l-pass').value;
   hideMsg('l-err');
   if(!email||!pass){ showMsg('l-err','Please enter email and password.'); return; }
   spin('Signing in...');
   try{
-    const {auth,signInWithEmailAndPassword,db,doc,getDoc,signOut} = window._FB;
-    const cred = await signInWithEmailAndPassword(auth, email, pass);
-    const snap = await getDoc(doc(db,'users',cred.user.uid));
+    const {auth,signInWithEmailAndPassword,db,doc,getDoc,signOut}=window._FB;
+    const cred=await signInWithEmailAndPassword(auth,email,pass);
+    const snap=await getDoc(doc(db,'users',cred.user.uid));
     if(!snap.exists()){ await signOut(auth); throw new Error('Profile not found.'); }
-    const data = snap.data();
-    if(data.role !== _selectedRole){ await signOut(auth); throw new Error('Wrong role selected. You are registered as a '+data.role+'.'); }
-  }catch(e){ unspin(); showMsg('l-err', '❌ '+friendlyErr(e.message)); }
+    const data=snap.data();
+    if(data.role!==_selectedRole){ await signOut(auth); throw new Error('Wrong role selected. You are registered as a '+data.role+'.'); }
+  }catch(e){ unspin(); showMsg('l-err','❌ '+friendlyErr(e.message)); }
 }
-
 async function doLogout(){
-  stopPreclassChecker();
-  dismissPreclassAlert();
-  const {auth,signOut} = window._FB;
+  stopPreclassChecker(); dismissPreclassAlert();
+  const {auth,signOut}=window._FB;
   await signOut(auth);
   window._teacher=null; window._student=null;
-  window._students=[]; window._schedules=[]; window._homeworks=[]; window._announcements=[]; window._resources=[];
+  window._students=[]; window._schedules=[]; window._homeworks=[];
+  window._announcements=[]; window._resources=[];
+  window._freeSlots=[]; window._classRequests=[];
   document.getElementById('s-back-btn').style.display='none';
   document.getElementById('s-back-btn-d').style.display='none';
   routeTo('login');
 }
-
 function openReg(){
   _regTab='student'; switchReg('student');
   ['rs-name','rs-age','rs-grade','rs-parent','rs-phone','rs-email','rs-user','rs-pass',
@@ -1936,18 +2023,16 @@ function openReg(){
   document.getElementById('reg-modal').classList.add('show');
 }
 function closeReg(){ document.getElementById('reg-modal').classList.remove('show'); }
-
 function switchReg(tab){
   _regTab=tab;
   document.getElementById('reg-tab-stu').classList.toggle('active',tab==='student');
   document.getElementById('reg-tab-tea').classList.toggle('active',tab==='teacher');
-  document.getElementById('reg-stu-form').style.display = tab==='student'?'block':'none';
-  document.getElementById('reg-tea-form').style.display = tab==='teacher'?'block':'none';
+  document.getElementById('reg-stu-form').style.display=tab==='student'?'block':'none';
+  document.getElementById('reg-tea-form').style.display=tab==='teacher'?'block':'none';
   hideMsg('reg-ok'); hideMsg('reg-err');
 }
-
 async function submitReg(){
-  const {auth,db,createUserWithEmailAndPassword,doc,setDoc,signOut,TEACHER_CODE} = window._FB;
+  const {auth,db,createUserWithEmailAndPassword,doc,setDoc,signOut,TEACHER_CODE}=window._FB;
   hideMsg('reg-ok'); hideMsg('reg-err');
   if(_regTab==='student'){
     const name=document.getElementById('rs-name').value.trim(), age=document.getElementById('rs-age').value.trim(),
@@ -1960,7 +2045,7 @@ async function submitReg(){
     spin('Creating account...');
     try{
       const color=randColor(), av=initials(name);
-      const cred = await createUserWithEmailAndPassword(auth,email,password);
+      const cred=await createUserWithEmailAndPassword(auth,email,password);
       await setDoc(doc(db,'users',cred.user.uid),{
         role:'student', name, email, username, avatar:av, color, course:subj, age:parseInt(age), grade, parent, phone,
         progress:0, done:0, remaining:20, points:0, fee:800, status:'active',
@@ -1979,8 +2064,8 @@ async function submitReg(){
     if(code!==TEACHER_CODE) return showMsg('reg-err','❌ Invalid invite code.');
     spin('Creating account...');
     try{
-      const cred = await createUserWithEmailAndPassword(auth,email,password);
-      await setDoc(doc(db,'users',cred.user.uid),{ role:'teacher', name, email, avatar:initials(name), color:randColor() });
+      const cred=await createUserWithEmailAndPassword(auth,email,password);
+      await setDoc(doc(db,'users',cred.user.uid),{role:'teacher',name,email,avatar:initials(name),color:randColor()});
       await signOut(auth); unspin();
       showMsg('reg-ok','✅ Teacher account created! You can now sign in.','ok');
       setTimeout(()=>closeReg(), 2400);
@@ -1990,34 +2075,34 @@ async function submitReg(){
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   TEACHER DASHBOARD INIT & NAVIGATION
-============================================================ -->
+==================================================== -->
 <script>
 const T_TITLES = {
   overview:'Overview', students:'My Students', schedule:'Schedule',
-  homework:'Homework', announcements:'Announcements', resources:'Resources',
-  earnings:'Earnings', performance:'Performance', resets:'Password Resets'
+  freeschedule:'Free Schedule', homework:'Homework', announcements:'Announcements',
+  resources:'Resources', earnings:'Earnings', performance:'Performance', resets:'Password Resets'
 };
 
 async function initTeacher(){
   spin('Loading dashboard...');
-  const t = window._teacher;
+  const t=window._teacher;
   if(t){
-    const av = initials(t.name||'T');
+    const av=initials(t.name||'T');
     ['t-av','t-av-d'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.textContent=av; el.style.background=`${t.color||'#7c6fef'}22`; el.style.color=t.color||'#7c6fef'; } });
     ['t-name','t-name-d'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=t.name||'Teacher'; });
     const hr=new Date().getHours();
-    const gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-    document.getElementById('t-greeting').textContent = gr+', '+(t.name||'Teacher')+' 👋';
+    document.getElementById('t-greeting').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', '+(t.name||'Teacher')+' 👋';
   }
-  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources()]);
+  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests()]);
   buildTeacherAll();
   fetchAndBuildResets();
   setupRealTimeListeners();
   checkAndSendReminders();
   startPreclassChecker();
   maybeShowNotifBanner();
+  updateFsReqBadge();
   routeTo('teacher');
 }
 
@@ -2029,8 +2114,9 @@ function tNav(section, el){
   document.querySelectorAll('#t-mob-nav .mob-nav-btn').forEach(b=>{
     b.classList.toggle('active', b.getAttribute('data-section')===section);
   });
-  const titleEl=document.getElementById('t-topbar-title'); if(titleEl) titleEl.textContent = T_TITLES[section]||section;
+  const titleEl=document.getElementById('t-topbar-title'); if(titleEl) titleEl.textContent=T_TITLES[section]||section;
   if(section==='schedule')      { buildWeekCal(); buildSchedTable(); }
+  if(section==='freeschedule')  buildTFreeSchedule();
   if(section==='homework')      buildTHW();
   if(section==='announcements') buildTAnn();
   if(section==='resources')     buildTRes();
@@ -2044,23 +2130,528 @@ function buildTeacherAll(){
   buildWeekCal(); buildSchedTable();
   buildTHW(); buildTAnn(); buildTRes();
   buildEarnings(); buildPerf();
+  buildTFreeSchedule();
 }
 </script>
 
 
-<!-- ============================================================
-  TEACHER DASHBOARD BUILDERS
-============================================================ -->
+<!-- ====================================================
+  🗓 FREE SCHEDULE — TEACHER SIDE
+==================================================== -->
+<script>
+
+/* Toggle add panel */
+function toggleFsAddPanel(){
+  const panel=document.getElementById('fs-add-panel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+    hideMsg('fs-add-err');
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+/* Tab switch */
+function fsSwitchTab(tab, el){
+  _fsCurrentTab=tab;
+  document.querySelectorAll('.fs-tab').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('fs-tab-slots').style.display     = tab==='slots'    ?'block':'none';
+  document.getElementById('fs-tab-calendar').style.display  = tab==='calendar' ?'block':'none';
+  document.getElementById('fs-tab-requests').style.display  = tab==='requests' ?'block':'none';
+  if(tab==='calendar') buildFsCalendar();
+  if(tab==='requests') buildTFsRequests();
+}
+
+/* Day filter */
+function fsDayFilter(day, el){
+  _fsFilterDay=day;
+  document.querySelectorAll('.fs-day-filter').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  buildFsSlotsList();
+}
+
+/* Add a free slot */
+async function addFreeSlot(){
+  const day   = document.getElementById('fs-day').value;
+  const start = document.getElementById('fs-start').value;
+  const end   = document.getElementById('fs-end').value;
+  const repeat= document.getElementById('fs-repeat').value;
+  hideMsg('fs-add-err');
+  if(!day||!start||!end){ showMsg('fs-add-err','Please fill in all fields.'); return; }
+  if(start>=end){ showMsg('fs-add-err','End time must be after start time.'); return; }
+  // check duplicate
+  const dup=window._freeSlots.find(s=>s.day===day&&s.start===start&&s.end===end);
+  if(dup){ showMsg('fs-add-err','This slot already exists.'); return; }
+  spin('Saving slot...');
+  try{
+    const data={ day, start, end, repeat, createdAt:new Date().toISOString() };
+    const id=await addDoc_('free_slots', data);
+    window._freeSlots.push({...data,id});
+    buildFsSlotsList();
+    document.getElementById('fs-add-panel').classList.remove('open');
+    toast(`Free slot added: ${day} ${fmt12(start)} – ${fmt12(end)}`);
+  }catch(e){ showMsg('fs-add-err','❌ '+e.message); }
+  unspin();
+}
+
+/* Delete single slot */
+async function deleteFreeSlot(id){
+  spin('Removing...');
+  try{
+    await delDoc_('free_slots', id);
+    window._freeSlots=window._freeSlots.filter(s=>s.id!==id);
+    buildFsSlotsList();
+    if(_fsCurrentTab==='calendar') buildFsCalendar();
+    toast('Slot removed.');
+  }catch(e){ alert('Error: '+e.message); }
+  unspin();
+}
+
+/* Delete all slots */
+async function deleteAllFreeSlots(){
+  if(!window._freeSlots.length){ toast('No slots to delete.'); return; }
+  if(!confirm('Delete ALL free schedule slots? This cannot be undone.')) return;
+  spin('Deleting all...');
+  try{
+    for(const s of window._freeSlots) await delDoc_('free_slots', s.id);
+    window._freeSlots=[];
+    buildFsSlotsList();
+    if(_fsCurrentTab==='calendar') buildFsCalendar();
+    toast('All free slots deleted.');
+  }catch(e){ alert('Error: '+e.message); }
+  unspin();
+}
+
+/* Build the slots list (list view) */
+function buildFsSlotsList(){
+  const el=document.getElementById('fs-slots-container');
+  const order=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const filtered=_fsFilterDay==='All'?window._freeSlots:window._freeSlots.filter(s=>s.day===_fsFilterDay);
+  // Check for pending requests per slot
+  const pendingMap={};
+  window._classRequests.filter(r=>r.status==='pending').forEach(r=>{
+    const k=`${r.slotDay}|${r.slotStart}|${r.slotEnd}`;
+    pendingMap[k]=(pendingMap[k]||0)+1;
+  });
+  if(!filtered.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🗓</div><p>No free time slots added yet.<br>Click "+ Add Schedule" to get started.</p></div>`;
+    return;
+  }
+  // Group by day
+  const byDay={};
+  filtered.forEach(s=>{ if(!byDay[s.day]) byDay[s.day]=[]; byDay[s.day].push(s); });
+  // Sort days
+  const sortedDays=order.filter(d=>byDay[d]);
+  el.innerHTML=sortedDays.map(day=>{
+    const slots=byDay[day].sort((a,b)=>a.start.localeCompare(b.start));
+    const count=slots.length;
+    return `<div class="fs-day-block">
+      <div class="fs-day-title">
+        📅 ${day}
+        <span class="fsd-count">${count} slot${count!==1?'s':''}</span>
+      </div>
+      <div class="fs-slots-row">
+        ${slots.map(s=>{
+          const reqKey=`${s.day}|${s.start}|${s.end}`;
+          const reqCount=pendingMap[reqKey]||0;
+          const isBooked=isSlotBooked(s);
+          return `<div class="fs-slot-chip">
+            <span style="color:var(--text3);font-size:.8rem">🕐</span>
+            <span class="fs-chip-time">${fmt12(s.start)} – ${fmt12(s.end)}</span>
+            ${s.repeat==='weekly'?`<span style="font-size:.67rem;color:var(--text3);background:var(--surface3);padding:1px 6px;border-radius:99px">weekly</span>`:''}
+            ${reqCount>0?`<span style="background:rgba(250,204,21,.2);color:var(--yellow);font-size:.67rem;font-weight:700;padding:2px 7px;border-radius:99px" title="${reqCount} pending request(s)">📨 ${reqCount}</span>`:''}
+            ${isBooked?`<span style="background:rgba(239,68,68,.15);color:var(--red);font-size:.67rem;padding:1px 6px;border-radius:99px">booked</span>`:''}
+            <button class="fs-chip-del" onclick="deleteFreeSlot('${s.id}')" title="Remove slot">✕</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* Check if a free slot conflicts with an existing scheduled class */
+function isSlotBooked(slot){
+  return window._schedules.some(c=>{
+    if(!c.date||!c.time) return false;
+    const dow=DAYS_FULL[new Date(c.date).getDay()];
+    return dow===slot.day && c.time>=slot.start && c.time<slot.end;
+  });
+}
+
+/* Week navigation for calendar */
+function fsWeekNav(dir){
+  if(dir===0) _fsCalWeekOffset=0;
+  else _fsCalWeekOffset+=dir;
+  buildFsCalendar();
+}
+
+/* Build calendar view */
+function buildFsCalendar(){
+  const today=new Date();
+  const weekStart=new Date(today);
+  weekStart.setDate(today.getDate()-today.getDay()+(_fsCalWeekOffset*7));
+
+  // Update label
+  const weekEnd=new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6);
+  document.getElementById('fs-week-label').textContent=
+    `${weekStart.toLocaleDateString('en',{month:'short',day:'numeric'})} – ${weekEnd.toLocaleDateString('en',{month:'short',day:'numeric', year:'numeric'})}`;
+
+  const el=document.getElementById('fs-calendar');
+  const HOURS=Array.from({length:15},(_,i)=>i+7); // 7am to 9pm
+
+  // Build header
+  let html=`<div class="fs-cal-header">
+    <div style="border-bottom:1px solid var(--border);"></div>
+    ${DAYS.map((d,i)=>{
+      const dayDate=new Date(weekStart); dayDate.setDate(weekStart.getDate()+i);
+      const isToday=dayDate.toDateString()===today.toDateString();
+      return `<div class="fs-cal-day-col ${isToday?'today':''}">
+        <div>${d}</div>
+        <div style="font-size:1rem;font-weight:900;margin-top:2px">${dayDate.getDate()}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  // Build body
+  html+=`<div class="fs-cal-body">
+    <div class="fs-cal-time-col">
+      ${HOURS.map(h=>`<div class="fs-time-label">${h<12?h:''}${h===12?'12':h>12?h-12:''}${h<12?'am':h===12?'pm':'pm'}</div>`).join('')}
+    </div>
+    ${DAYS.map((d,i)=>{
+      const dayDate=new Date(weekStart); dayDate.setDate(weekStart.getDate()+i);
+      const dayName=DAYS_FULL[i];
+      const dateStr=dayDate.toISOString().split('T')[0];
+      let colHtml=`<div class="fs-cal-col">
+        ${HOURS.map(h=>`<div class="fs-cal-cell"></div>`).join('')}`;
+
+      // Free slots for this day
+      window._freeSlots.filter(s=>s.day===dayName).forEach(s=>{
+        const [sh,sm]=s.start.split(':').map(Number);
+        const [eh,em]=s.end.split(':').map(Number);
+        const top=((sh+sm/60-7)*52);
+        const height=((eh+em/60)-(sh+sm/60))*52;
+        colHtml+=`<div class="fs-event fs-event-free" style="top:${top}px;height:${Math.max(height-2,16)}px" title="${dayName} ${fmt12(s.start)}–${fmt12(s.end)}">
+          <div>${fmt12(s.start)}</div>
+          <div style="opacity:.7;font-size:.6rem">Free Slot</div>
+        </div>`;
+      });
+
+      // Pending requests for this day
+      window._classRequests.filter(r=>r.slotDay===dayName&&r.status==='pending').forEach(r=>{
+        const [sh,sm]=r.slotStart.split(':').map(Number);
+        const [eh,em]=r.slotEnd.split(':').map(Number);
+        const top=((sh+sm/60-7)*52);
+        const height=((eh+em/60)-(sh+sm/60))*52;
+        colHtml+=`<div class="fs-event fs-event-req" style="top:${top}px;height:${Math.max(height-2,16)}px" title="Request: ${r.studentName}">
+          <div style="font-size:.63rem">${r.studentName||'?'}</div>
+          <div style="opacity:.7;font-size:.58rem">Request</div>
+        </div>`;
+      });
+
+      // Booked classes
+      window._schedules.filter(c=>c.date===dateStr).forEach(c=>{
+        if(!c.time) return;
+        const [sh,sm]=c.time.split(':').map(Number);
+        const dur=parseInt((c.duration||'60 min'))||60;
+        const eh=sh+Math.floor((sm+dur)/60), em=(sm+dur)%60;
+        const top=((sh+sm/60-7)*52);
+        const height=((eh+em/60)-(sh+sm/60))*52;
+        colHtml+=`<div class="fs-event fs-event-class" style="top:${top}px;height:${Math.max(height-2,16)}px" title="${c.studentName}: ${c.course}">
+          <div style="font-size:.63rem">${fmt12(c.time)}</div>
+          <div style="font-size:.6rem;opacity:.85">${(c.studentName||'').split(' ')[0]}</div>
+        </div>`;
+      });
+
+      colHtml+=`</div>`;
+      return colHtml;
+    }).join('')}
+  </div>`;
+
+  el.innerHTML=html;
+}
+
+/* Build requests list (teacher view) */
+function buildTFsRequests(){
+  const el=document.getElementById('fs-requests-list');
+  const pending=window._classRequests.filter(r=>r.status==='pending');
+  const approved=window._classRequests.filter(r=>r.status==='approved');
+  const declined=window._classRequests.filter(r=>r.status==='declined');
+
+  let html='';
+  if(pending.length){
+    html+=`<div style="font-size:.78rem;font-weight:700;color:var(--yellow);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">⏳ Pending (${pending.length})</div>`;
+    html+=pending.map(r=>buildReqCard(r,'teacher')).join('');
+  }
+  if(approved.length){
+    html+=`<div style="font-size:.78rem;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✅ Approved (${approved.length})</div>`;
+    html+=approved.map(r=>buildReqCard(r,'teacher-done')).join('');
+  }
+  if(declined.length){
+    html+=`<div style="font-size:.78rem;font-weight:700;color:var(--red);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✗ Declined (${declined.length})</div>`;
+    html+=declined.map(r=>buildReqCard(r,'teacher-done')).join('');
+  }
+  if(!pending.length&&!approved.length&&!declined.length){
+    html=`<div class="empty"><div class="empty-icon">📨</div><p>No class requests yet.</p></div>`;
+  }
+  el.innerHTML=html;
+}
+
+function buildReqCard(r, mode){
+  const statusColors={pending:'var(--yellow)',approved:'var(--green)',declined:'var(--red)'};
+  return `<div class="fs-req-card" style="margin-bottom:10px;${r.status==='pending'?'border-color:rgba(250,204,21,.3);':''}">
+    <div style="font-size:1.6rem;flex-shrink:0">
+      ${r.status==='pending'?'⏳':r.status==='approved'?'✅':'✗'}
+    </div>
+    <div class="fsr-info">
+      <div class="fsr-name">${r.studentName||'Unknown Student'}</div>
+      <div class="fsr-meta">
+        📅 ${r.slotDay} · ⏰ ${fmt12(r.slotStart)} – ${fmt12(r.slotEnd)}
+        · 📚 ${r.subject||'—'} · ⏱ ${r.duration||'60 min'}
+      </div>
+      ${r.note?`<div style="font-size:.76rem;color:var(--text3);margin-top:3px;font-style:italic">"${r.note}"</div>`:''}
+      <div style="font-size:.7rem;color:var(--text3);margin-top:3px">${r.createdAt?new Date(r.createdAt).toLocaleString():''}</div>
+    </div>
+    ${mode==='teacher'?`<div class="fsr-actions">
+      <button class="btn btn-green btn-sm" onclick="openApproveReq('${r.id}')">✓ Approve</button>
+      <button class="btn btn-danger btn-sm" onclick="declineReqById('${r.id}')">✗ Decline</button>
+    </div>`:''}
+  </div>`;
+}
+
+/* Update request badge */
+function updateFsReqBadge(){
+  const count=window._classRequests.filter(r=>r.status==='pending').length;
+  ['fs-req-badge','t-fs-req-count'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    el.textContent=count; el.style.display=count>0?'inline-block':'none';
+  });
+}
+
+/* Main builder */
+function buildTFreeSchedule(){
+  buildFsSlotsList();
+  buildTFsRequests();
+  updateFsReqBadge();
+}
+
+/* Approve request modal */
+function openApproveReq(reqId){
+  _currentApproveReqId=reqId;
+  const req=window._classRequests.find(r=>r.id===reqId);
+  if(!req) return;
+  document.getElementById('approve-req-info').innerHTML=
+    `<strong>${req.studentName}</strong> wants a <strong>${req.subject}</strong> class<br>
+     📅 ${req.slotDay} · ⏰ ${fmt12(req.slotStart)} – ${fmt12(req.slotEnd)} · ⏱ ${req.duration||'60 min'}
+     ${req.note?`<br>💬 <em>"${req.note}"</em>`:''}`;
+  document.getElementById('apr-fee').value=800;
+  hideMsg('apr-ok'); hideMsg('apr-err');
+  document.getElementById('approve-req-modal').classList.add('show');
+}
+function closeApproveReq(){ document.getElementById('approve-req-modal').classList.remove('show'); _currentApproveReqId=null; }
+
+async function approveClassRequest(){
+  if(!_currentApproveReqId) return;
+  const req=window._classRequests.find(r=>r.id===_currentApproveReqId);
+  if(!req){ closeApproveReq(); return; }
+  const fee=Number(document.getElementById('apr-fee').value)||800;
+  const platform=document.getElementById('apr-plat').value;
+  const meetingLink=platform!=='In-Person'?generateMeetingLink(platform):'';
+  // Convert day to nearest upcoming date
+  const dayIdx=DAYS_FULL.indexOf(req.slotDay);
+  const today=new Date(), todayDow=today.getDay();
+  let diff=(dayIdx-todayDow+7)%7; if(diff===0) diff=7;
+  const schedDate=new Date(today); schedDate.setDate(today.getDate()+diff);
+  const dateStr=schedDate.toISOString().split('T')[0];
+  const student=window._students.find(s=>s.uid===req.studentUid);
+  if(!student){ showMsg('apr-err','Student not found.'); return; }
+  spin('Scheduling...');
+  try{
+    const newClass={
+      studentUid:req.studentUid, studentName:req.studentName,
+      studentColor:student.color||'#7c6fef', studentAvatar:student.avatar||'?',
+      studentEmail:student.email||'',
+      course:req.subject, date:dateStr, time:req.slotStart, platform, meetingLink,
+      duration:req.duration||'60 min', fee, topic:req.note||'', notes:'Requested by student',
+      status:'scheduled', createdAt:new Date().toISOString()
+    };
+    const id=await addDoc_('schedules', newClass);
+    await updateDoc_('class_requests', _currentApproveReqId, { status:'approved', scheduledDate:dateStr });
+    window._classRequests=window._classRequests.map(r=>r.id===_currentApproveReqId?{...r,status:'approved',scheduledDate:dateStr}:r);
+    window._schedules.push({...newClass,id});
+    if(student.email) await sendClassLinkEmail({...newClass,id}, student);
+    buildTFsRequests(); buildSchedTable(); buildOvStats(); buildEarnings();
+    updateFsReqBadge();
+    closeApproveReq();
+    toast(`Class approved & scheduled for ${req.studentName}!`);
+  }catch(e){ showMsg('apr-err','❌ '+e.message); }
+  unspin();
+}
+
+async function declineReqById(reqId){
+  if(!confirm('Decline this class request?')) return;
+  spin('Declining...');
+  try{
+    await updateDoc_('class_requests', reqId, {status:'declined'});
+    window._classRequests=window._classRequests.map(r=>r.id===reqId?{...r,status:'declined'}:r);
+    buildTFsRequests(); updateFsReqBadge();
+    toast('Request declined.');
+  }catch(e){ alert('Error: '+e.message); }
+  unspin();
+}
+async function declineClassRequest(){
+  if(_currentApproveReqId) await declineReqById(_currentApproveReqId);
+  closeApproveReq();
+}
+</script>
+
+
+<!-- ====================================================
+  🗓 FREE SCHEDULE — STUDENT SIDE
+==================================================== -->
+<script>
+
+function sFsSwitchTab(tab, el){
+  document.querySelectorAll('#sp-freeschedule .fs-tab').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('s-fs-tab-slots').style.display        = tab==='slots'      ?'block':'none';
+  document.getElementById('s-fs-tab-my-requests').style.display  = tab==='my-requests'?'block':'none';
+  if(tab==='my-requests') buildSMyRequests(window._student);
+}
+
+function buildSFreeSchedule(s){
+  buildSFsSlots(s);
+  buildSMyRequests(s);
+  updateStudentReqBadge(s);
+}
+
+function buildSFsSlots(s){
+  const el=document.getElementById('s-fs-slots-container');
+  const order=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  if(!window._freeSlots.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🗓</div><p>No free time slots available yet.<br>Your teacher hasn't set any availability.</p></div>`;
+    return;
+  }
+  // My pending requests
+  const myRequests=window._classRequests.filter(r=>r.studentUid===s.uid&&r.status==='pending');
+  const myReqKeys=new Set(myRequests.map(r=>`${r.slotDay}|${r.slotStart}|${r.slotEnd}`));
+
+  // Group by day
+  const byDay={};
+  window._freeSlots.forEach(slot=>{ if(!byDay[slot.day]) byDay[slot.day]=[]; byDay[slot.day].push(slot); });
+  const sortedDays=order.filter(d=>byDay[d]);
+
+  el.innerHTML=sortedDays.map(day=>{
+    const slots=byDay[day].sort((a,b)=>a.start.localeCompare(b.start));
+    return `<div class="fs-day-block">
+      <div class="fs-day-title">📅 ${day} <span class="fsd-count">${slots.length} slot${slots.length!==1?'s':''}</span></div>
+      <div class="fs-slots-row">
+        ${slots.map(slot=>{
+          const key=`${slot.day}|${slot.start}|${slot.end}`;
+          const isBooked=isSlotBooked(slot);
+          const isRequested=myReqKeys.has(key);
+          let cls='fs-slot-chip', badge='', clickAttr='';
+          if(isBooked){ cls+=' booked'; badge=`<span style="background:rgba(239,68,68,.15);color:var(--red);font-size:.67rem;padding:1px 6px;border-radius:99px">Booked</span>`; }
+          else if(isRequested){ cls+=' requested'; badge=`<span style="background:rgba(250,204,21,.15);color:var(--yellow);font-size:.67rem;padding:2px 7px;border-radius:99px">✓ Requested</span>`; }
+          else { cls+=' requestable'; clickAttr=`onclick="openReqModal('${slot.id}','${slot.day}','${slot.start}','${slot.end}')"`;
+            badge=`<span style="background:rgba(61,214,140,.1);color:var(--green);font-size:.67rem;padding:2px 7px;border-radius:99px">→ Request</span>`; }
+          return `<div class="${cls}" ${clickAttr} title="${isBooked?'Already booked':isRequested?'You have requested this slot':'Click to request a class'}">
+            <span style="color:var(--text3);font-size:.8rem">🕐</span>
+            <span class="fs-chip-time">${fmt12(slot.start)} – ${fmt12(slot.end)}</span>
+            ${badge}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildSMyRequests(s){
+  const el=document.getElementById('s-fs-my-requests-list');
+  const mine=window._classRequests.filter(r=>r.studentUid===s.uid)
+    .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  if(!mine.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📨</div><p>You haven't requested any classes yet.<br>Go to "Available Slots" to make a request.</p></div>`;
+    return;
+  }
+  el.innerHTML=mine.map(r=>{
+    const statusColors={pending:'var(--yellow)',approved:'var(--green)',declined:'var(--red)'};
+    const statusIcons={pending:'⏳',approved:'✅',declined:'✗'};
+    return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+      <div style="font-size:1.8rem;flex-shrink:0">${statusIcons[r.status]||'📨'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:.9rem">${r.subject||'—'} · ${r.slotDay} ${fmt12(r.slotStart)}–${fmt12(r.slotEnd)}</div>
+        <div style="font-size:.76rem;color:var(--text3);margin-top:3px">Duration: ${r.duration||'60 min'} ${r.note?'· "'+r.note+'"':''}</div>
+        ${r.scheduledDate?`<div style="font-size:.76rem;color:var(--green);margin-top:4px">📅 Scheduled for: ${r.scheduledDate}</div>`:''}
+        <div style="font-size:.7rem;color:var(--text3);margin-top:3px">${r.createdAt?new Date(r.createdAt).toLocaleString():''}</div>
+      </div>
+      <span style="padding:4px 12px;border-radius:99px;font-size:.72rem;font-weight:700;background:${statusColors[r.status]+'22'};color:${statusColors[r.status]};flex-shrink:0">${(r.status||'pending').toUpperCase()}</span>
+    </div>`;
+  }).join('');
+}
+
+function updateStudentReqBadge(s){
+  const approved=window._classRequests.filter(r=>r.studentUid===s.uid&&r.status==='approved').length;
+  const badge=document.getElementById('s-req-badge');
+  if(badge){ badge.textContent='✓'; badge.style.display=approved>0?'inline-block':'none'; }
+}
+
+/* Open request class modal */
+let _reqSlotId='', _reqSlotDay='', _reqSlotStart='', _reqSlotEnd='';
+function openReqModal(slotId, day, start, end){
+  _reqSlotId=slotId; _reqSlotDay=day; _reqSlotStart=start; _reqSlotEnd=end;
+  document.getElementById('req-slot-display').textContent=`${day}: ${fmt12(start)} – ${fmt12(end)}`;
+  document.getElementById('req-slot-sub').textContent='Request a class during this free slot';
+  document.getElementById('req-note').value='';
+  hideMsg('req-ok'); hideMsg('req-err');
+  document.getElementById('req-class-modal').classList.add('show');
+}
+function closeReqModal(){ document.getElementById('req-class-modal').classList.remove('show'); }
+
+async function submitClassRequest(){
+  const s=window._student; if(!s) return;
+  const subject=document.getElementById('req-subj').value;
+  const duration=document.getElementById('req-dur').value;
+  const note=document.getElementById('req-note').value.trim();
+  hideMsg('req-ok'); hideMsg('req-err');
+  // prevent duplicate
+  const dup=window._classRequests.find(r=>r.studentUid===s.uid&&r.slotDay===_reqSlotDay&&r.slotStart===_reqSlotStart&&r.slotEnd===_reqSlotEnd&&r.status==='pending');
+  if(dup){ showMsg('req-err','You already have a pending request for this slot.'); return; }
+  spin('Sending request...');
+  try{
+    const data={
+      studentUid:s.uid, studentName:s.name||'Student',
+      studentEmail:s.email||'',
+      slotId:_reqSlotId, slotDay:_reqSlotDay, slotStart:_reqSlotStart, slotEnd:_reqSlotEnd,
+      subject, duration, note, status:'pending',
+      createdAt:new Date().toISOString()
+    };
+    const id=await addDoc_('class_requests', data);
+    window._classRequests.push({...data,id});
+    buildSFreeSchedule(s); buildTFsRequests(); updateFsReqBadge();
+    unspin();
+    showMsg('req-ok',`✅ Request sent! Your teacher will review it soon.`,'ok');
+    document.getElementById('req-class-modal').querySelector('.btn-primary').style.display='none';
+    setTimeout(()=>closeReqModal(), 2200);
+  }catch(e){ unspin(); showMsg('req-err','❌ '+e.message); }
+}
+</script>
+
+
+<!-- ====================================================
+  TEACHER DASHBOARD BUILDERS (core)
+==================================================== -->
 <script>
 function buildOvStats(){
   const s=window._students, c=window._schedules;
   const total=c.reduce((x,v)=>x+(Number(v.fee)||0),0);
   const rem=c.filter(v=>v.status==='scheduled').length;
+  const pending=window._classRequests.filter(r=>r.status==='pending').length;
   document.getElementById('ov-stats').innerHTML=`
     <div class="stat-card s-purple"><div class="stat-icon2">👨‍🎓</div><div class="stat-big">${s.length}</div><div class="stat-lbl">Students</div></div>
     <div class="stat-card s-green"> <div class="stat-icon2">📚</div><div class="stat-big">${c.length}</div><div class="stat-lbl">Total Classes</div></div>
     <div class="stat-card s-yellow"><div class="stat-icon2">💰</div><div class="stat-big">${fmtMoney(total)}</div><div class="stat-lbl">Total Earnings</div></div>
-    <div class="stat-card s-pink">  <div class="stat-icon2">⏳</div><div class="stat-big">${rem}</div><div class="stat-lbl">Remaining</div></div>`;
+    <div class="stat-card s-pink">  <div class="stat-icon2">⏳</div><div class="stat-big">${rem}</div><div class="stat-lbl">Remaining</div></div>
+    ${pending>0?`<div class="stat-card s-cyan"><div class="stat-icon2">📨</div><div class="stat-big">${pending}</div><div class="stat-lbl">Pending Requests</div></div>`:''}`;
 }
 
 function buildOvTable(){
@@ -2143,9 +2734,7 @@ function buildTHW(){
         <div><div class="hw-title">${h.title||'Untitled'}</div>
           <div class="hw-meta">${h.subject||'—'} · For: ${h.studentName||'All Students'}</div></div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span class="hw-due ${daysLeft(h.due)<0?'overdue':daysLeft(h.due)<=2?'soon':'ok'}">
-            Due: ${h.due||'—'}${daysLeft(h.due)>0?' ('+daysLeft(h.due)+'d left)':daysLeft(h.due)===0?' (today)':' (overdue)'}
-          </span>
+          <span class="hw-due ${daysLeft(h.due)<0?'overdue':daysLeft(h.due)<=2?'soon':'ok'}">Due: ${h.due||'—'}</span>
           <button class="btn btn-danger btn-sm btn-icon" onclick="askDelItem('homeworks','${h.id}',event)" data-name="${h.title||''}">🗑</button>
         </div>
       </div>
@@ -2189,11 +2778,11 @@ function buildEarnings(){
   const c=window._schedules;
   const total=c.reduce((x,v)=>x+(Number(v.fee)||0),0);
   const now=new Date();
-  const mFees=c.filter(v=>{const d=new Date(v.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((x,v)=>x+(Number(v.fee)||0),0);
+  const mFees=c.filter(v=>{ const d=new Date(v.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).reduce((x,v)=>x+(Number(v.fee)||0),0);
   const yFees=c.filter(v=>new Date(v.date).getFullYear()===now.getFullYear()).reduce((x,v)=>x+(Number(v.fee)||0),0);
   const avg=c.length?Math.round(total/c.length):0;
   document.getElementById('earn-stats').innerHTML=`
-    <div class="stat-card s-green"> <div class="stat-icon2">💵</div><div class="stat-big">${fmtMoney(mFees)}</div><div class="stat-lbl">This Month</div></div>
+    <div class="stat-card s-green"><div class="stat-icon2">💵</div><div class="stat-big">${fmtMoney(mFees)}</div><div class="stat-lbl">This Month</div></div>
     <div class="stat-card s-purple"><div class="stat-icon2">📆</div><div class="stat-big">${fmtMoney(yFees)}</div><div class="stat-lbl">This Year</div></div>
     <div class="stat-card s-yellow"><div class="stat-icon2">⭐</div><div class="stat-big">${fmtMoney(avg)}</div><div class="stat-lbl">Avg Per Class</div></div>`;
   const byM=Array(12).fill(0);
@@ -2244,8 +2833,7 @@ function buildPerf(){
 }
 
 function teacherViewStudent(uid){
-  const s=window._students.find(x=>x.uid===uid);
-  if(!s) return;
+  const s=window._students.find(x=>x.uid===uid); if(!s) return;
   window._student=s;
   ['s-back-btn','s-back-btn-d'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='flex'; });
   initStudentUI(s);
@@ -2254,9 +2842,9 @@ function teacherViewStudent(uid){
 </script>
 
 
-<!-- ============================================================
-  ✦ SCHEDULE SAVE (with auto link generation + email)
-============================================================ -->
+<!-- ====================================================
+  SCHEDULE MODAL SAVE
+==================================================== -->
 <script>
 function openScheduleModal(){
   if(!window._students.length){ alert('No students found. Add students via "Create Account" first.'); return; }
@@ -2264,9 +2852,9 @@ function openScheduleModal(){
     `<option value="${s.uid}" data-name="${s.name}" data-color="${s.color||'#7c6fef'}" data-avatar="${s.avatar||'?'}" data-email="${s.email||''}">${s.name}</option>`
   ).join('');
   document.getElementById('sch-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('sch-manual-toggle').checked = false;
-  document.getElementById('sch-link').style.display = 'none';
-  document.getElementById('sch-link').value = '';
+  document.getElementById('sch-manual-toggle').checked=false;
+  document.getElementById('sch-link').style.display='none';
+  document.getElementById('sch-link').value='';
   hideMsg('sch-err');
   refreshAutoLink();
   document.getElementById('sched-modal').classList.add('show');
@@ -2274,65 +2862,45 @@ function openScheduleModal(){
 function closeSchedModal(){ document.getElementById('sched-modal').classList.remove('show'); }
 
 async function saveSchedule(){
-  const selEl  = document.getElementById('sch-stu');
-  const selOpt = selEl.options[selEl.selectedIndex];
-  const date   = document.getElementById('sch-date').value;
-  const time   = document.getElementById('sch-time').value;
+  const selEl=document.getElementById('sch-stu');
+  const selOpt=selEl.options[selEl.selectedIndex];
+  const date=document.getElementById('sch-date').value;
+  const time=document.getElementById('sch-time').value;
   if(!date||!time){ showMsg('sch-err','Date and time are required.'); return; }
-
-  const platform    = document.getElementById('sch-plat').value;
-  const useManual   = document.getElementById('sch-manual-toggle').checked;
-  const manualLink  = document.getElementById('sch-link').value.trim();
-
-  /* Determine final meeting link */
-  let meetingLink = '';
-  if(platform !== 'In-Person'){
-    if(useManual && manualLink){
-      meetingLink = manualLink;
-    } else {
-      // Use the auto-generated link that was previewed
-      meetingLink = _currentAutoLink || generateMeetingLink(platform) || '';
-    }
+  const platform=document.getElementById('sch-plat').value;
+  const useManual=document.getElementById('sch-manual-toggle').checked;
+  const manualLink=document.getElementById('sch-link').value.trim();
+  let meetingLink='';
+  if(platform!=='In-Person'){
+    meetingLink=useManual&&manualLink?manualLink:(_currentAutoLink||generateMeetingLink(platform)||'');
   }
-
   spin('Saving schedule...');
   try{
-    const newClass = {
-      studentUid:    selEl.value,
-      studentName:   selOpt.getAttribute('data-name'),
-      studentColor:  selOpt.getAttribute('data-color'),
-      studentAvatar: selOpt.getAttribute('data-avatar'),
-      studentEmail:  selOpt.getAttribute('data-email'),
-      course:   document.getElementById('sch-subj').value,
+    const newClass={
+      studentUid:selEl.value, studentName:selOpt.getAttribute('data-name'),
+      studentColor:selOpt.getAttribute('data-color'), studentAvatar:selOpt.getAttribute('data-avatar'),
+      studentEmail:selOpt.getAttribute('data-email'),
+      course:document.getElementById('sch-subj').value,
       date, time, platform, meetingLink,
-      duration: document.getElementById('sch-dur').value,
-      fee:      Number(document.getElementById('sch-fee').value)||0,
-      topic:    document.getElementById('sch-topic').value.trim(),
-      notes:    document.getElementById('sch-notes').value.trim(),
-      status:   'scheduled',
-      createdAt:new Date().toISOString()
+      duration:document.getElementById('sch-dur').value,
+      fee:Number(document.getElementById('sch-fee').value)||0,
+      topic:document.getElementById('sch-topic').value.trim(),
+      notes:document.getElementById('sch-notes').value.trim(),
+      status:'scheduled', createdAt:new Date().toISOString()
     };
-    const id = await addDoc_('schedules', newClass);
-    window._schedules.push({...newClass, id});
-
-    /* Send class link + details email immediately */
-    const shouldEmail = document.getElementById('sch-notify').checked;
-    const studentEmail = selOpt.getAttribute('data-email');
-    if(shouldEmail && studentEmail){
-      const student = { name: newClass.studentName, email: studentEmail };
-      await sendClassLinkEmail({...newClass, id}, student);
-    } else if(shouldEmail && !studentEmail){
-      console.info('No email on file for student — email skipped.');
-    }
-
+    const id=await addDoc_('schedules', newClass);
+    window._schedules.push({...newClass,id});
+    const shouldEmail=document.getElementById('sch-notify').checked;
+    const studentEmail=selOpt.getAttribute('data-email');
+    if(shouldEmail&&studentEmail) await sendClassLinkEmail({...newClass,id},{name:newClass.studentName,email:studentEmail});
     buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings();
     closeSchedModal();
-    toast(`Class scheduled! ${meetingLink ? 'Meet link generated & sent.' : 'No link (In-Person).'}`);
+    toast(`Class scheduled!${meetingLink?' Meet link sent.':''}`);
   }catch(e){ showMsg('sch-err','❌ '+e.message); }
   unspin();
 }
 
-/* Homework */
+/* HW */
 function openHWModal(){
   document.getElementById('hw-stu').innerHTML='<option value="all">All Students</option>'+
     window._students.map(s=>`<option value="${s.uid}" data-email="${s.email||''}">${s.name}</option>`).join('');
@@ -2354,16 +2922,6 @@ async function saveHW(){
       link:document.getElementById('hw-link').value.trim(), createdAt:new Date().toISOString() };
     const id=await addDoc_('homeworks',data);
     window._homeworks.push({...data,id});
-    if(document.getElementById('hw-notify').checked){
-      const subject=`📝 New Homework: ${title}`;
-      if(stuSel.value==='all'){
-        await sendEmailToAll(subject, s=>`Hi ${s.name},\n\nNew homework assigned:\nTitle: ${title}\nSubject: ${data.subject}\nDue: ${data.due}\n${data.desc?'Details: '+data.desc+'\n':''}${data.link?'Resource: '+data.link+'\n':''}\nGood luck!\n— Mathmade Easy`);
-      } else {
-        const sEmail=stuOpt.getAttribute('data-email');
-        if(sEmail) await sendEmail(sEmail, stuOpt.text, subject,
-          `Hi ${stuOpt.text},\n\nNew homework assigned:\nTitle: ${title}\nSubject: ${data.subject}\nDue: ${data.due}\n${data.desc?'Details: '+data.desc+'\n':''}${data.link?'Resource: '+data.link+'\n':''}\nGood luck!\n— Mathmade Easy`);
-      }
-    }
     buildTHW(); closeHWModal(); toast('Homework assigned!');
   }catch(e){ toast('Error: '+e.message); }
   unspin();
@@ -2385,7 +2943,7 @@ async function saveAnn(){
     const id=await addDoc_('announcements',data);
     window._announcements.unshift({...data,id});
     if(document.getElementById('ann-notify').checked){
-      await sendEmailToAll('📣 New Announcement: '+title, s=>`Hi ${s.name},\n\nAnnouncement:\n\n"${title}"\n\n${data.body}\n\n— Mathmade Easy`);
+      await sendEmailToAll('📣 '+title, s=>`Hi ${s.name},\n\n"${title}"\n\n${data.body}\n\n— Mathmade Easy`);
     }
     buildTAnn(); closeAnnModal(); toast('Announcement posted!');
   }catch(e){ toast('Error: '+e.message); }
@@ -2407,9 +2965,6 @@ async function saveRes(){
       url:document.getElementById('res-url').value.trim(), desc:document.getElementById('res-desc').value.trim(), createdAt:new Date().toISOString() };
     const id=await addDoc_('resources',data);
     window._resources.push({...data,id});
-    if(document.getElementById('res-notify').checked){
-      await sendEmailToAll('📂 New Resource: '+title, s=>`Hi ${s.name},\n\nNew resource shared:\nTitle: ${title}\nType: ${data.type.toUpperCase()}\n${data.desc?'About: '+data.desc+'\n':''}${data.url?'Link: '+data.url+'\n':''}\n— Mathmade Easy`);
-    }
     buildTRes(); closeResModal(); toast('Resource added!');
   }catch(e){ toast('Error: '+e.message); }
   unspin();
@@ -2417,9 +2972,9 @@ async function saveRes(){
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   DELETE HANDLERS
-============================================================ -->
+==================================================== -->
 <script>
 function askDelStu(uid, evt){
   _pendingDelStuUid=uid;
@@ -2472,9 +3027,9 @@ async function confirmDelItem(){
   spin('Deleting...');
   try{
     await delDoc_(col,id);
-    if(col==='homeworks')     { window._homeworks=window._homeworks.filter(x=>x.id!==id); buildTHW(); }
+    if(col==='homeworks') { window._homeworks=window._homeworks.filter(x=>x.id!==id); buildTHW(); }
     if(col==='announcements') { window._announcements=window._announcements.filter(x=>x.id!==id); buildTAnn(); }
-    if(col==='resources')     { window._resources=window._resources.filter(x=>x.id!==id); buildTRes(); }
+    if(col==='resources') { window._resources=window._resources.filter(x=>x.id!==id); buildTRes(); }
     toast('Deleted.');
   }catch(e){ alert('Error: '+e.message); }
   unspin();
@@ -2482,20 +3037,20 @@ async function confirmDelItem(){
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   STUDENT DASHBOARD INIT & NAVIGATION
-============================================================ -->
+==================================================== -->
 <script>
 const S_TITLES = {
-  home:'Home', classes:'My Classes', progress:'My Progress', homework:'Homework',
-  badges:'Badges', leaderboard:'Leaderboard', resources:'Resources',
-  announcements:'Announcements', profile:'Profile'
+  home:'Home', classes:'My Classes', freeschedule:'Book a Class',
+  progress:'My Progress', homework:'Homework', badges:'Badges',
+  leaderboard:'Leaderboard', resources:'Resources', announcements:'Announcements', profile:'Profile'
 };
 
 async function initStudent(){
   spin('Loading your dashboard...');
   const s=window._student;
-  await Promise.all([fetchStudents(), fetchSchedules(), fetchHomeworks(), fetchAnnouncements(), fetchResources()]);
+  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests()]);
   initStudentUI(s);
   setupRealTimeListeners();
   startPreclassChecker();
@@ -2510,7 +3065,7 @@ function initStudentUI(s){
   const avD=document.getElementById('s-av-d'); if(avD){ avD.textContent=av; avD.style.background=color+'22'; avD.style.color=color; }
   document.getElementById('s-name').textContent    = s.name||'Student';
   document.getElementById('s-course').textContent  = s.course||'—';
-  document.getElementById('s-pts').textContent      = (s.points||0)+' Points';
+  document.getElementById('s-pts').textContent     = (s.points||0)+' Points';
   document.getElementById('s-name-d').textContent  = s.name||'Student';
   document.getElementById('s-course-d').textContent= s.course||'—';
   document.getElementById('s-pts-d').textContent   = (s.points||0)+' Points';
@@ -2523,9 +3078,10 @@ function initStudentUI(s){
   document.getElementById('s-pf-lvllbl').textContent=(LEVELS[lvl]||'Hawking')+' Mathematician';
   const backMain=document.getElementById('s-back-btn');
   const backD   =document.getElementById('s-back-btn-d');
-  if(backD && backMain) backD.style.display=backMain.style.display;
+  if(backD&&backMain) backD.style.display=backMain.style.display;
   buildSHome(s); buildSClasses(s); buildSProgress(s); buildSHW(s);
   buildSBadges(s); buildSLeaderboard(s); buildSRes(); buildSAnn(); buildSProfile(s);
+  buildSFreeSchedule(s);
 }
 
 function sNav(section, el){
@@ -2537,13 +3093,14 @@ function sNav(section, el){
     b.classList.toggle('active', b.getAttribute('data-section')===section);
   });
   const titleEl=document.getElementById('s-topbar-title'); if(titleEl) titleEl.textContent=S_TITLES[section]||section;
+  if(section==='freeschedule') buildSFreeSchedule(window._student);
 }
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   STUDENT DASHBOARD BUILDERS
-============================================================ -->
+==================================================== -->
 <script>
 function buildSHome(s){
   const lvl=Math.max(1,Math.floor((s.points||0)/50));
@@ -2553,9 +3110,7 @@ function buildSHome(s){
     <div class="stat-card s-green"> <div class="stat-icon2">📚</div><div class="stat-big">${s.done||0}</div><div class="stat-lbl">Classes Done</div></div>
     <div class="stat-card s-pink">  <div class="stat-icon2">⏳</div><div class="stat-big">${s.remaining||0}</div><div class="stat-lbl">Remaining</div></div>
     <div class="stat-card s-yellow"><div class="stat-icon2">📊</div><div class="stat-big">${s.progress||0}%</div><div class="stat-lbl">Progress</div></div>`;
-  buildSkillBars(s, 's-skills', 4);
-  buildPtsLog(s, 's-pts-log', 4);
-  const hg=document.querySelector('.home-grid'); if(hg) hg.style.gridTemplateColumns='';
+  buildSkillBars(s,'s-skills',4); buildPtsLog(s,'s-pts-log',4);
 }
 
 function buildSkillBars(s, elId, maxItems){
@@ -2588,7 +3143,7 @@ function buildSClasses(s){
   if(!mine.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📅</div><p>No classes scheduled yet.</p></div>`; return; }
   el.innerHTML=mine.map(c=>{
     const isPast=new Date(c.date+'T'+c.time)<new Date();
-    const linkBtn = c.meetingLink
+    const linkBtn=c.meetingLink
       ? `<a href="${c.meetingLink}" target="_blank" class="ci-link ${PLAT_CLASS[c.platform]||''}">${PLAT_ICON[c.platform]||'🔗'} ${c.platform==='Google Meet'?'Join Meet':c.platform==='Microsoft Teams'?'Join Teams':'Join Zoom'}</a>`
       : `<span class="tag tag-active">📍 In-Person</span>`;
     return `<div class="class-item ${SUBJ_SLOT[c.course]||''}">
@@ -2613,8 +3168,7 @@ function buildSProgress(s){
     <div class="stat-card s-green"> <div class="stat-icon2">📚</div><div class="stat-big">${s.done||0}</div><div class="stat-lbl">Classes Done</div></div>
     <div class="stat-card s-cyan">  <div class="stat-icon2">🎯</div><div class="stat-big">${s.progress||0}%</div><div class="stat-lbl">Progress</div></div>
     <div class="stat-card s-orange"><div class="stat-icon2">🏆</div><div class="stat-big">Lv.${lvl}</div><div class="stat-lbl">${LEVELS[lvl]||'Hawking'}</div></div>`;
-  buildSkillBars(s, 's-skills2');
-  buildPtsLog(s, 's-pts-log2');
+  buildSkillBars(s,'s-skills2'); buildPtsLog(s,'s-pts-log2');
 }
 
 function buildSHW(s){
@@ -2625,7 +3179,7 @@ function buildSHW(s){
     <div class="hw-card">
       <div class="hw-card-head">
         <div><div class="hw-title">${h.title||'Untitled'}</div>
-          <div class="hw-meta">${h.subject||'—'} · Due: <span class="hw-due ${daysLeft(h.due)<0?'overdue':daysLeft(h.due)<=2?'soon':'ok'}">${h.due||'—'}${daysLeft(h.due)>0?' ('+daysLeft(h.due)+'d)':daysLeft(h.due)===0?' (today)':' (overdue)'}</span></div>
+          <div class="hw-meta">${h.subject||'—'} · Due: <span class="hw-due ${daysLeft(h.due)<0?'overdue':daysLeft(h.due)<=2?'soon':'ok'}">${h.due||'—'}</span></div>
         </div>
       </div>
       ${h.desc?`<div style="font-size:.82rem;color:var(--text2);margin-top:5px">${h.desc}</div>`:''}
@@ -2643,7 +3197,7 @@ function buildSBadges(s){
   if((s.skills?.Algebra||0)>=90)  earned.add('algebra_90');
   if((s.skills?.Geometry||0)>=90) earned.add('geo_90');
   if((s.skills?.Calculus||0)>=90) earned.add('calc_90');
-  if((s.done||0)>=1)     earned.add('first_class');
+  if((s.done||0)>=1) earned.add('first_class');
   el.innerHTML=BADGE_DEFS.map(b=>`
     <div class="badge-card ${earned.has(b.id)?'earned':'locked'}">
       <div class="badge-icon">${b.icon}</div>
@@ -2710,19 +3264,18 @@ function buildSProfile(s){
 </script>
 
 
-<!-- ============================================================
+<!-- ====================================================
   FORGOT PASSWORD & TEACHER RESET
-============================================================ -->
+==================================================== -->
 <script>
 function openForgotPw(){
-  document.getElementById('fp-email').value = document.getElementById('l-email').value||'';
+  document.getElementById('fp-email').value=document.getElementById('l-email').value||'';
   hideMsg('fp-ok'); hideMsg('fp-err');
   document.getElementById('fp-approved-box').style.display='none';
   document.getElementById('fp-submit-btn').style.display='inline-flex';
   document.getElementById('fp-modal').classList.add('show');
 }
 function closeForgotPw(){ document.getElementById('fp-modal').classList.remove('show'); }
-
 async function submitForgotPw(){
   const email=document.getElementById('fp-email').value.trim().toLowerCase();
   if(!email){ showMsg('fp-err','Please enter your email.'); return; }
@@ -2738,8 +3291,7 @@ async function submitForgotPw(){
       document.getElementById('fp-approved-box').style.display='block';
       document.getElementById('fp-new-pass-display').textContent=stuData.tempPassword;
       document.getElementById('fp-submit-btn').style.display='none';
-      showMsg('fp-ok','✅ Your teacher approved your reset. Use the password shown below.','ok');
-      return;
+      showMsg('fp-ok','✅ Your teacher approved your reset. Use the password shown below.','ok'); return;
     }
     const existing=await getDocs(query(collection(db,'password_resets'),where('studentUid','==',stuDoc.id),where('status','==','pending')));
     if(!existing.empty){ unspin(); showMsg('fp-ok','Your request is already pending. Please wait for your teacher.','ok'); return; }
@@ -2748,9 +3300,8 @@ async function submitForgotPw(){
     document.getElementById('fp-submit-btn').style.display='none';
   }catch(e){ unspin(); showMsg('fp-err','Error: '+e.message); }
 }
-
 async function fetchAndBuildResets(){
-  const {db,collection,getDocs,query,where}=window._FB;
+const {db,collection,getDocs,query,where}=window._FB;
   const snap=await getDocs(query(collection(db,'password_resets'),where('status','==','pending')));
   const resets=snap.docs.map(d=>({...d.data(),id:d.id}));
   ['reset-badge','reset-badge-d','reset-badge-m'].forEach(id=>{
