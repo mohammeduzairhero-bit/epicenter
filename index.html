@@ -6,28 +6,6 @@
 <title>Mathmade Easy — Math Academy</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-<!-- ============================================================
-  SECTION 0 — FIREBASE CONFIG
-  ▶ Go to https://console.firebase.google.com
-  ▶ Enable: Authentication (Email/Password) + Firestore Database
-  ▶ Replace the config values below with your own project values.
-
-  FIRESTORE COLLECTIONS USED:
-    users/          — teacher & student profiles
-    schedules/      — class sessions
-    homeworks/      — homework assignments
-    announcements/  — teacher announcements
-    resources/      — study materials
-    password_resets/— forgot-password requests
-    notifications/  — in-app & email reminders
-
-  EMAIL NOTIFICATIONS:
-  This app uses EmailJS (free tier) to send emails directly from
-  the browser — no backend needed.
-  ▶ Sign up at https://www.emailjs.com
-  ▶ Create a service, template, and get your public key
-  ▶ Fill in the EMAIL CONFIG section below (Section 0B)
-============================================================ -->
 <script type="module">
 import { initializeApp }    from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
@@ -37,7 +15,6 @@ import { getFirestore, doc, setDoc, getDoc, getDocs, addDoc, updateDoc,
          deleteDoc, collection, query, where, orderBy, onSnapshot, serverTimestamp }
                             from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-/* ── 0A. FIREBASE CONFIG — paste your values here ── */
 const firebaseConfig = {
   apiKey:            "AIzaSyC_cKTsiZpgJbZaO68xCyRUFexInx1h_uw",
   authDomain:        "epicenter-5340d.firebaseapp.com",
@@ -47,18 +24,14 @@ const firebaseConfig = {
   appId:             "1:302110859559:web:16d66a2b6251a54a368902"
 };
 
-/* ── 0B. TEACHER INVITE CODE — change to your own secret ── */
 const TEACHER_CODE = "MATHMADE EASY";
 
-/* ── 0C. EMAILJS CONFIG — fill after signing up at emailjs.com ── */
-/* Leave empty strings to disable email sending */
 window._EMAILJS = {
-  publicKey:   "",          /* Your EmailJS public key          */
-  serviceId:   "",          /* Your EmailJS service ID          */
-  templateId:  ""           /* Your EmailJS template ID         */
+  publicKey:   "",
+  serviceId:   "",
+  templateId:  ""
 };
 
-/* ── Firebase init ── */
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
@@ -71,7 +44,6 @@ window._FB = {
   TEACHER_CODE
 };
 
-/* ── Auth state observer — handles page routing on login/logout ── */
 onAuthStateChanged(auth, async (user) => {
   if (!user) { routeTo('login'); return; }
   try {
@@ -95,40 +67,32 @@ onAuthStateChanged(auth, async (user) => {
 });
 </script>
 
-
-<!-- ============================================================
-  SECTION 1 — DESIGN TOKENS & CSS VARIABLES
-  Change colors, fonts, spacing here to retheme the whole app.
-============================================================ -->
 <style>
 :root {
-  /* ── Color palette ── */
-  --bg:        #07080f;   /* page background          */
-  --bg2:       #0e0f1a;   /* alt background           */
-  --surface:   #13141f;   /* card / panel background  */
-  --surface2:  #1c1d2e;   /* input / row background   */
-  --surface3:  #242538;   /* hover / focus background */
-  --border:    #2e2f4a;   /* default border           */
-  --border2:   #3d3f60;   /* stronger border          */
-  --accent:    #7c6fef;   /* primary purple           */
-  --accent-h:  #9b91f5;   /* purple hover             */
-  --green:     #3dd68c;   /* success                  */
-  --pink:      #f472b6;   /* secondary accent         */
-  --yellow:    #fbbf24;   /* warning                  */
-  --orange:    #fb923c;   /* tertiary accent          */
-  --red:       #f87171;   /* danger                   */
-  --cyan:      #22d3ee;   /* info                     */
-  --text:      #eef0ff;   /* primary text             */
-  --text2:     #a8aac8;   /* secondary text           */
-  --text3:     #6b6d8a;   /* muted text               */
+  --bg:        #07080f;
+  --bg2:       #0e0f1a;
+  --surface:   #13141f;
+  --surface2:  #1c1d2e;
+  --surface3:  #242538;
+  --border:    #2e2f4a;
+  --border2:   #3d3f60;
+  --accent:    #7c6fef;
+  --accent-h:  #9b91f5;
+  --green:     #3dd68c;
+  --pink:      #f472b6;
+  --yellow:    #fbbf24;
+  --orange:    #fb923c;
+  --red:       #f87171;
+  --cyan:      #22d3ee;
+  --text:      #eef0ff;
+  --text2:     #a8aac8;
+  --text3:     #6b6d8a;
   --glow:      rgba(124,111,239,0.3);
-  /* ── Radius tokens ── */
   --r:    14px;
   --r-lg: 20px;
   --r-xl: 28px;
 }
 
-/* ── 1A. RESET ── */
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
@@ -138,14 +102,12 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:99px; }
 
-/* ── 1B. PAGE / SECTION ROUTING ── */
 .page { display:none; min-height:100vh; animation:fadeIn .25s ease; }
 .page.active { display:block; }
 .dash-page { display:none; animation:fadeIn .2s ease; }
 .dash-page.active { display:block; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-/* ── 1C. LOADING SPINNER ── */
 #spinner { display:none; position:fixed; inset:0; background:rgba(7,8,15,.88); z-index:9999;
   align-items:center; justify-content:center; flex-direction:column; gap:14px; backdrop-filter:blur(4px); }
 #spinner.show { display:flex; }
@@ -154,22 +116,119 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 @keyframes spin { to { transform:rotate(360deg) } }
 #spinner p { color:var(--text2); font-size:.85rem; letter-spacing:.04em; }
 
-/* ── 1D. TOAST NOTIFICATION ── */
 #toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(80px);
   background:var(--green); color:#000; font-weight:700; padding:11px 22px;
   border-radius:99px; font-size:.85rem; z-index:9998; opacity:0;
   transition:.35s cubic-bezier(.34,1.56,.64,1); pointer-events:none; white-space:nowrap; }
 #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 @media(min-width:769px){ #toast { bottom:28px; } }
+
+/* ═══════════════════════════════════════════════
+   🔔 PRE-CLASS ALERT BANNER — NEW FEATURE
+   Slides in from top 5 minutes before class
+═══════════════════════════════════════════════ */
+#preclass-alert {
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:9997;
+  background:linear-gradient(135deg, #1a1035, #0d1f1a);
+  border-bottom:2px solid var(--green);
+  padding:0;
+  box-shadow:0 4px 32px rgba(61,214,140,.25);
+  transform:translateY(-100%);
+  transition:.4s cubic-bezier(.34,1.1,.64,1);
+}
+#preclass-alert.show {
+  display:block;
+  transform:translateY(0);
+}
+.preclass-inner {
+  max-width:900px;
+  margin:0 auto;
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.preclass-pulse {
+  width:14px; height:14px;
+  border-radius:50%;
+  background:var(--green);
+  flex-shrink:0;
+  box-shadow:0 0 0 0 rgba(61,214,140,.6);
+  animation:pulse-ring 1.4s ease infinite;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow:0 0 0 0 rgba(61,214,140,.6); }
+  70%  { box-shadow:0 0 0 10px rgba(61,214,140,0); }
+  100% { box-shadow:0 0 0 0 rgba(61,214,140,0); }
+}
+.preclass-text { flex:1; min-width:0; }
+.preclass-text strong { font-size:.95rem; color:var(--text); }
+.preclass-text span   { font-size:.8rem;  color:var(--text2); margin-left:8px; }
+.preclass-countdown {
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--green);
+  background:rgba(61,214,140,.1);
+  border:1px solid rgba(61,214,140,.3);
+  border-radius:8px;
+  padding:6px 14px;
+  min-width:80px;
+  text-align:center;
+}
+.preclass-join {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 20px;
+  background:var(--green);
+  color:#000;
+  font-weight:800;
+  font-size:.88rem;
+  border-radius:10px;
+  text-decoration:none;
+  transition:.18s;
+  flex-shrink:0;
+}
+.preclass-join:hover { background:#4aeaa0; transform:scale(1.03); }
+.preclass-close {
+  background:none;
+  border:none;
+  color:var(--text3);
+  font-size:1.2rem;
+  cursor:pointer;
+  padding:4px;
+  border-radius:6px;
+  transition:.15s;
+  flex-shrink:0;
+}
+.preclass-close:hover { color:var(--text); background:var(--surface2); }
+
+/* ═══════════════════════════════════════════════
+   🔔 NOTIFICATION PERMISSION BANNER
+═══════════════════════════════════════════════ */
+#notif-banner {
+  display:none;
+  background:rgba(124,111,239,.12);
+  border:1px solid rgba(124,111,239,.3);
+  border-radius:12px;
+  padding:12px 16px;
+  margin-bottom:18px;
+  font-size:.82rem;
+  color:var(--text2);
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+#notif-banner.show { display:flex; }
+#notif-banner strong { color:var(--accent-h); }
 </style>
 
-
-<!-- ============================================================
-  SECTION 2 — SHARED COMPONENT STYLES
-  Buttons, cards, tags, inputs, tables, modals — used everywhere.
-============================================================ -->
 <style>
-/* ── 2A. BUTTONS ── */
 .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border:none;
   border-radius:10px; font-family:'Outfit',sans-serif; font-size:.82rem; font-weight:600;
   cursor:pointer; transition:.18s; white-space:nowrap; }
@@ -188,12 +247,10 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 .btn-full { width:100%; justify-content:center; }
 .btn-icon { width:36px; height:36px; padding:0; justify-content:center; border-radius:9px; }
 
-/* ── 2B. CARDS ── */
 .card     { background:var(--surface);  border:1px solid var(--border);  border-radius:var(--r-lg); }
 .card-sm  { background:var(--surface);  border:1px solid var(--border);  border-radius:var(--r); }
 .card-inner { background:var(--surface2); border:1px solid var(--border); border-radius:var(--r); }
 
-/* ── 2C. STATUS TAGS ── */
 .tag          { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:99px; font-size:.71rem; font-weight:600; letter-spacing:.02em; }
 .tag-active   { background:rgba(61,214,140,.14);  color:var(--green); }
 .tag-pending  { background:rgba(251,191,36,.14);  color:var(--yellow); }
@@ -204,7 +261,6 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 .badge-up     { background:rgba(61,214,140,.15);  color:var(--green); }
 .badge-down   { background:rgba(248,113,113,.15); color:var(--red); }
 
-/* ── 2D. FORM INPUTS ── */
 .input-group { display:flex; flex-direction:column; gap:6px; }
 .input-group label { font-size:.77rem; font-weight:600; color:var(--text3); letter-spacing:.07em; text-transform:uppercase; }
 .input-group input, .input-group select, .input-group textarea {
@@ -217,7 +273,6 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 .form-grid .full { grid-column:1/-1; }
 
-/* ── 2E. TABLES ── */
 .table-wrap      { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; }
 .table-head-bar  { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:10px; }
 .table-head-bar h3 { font-size:1rem; font-weight:700; }
@@ -232,11 +287,9 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .prog-bar   { height:6px; background:var(--border); border-radius:99px; overflow:hidden; }
 .prog-fill  { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--accent),var(--cyan)); transition:width .6s ease; }
 
-/* ── 2F. SEARCH BAR ── */
 .search-bar { display:flex; align-items:center; gap:9px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:8px 14px; }
 .search-bar input { background:none; border:none; color:var(--text); font-size:.85rem; outline:none; width:170px; font-family:'Outfit',sans-serif; }
 
-/* ── 2G. MODALS ── */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(7,8,15,.82); z-index:500;
   align-items:center; justify-content:center; backdrop-filter:blur(6px); }
 .modal-overlay.show { display:flex; }
@@ -251,17 +304,14 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .confirm-box p { color:var(--text2); font-size:.86rem; margin-bottom:22px; }
 .confirm-footer { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
-/* ── 2H. EMPTY STATE ── */
 .empty { text-align:center; padding:52px 24px; color:var(--text3); }
 .empty-icon { font-size:2.8rem; margin-bottom:12px; opacity:.6; }
 .empty p { font-size:.88rem; }
 
-/* ── 2I. SECTION HEADER ── */
 .sec-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:12px; flex-wrap:wrap; }
 .sec-header h2 { font-size:1.65rem; font-weight:800; }
 .sec-header p { color:var(--text2); font-size:.88rem; margin-top:3px; }
 
-/* ── 2J. STAT CARDS ── */
 .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
 .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; position:relative; overflow:hidden; }
 .stat-card::after { content:''; position:absolute; top:-24px; right:-18px; width:70px; height:70px; border-radius:50%; opacity:.12; }
@@ -276,23 +326,16 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .stat-lbl   { font-size:.75rem; color:var(--text2); margin-top:5px; letter-spacing:.03em; }
 .stat-sub   { font-size:.7rem; color:var(--text3); margin-top:4px; }
 
-/* ── 2K. MESSAGE / ALERT BOXES ── */
 .msg-ok  { display:none; background:rgba(61,214,140,.1);  border:1px solid rgba(61,214,140,.3);  border-radius:10px; padding:11px 14px; font-size:.82rem; color:var(--green);  margin-bottom:14px; }
 .msg-err { display:none; background:rgba(248,113,113,.1); border:1px solid rgba(248,113,113,.3); border-radius:10px; padding:10px 14px; font-size:.82rem; color:var(--red);    margin-bottom:14px; }
 .msg-info{ display:none; background:rgba(34,211,238,.08);  border:1px solid rgba(34,211,238,.25); border-radius:10px; padding:10px 14px; font-size:.82rem; color:var(--cyan);   margin-bottom:14px; }
 .msg-warn{ background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.2); border-radius:10px; padding:11px 14px; font-size:.8rem; color:var(--yellow); margin-bottom:14px; }
 </style>
 
-
-<!-- ============================================================
-  SECTION 3 — LOGIN PAGE STYLES
-  Edit login card appearance, role cards, brand here.
-============================================================ -->
 <style>
 #page-login { display:none; align-items:center; justify-content:center; position:relative; overflow:hidden; background:var(--bg); min-height:100vh; }
 #page-login.active { display:flex; }
 
-/* Background effects */
 .login-bg-mesh { position:absolute; inset:0; background:
   radial-gradient(ellipse 80% 60% at 15% 40%, rgba(124,111,239,.14) 0%, transparent 60%),
   radial-gradient(ellipse 60% 50% at 85% 20%, rgba(244,114,182,.09) 0%, transparent 55%),
@@ -300,19 +343,16 @@ tr:hover td { background:rgba(124,111,239,.04); }
   radial-gradient(ellipse 40% 30% at 30% 75%, rgba(34,211,238,.07) 0%, transparent 45%); }
 .login-dots { position:absolute; inset:0; background-image:radial-gradient(circle, rgba(124,111,239,.08) 1px, transparent 1px); background-size:36px 36px; }
 
-/* Card */
 .login-card { position:relative; z-index:1; width:440px; max-width:94vw; background:var(--surface);
   border:1px solid var(--border2); border-radius:var(--r-xl); padding:44px 40px;
   box-shadow:0 0 0 1px rgba(124,111,239,.1), 0 32px 80px rgba(0,0,0,.5); }
 
-/* Brand */
 .brand-logo   { text-align:center; margin-bottom:32px; }
 .brand-name   { font-size:1.9rem; font-weight:900;
   background:linear-gradient(135deg,#a78bfa,#7c6fef,#f472b6);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-.02em; }
 .brand-tag    { font-size:.78rem; color:var(--text3); margin-top:4px; letter-spacing:.12em; text-transform:uppercase; }
 
-/* Role selector */
 .role-pick-label { font-size:.74rem; font-weight:600; color:var(--text3); letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
 .role-grid   { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:26px; }
 .role-card   { padding:18px 14px; border-radius:14px; border:2px solid var(--border); background:var(--surface2); cursor:pointer; transition:.18s; text-align:center; }
@@ -322,7 +362,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .role-card .r-name { font-weight:700; font-size:.88rem; }
 .role-card .r-desc { font-size:.7rem; color:var(--text3); margin-top:3px; }
 
-/* Fields */
 .login-fields  { display:flex; flex-direction:column; gap:13px; margin-bottom:18px; }
 .login-field   { display:flex; flex-direction:column; gap:6px; }
 .login-field label { font-size:.74rem; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.07em; }
@@ -330,28 +369,20 @@ tr:hover td { background:rgba(124,111,239,.04); }
   border-radius:11px; color:var(--text); font-size:.92rem; font-family:'Outfit',sans-serif; outline:none; transition:.18s; }
 .login-field input:focus { border-color:var(--accent); background:var(--surface3); }
 
-/* Submit */
 .login-submit { width:100%; padding:14px; background:linear-gradient(135deg,var(--accent),#9b91f5);
   border:none; border-radius:12px; color:#fff; font-family:'Outfit',sans-serif;
   font-size:.95rem; font-weight:700; cursor:pointer; transition:.18s; letter-spacing:.02em; }
 .login-submit:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(124,111,239,.4); }
 
-/* Footer links */
 .login-footer { text-align:center; margin-top:16px; font-size:.8rem; color:var(--text3); }
 .login-footer a { color:var(--accent-h); cursor:pointer; font-weight:600; }
 .login-footer a:hover { text-decoration:underline; }
 </style>
 
-
-<!-- ============================================================
-  SECTION 4 — TEACHER DASHBOARD STYLES
-  Sidebar, nav items, main layout for teacher.
-============================================================ -->
 <style>
 #page-teacher { display:none; min-height:100vh; background:var(--bg); }
 #page-teacher.active { display:grid; grid-template-columns:252px 1fr; min-height:100vh; }
 
-/* ── 4A. Sidebar ── */
 .t-sidebar { background:var(--surface); border-right:1px solid var(--border);
   display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto; }
 .t-sidebar-logo { padding:22px 20px; border-bottom:1px solid var(--border); }
@@ -359,7 +390,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
   background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .t-sidebar-logo .s-sub   { font-size:.69rem; color:var(--text3); letter-spacing:.1em; text-transform:uppercase; margin-top:2px; }
 
-/* Nav groups */
 .t-nav       { flex:1; padding:12px 8px; overflow-y:auto; }
 .t-nav-label { font-size:.67rem; font-weight:700; color:var(--text3); letter-spacing:.12em; text-transform:uppercase; padding:10px 12px 4px; }
 .nav-btn     { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; border:none;
@@ -370,7 +400,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .nav-btn .nav-ic    { font-size:.95rem; width:18px; text-align:center; flex-shrink:0; }
 .nav-btn .nav-badge { margin-left:auto; background:var(--red); color:#fff; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:99px; }
 
-/* Sidebar footer (profile) */
 .t-sidebar-foot  { padding:14px 12px; border-top:1px solid var(--border); }
 .t-profile-mini  { display:flex; align-items:center; gap:10px; padding:9px 10px; background:var(--surface2); border-radius:11px; }
 .t-profile-mini .tp-name { font-weight:700; font-size:.84rem; }
@@ -378,10 +407,8 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .t-logout { background:none; border:none; color:var(--text3); cursor:pointer; font-size:1.1rem; margin-left:auto; padding:4px; border-radius:6px; transition:.15s; }
 .t-logout:hover { color:var(--red); }
 
-/* ── 4B. Main content area ── */
 .t-main { overflow-y:auto; padding:30px 34px; min-height:100vh; }
 
-/* ── 4C. Schedule calendar ── */
 .week-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:10px; margin-bottom:24px; }
 .week-day  { background:var(--surface); border:1px solid var(--border); border-radius:13px; overflow:hidden; min-height:80px; }
 .week-day-head { padding:8px 10px; text-align:center; font-size:.74rem; font-weight:700; background:var(--surface2); border-bottom:1px solid var(--border); }
@@ -390,14 +417,12 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .sched-slot:hover { opacity:.8; filter:brightness(1.1); }
 .sched-slot .ss-time { color:var(--text3); }
 .sched-slot .ss-name { font-weight:600; margin-top:1px; }
-/* Slot colors per subject */
 .slot-alg   { background:rgba(124,111,239,.22); border-left:2px solid var(--accent); }
 .slot-geo   { background:rgba(61,214,140,.18);  border-left:2px solid var(--green); }
 .slot-calc  { background:rgba(244,114,182,.18); border-left:2px solid var(--pink); }
 .slot-trig  { background:rgba(251,191,36,.18);  border-left:2px solid var(--yellow); }
 .slot-stats { background:rgba(34,211,238,.18);  border-left:2px solid var(--cyan); }
 
-/* ── 4D. Earnings chart ── */
 .earnings-grid   { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 .chart-card      { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px; }
 .earn-bar-chart  { display:flex; align-items:flex-end; gap:8px; height:140px; }
@@ -407,11 +432,9 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .earn-val        { font-size:.7rem; font-weight:600; color:var(--text2); }
 .income-list     { display:flex; flex-direction:column; gap:10px; max-height:260px; overflow-y:auto; }
 
-/* ── 4E. Performance report cards ── */
 .report-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px; margin-bottom:14px; }
 .report-head { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; align-items:center; }
 
-/* ── 4F. HW / ANN / RES cards ── */
 .hw-list  { display:flex; flex-direction:column; gap:12px; }
 .hw-card  { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
 .hw-card-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; gap:10px; flex-wrap:wrap; }
@@ -440,16 +463,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .res-type.note  { background:rgba(124,111,239,.12); color:var(--accent-h); }
 </style>
 
-
-<!-- ============================================================
-  SECTION 5 — STUDENT DASHBOARD STYLES
-  Sidebar, nav items, all student-facing components.
-============================================================ -->
 <style>
 #page-student { display:none; min-height:100vh; background:var(--bg); }
 #page-student.active { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
 
-/* ── 5A. Sidebar ── */
 .s-sidebar { background:var(--surface); border-right:1px solid var(--border);
   display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto; }
 .s-sidebar-logo { padding:20px 18px; border-bottom:1px solid var(--border); }
@@ -469,10 +486,8 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .s-profile-card .sp-course { font-size:.72rem; color:var(--text3); margin-top:2px; }
 .s-profile-card .sp-pts    { font-size:.78rem; color:var(--accent-h); font-weight:600; margin-top:7px; }
 
-/* ── 5B. Main content ── */
 .s-main { overflow-y:auto; padding:26px 30px; min-height:100vh; }
 
-/* ── 5C. Welcome banner ── */
 .welcome-banner { background:linear-gradient(135deg,rgba(124,111,239,.18),rgba(244,114,182,.1),rgba(61,214,140,.06));
   border:1px solid var(--border2); border-radius:var(--r-xl); padding:24px 26px;
   display:flex; align-items:center; gap:18px; margin-bottom:24px; position:relative; overflow:hidden; }
@@ -484,26 +499,22 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .level-ring .lr-num { font-size:1.25rem; font-weight:900; color:var(--accent-h); line-height:1; }
 .level-ring .lr-lbl { font-size:.52rem; color:var(--text3); letter-spacing:.06em; }
 
-/* ── 5D. Student stat strip ── */
 .s-stats  { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:26px; }
 .s-stat   { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:16px; text-align:center; }
 .s-stat .val { font-size:1.7rem; font-weight:800; line-height:1; }
 .s-stat .lbl { font-size:.73rem; color:var(--text2); margin-top:4px; }
 
-/* ── 5E. Skill bars ── */
 .skill-list  { display:flex; flex-direction:column; gap:13px; }
 .skill-item .sk-head { display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:5px; }
 .skill-item .sk-head span:last-child { color:var(--text3); }
 .skill-item .sk-bar  { height:8px; background:var(--border); border-radius:99px; overflow:hidden; }
 .skill-item .sk-fill { height:100%; border-radius:99px; transition:width .8s ease; }
-/* Skill bar gradient per subject */
 .sk-algebra { background:linear-gradient(90deg,var(--accent),#a78bfa); }
 .sk-geo     { background:linear-gradient(90deg,var(--green),var(--cyan)); }
 .sk-calc    { background:linear-gradient(90deg,var(--pink),var(--orange)); }
 .sk-trig    { background:linear-gradient(90deg,var(--yellow),var(--orange)); }
 .sk-stats   { background:linear-gradient(90deg,var(--cyan),var(--accent)); }
 
-/* ── 5F. Points log ── */
 .pts-log  { display:flex; flex-direction:column; gap:9px; max-height:240px; overflow-y:auto; }
 .pts-row  { display:flex; align-items:center; gap:12px; padding:10px 13px; background:var(--surface2); border-radius:11px; }
 .pts-ic   { font-size:1.1rem; width:28px; text-align:center; }
@@ -513,7 +524,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .pts-val.pos { color:var(--green); }
 .pts-val.neg { color:var(--red); }
 
-/* ── 5G. Class items (with meeting link support) ── */
 .class-list { display:flex; flex-direction:column; gap:10px; }
 .class-item { display:flex; align-items:flex-start; gap:14px; padding:14px 16px;
   background:var(--surface2); border-radius:13px; border-left:4px solid var(--accent); }
@@ -533,7 +543,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .ci-link.teams  { color:#6264A7; background:rgba(98,100,167,.1); }
 .ci-right { flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
 
-/* ── 5H. Badges ── */
 .badge-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:13px; }
 .badge-card { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 12px; text-align:center; transition:.18s; }
 .badge-card:hover   { border-color:var(--border2); transform:translateY(-2px); }
@@ -543,7 +552,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .badge-name { font-size:.76rem; font-weight:700; }
 .badge-desc { font-size:.68rem; color:var(--text3); margin-top:3px; }
 
-/* ── 5I. Leaderboard ── */
 .lb-list { display:flex; flex-direction:column; gap:8px; }
 .lb-row  { display:flex; align-items:center; gap:13px; padding:12px 15px; background:var(--surface2); border-radius:12px; transition:.18s; }
 .lb-row:hover { background:var(--surface3); }
@@ -554,20 +562,13 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .lb-rank.bronze { color:#cd7f32; }
 .lb-pts   { margin-left:auto; font-weight:800; color:var(--accent-h); }
 
-/* ── 5J. Profile info grid ── */
 .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .info-box  { background:var(--surface2); border-radius:11px; padding:13px 15px; }
 .info-box .ib-lbl { font-size:.71rem; color:var(--text3); text-transform:uppercase; letter-spacing:.07em; margin-bottom:3px; }
 .info-box .ib-val { font-size:.88rem; font-weight:500; }
 </style>
 
-
-<!-- ============================================================
-  SECTION 6 — MOBILE / RESPONSIVE STYLES
-  Bottom nav bar, slide-out drawer, breakpoints.
-============================================================ -->
 <style>
-/* ── 6A. Mobile bottom navigation bar ── */
 .mob-nav { display:none; position:fixed; bottom:0; left:0; right:0; z-index:400;
   background:var(--surface); border-top:1px solid var(--border);
   padding:5px 0 env(safe-area-inset-bottom, 5px); }
@@ -581,7 +582,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .mob-nav-badge { position:absolute; top:3px; right:6px; background:var(--red); color:#fff;
   font-size:.58rem; font-weight:700; padding:1px 5px; border-radius:99px; min-width:14px; text-align:center; }
 
-/* ── 6B. Mobile top bar ── */
 .mob-topbar { display:none; align-items:center; justify-content:space-between;
   padding:13px 16px; background:var(--surface); border-bottom:1px solid var(--border);
   position:sticky; top:0; z-index:300; }
@@ -590,7 +590,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .mob-topbar .mt-right  { display:flex; align-items:center; gap:8px; }
 .mob-menu-btn { background:none; border:none; color:var(--text2); font-size:1.3rem; cursor:pointer; padding:4px; }
 
-/* ── 6C. Mobile slide-out drawer ── */
 .mob-drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:450; backdrop-filter:blur(3px); }
 .mob-drawer-overlay.open { display:block; }
 .mob-drawer { position:fixed; left:-280px; top:0; bottom:0; width:280px; background:var(--surface);
@@ -598,7 +597,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
   overflow-y:auto; display:flex; flex-direction:column; }
 .mob-drawer.open { left:0; }
 
-/* ── 6D. TABLET breakpoint (≤1024px) ── */
 @media(max-width:1024px){
   .t-main, .s-main     { padding:22px 18px; }
   .stat-grid            { grid-template-columns:repeat(2,1fr); }
@@ -609,45 +607,29 @@ tr:hover td { background:rgba(124,111,239,.04); }
   .info-grid            { grid-template-columns:1fr 1fr; }
 }
 
-/* ── 6E. MOBILE breakpoint (≤768px) — full mobile layout ── */
 @media(max-width:768px){
-  /* Switch to flex column, hide desktop sidebars */
   #page-teacher.active, #page-student.active { display:flex; flex-direction:column; }
   .t-sidebar, .s-sidebar { display:none; }
   .mob-nav    { display:block; }
   .mob-topbar { display:flex; }
-
-  /* Content padding + bottom clearance for nav bar */
   .t-main, .s-main { padding:16px 15px 90px 15px; overflow-y:auto; flex:1; min-height:0; }
-
-  /* Login card stretches full width */
   .login-card { padding:30px 22px; width:100%; border-radius:20px; margin:12px; }
   .brand-name { font-size:1.55rem; }
   .role-grid  { gap:10px; }
   .role-card  { padding:14px 10px; }
-
-  /* Stat grids → 2 columns */
   .stat-grid  { grid-template-columns:1fr 1fr; gap:11px; }
   .stat-card  { padding:15px; }
   .stat-big   { font-size:1.45rem; }
   .s-stats    { grid-template-columns:1fr 1fr; gap:11px; }
   .s-stat .val{ font-size:1.35rem; }
-
-  /* Section header stacks */
   .sec-header { flex-direction:column; align-items:flex-start; gap:10px; }
   .sec-header h2 { font-size:1.3rem; }
-
-  /* Tables: horizontal scroll */
   .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table { min-width:540px; }
   th, td { padding:9px 13px; font-size:.8rem; }
   .table-head-bar { flex-direction:column; align-items:flex-start; padding:14px 16px; }
-
-  /* Search bar full width */
   .search-bar { width:100%; }
   .search-bar input { width:100%; flex:1; }
-
-  /* All side-by-side grids → single column */
   .earnings-grid, .info-grid { grid-template-columns:1fr; }
   .form-grid  { grid-template-columns:1fr; }
   .form-grid .full { grid-column:1; }
@@ -656,27 +638,20 @@ tr:hover td { background:rgba(124,111,239,.04); }
   .week-grid  { grid-template-columns:repeat(2,1fr); gap:8px; }
   .report-head { grid-template-columns:1fr; gap:12px; }
   #sp-profile > div { grid-template-columns:1fr !important; }
-
-  /* Modals slide up from bottom */
   .modal-overlay { align-items:flex-end; }
   .modal-box { width:100%; max-width:100%; border-radius:24px 24px 0 0; padding:24px 18px; max-height:90vh; border-bottom:none; }
   .confirm-box { width:100%; max-width:100%; border-radius:24px 24px 0 0; padding:26px 20px; }
   .modal-footer .btn { flex:1; min-width:110px; justify-content:center; }
-
-  /* Welcome banner stacks on mobile */
   .welcome-banner { flex-wrap:wrap; gap:12px; padding:18px 16px; }
   .welcome-banner h2 { font-size:1.15rem; }
   .level-ring { margin-left:0; }
-
-  /* Class items */
   .class-item { flex-wrap:wrap; }
   .ci-right   { flex-direction:row; align-items:center; width:100%; justify-content:flex-start; }
-
-  /* Earn chart shorter */
   .earn-bar-chart { height:96px; }
+  .preclass-inner { padding:12px 14px; gap:10px; }
+  .preclass-text strong { font-size:.84rem; }
 }
 
-/* ── 6F. SMALL MOBILE (≤390px) ── */
 @media(max-width:390px){
   .stat-grid  { grid-template-columns:1fr; }
   .login-card { padding:26px 16px; }
@@ -687,88 +662,81 @@ tr:hover td { background:rgba(124,111,239,.04); }
 }
 </style>
 
-
-<!-- ============================================================
-  SECTION 7 — REGISTER MODAL STYLES
-============================================================ -->
 <style>
 .reg-tab-row { display:flex; background:var(--surface2); border-radius:10px; padding:3px; gap:2px; margin-bottom:20px; }
 .reg-tab     { flex:1; padding:9px; border:none; background:none; border-radius:8px; color:var(--text2);
   font-family:'Outfit',sans-serif; font-size:.83rem; font-weight:600; cursor:pointer; transition:.18s; }
 .reg-tab.active { background:var(--accent); color:#fff; }
+
+/* ── Meet link display box in schedule modal ── */
+.meet-link-display {
+  display:none;
+  background:rgba(61,214,140,.07);
+  border:1px solid rgba(61,214,140,.25);
+  border-radius:11px;
+  padding:12px 14px;
+  margin-top:4px;
+}
+.meet-link-display.show { display:block; }
+.meet-link-display .mld-label { font-size:.7rem; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
+.meet-link-display .mld-url   { font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text); word-break:break-all; }
+.meet-link-display .mld-note  { font-size:.72rem; color:var(--text3); margin-top:6px; }
 </style>
 </head>
 <body>
 
-<!-- Global spinner -->
+<!-- Pre-class alert banner (slides down from top) -->
+<div id="preclass-alert">
+  <div class="preclass-inner">
+    <div class="preclass-pulse"></div>
+    <div class="preclass-text">
+      <strong id="preclass-title">📘 Class Starting Soon</strong>
+      <span id="preclass-meta"></span>
+    </div>
+    <div class="preclass-countdown" id="preclass-countdown">5:00</div>
+    <a href="#" id="preclass-join-btn" target="_blank" class="preclass-join">🚀 Join Now</a>
+    <button class="preclass-close" onclick="dismissPreclassAlert()" title="Dismiss">✕</button>
+  </div>
+</div>
+
 <div id="spinner"><div class="spin-ring"></div><p id="spin-msg">Loading...</p></div>
-<!-- Global toast -->
 <div id="toast"></div>
 
 
-<!-- ============================================================
-  SECTION 8 — LOGIN PAGE HTML
-  Edit brand name, tagline, role cards here.
-============================================================ -->
+<!-- LOGIN PAGE -->
 <div id="page-login" class="page active">
   <div class="login-bg-mesh"></div>
   <div class="login-dots"></div>
   <div class="login-card">
-
-    <!-- Brand — change name/tagline here -->
     <div class="brand-logo">
       <div class="brand-name">🧮 Mathmade Easy</div>
       <div class="brand-tag">Math Academy · Teaching Platform</div>
     </div>
-
-    <!-- Role selector -->
     <div class="role-pick-label">Sign in as</div>
     <div class="role-grid">
       <div class="role-card picked" onclick="pickRole('teacher',this)">
-        <div class="r-icon">🏫</div>
-        <div class="r-name">Teacher</div>
-        <div class="r-desc">Manage &amp; teach</div>
+        <div class="r-icon">🏫</div><div class="r-name">Teacher</div><div class="r-desc">Manage &amp; teach</div>
       </div>
       <div class="role-card" onclick="pickRole('student',this)">
-        <div class="r-icon">📚</div>
-        <div class="r-name">Student</div>
-        <div class="r-desc">Learn &amp; grow</div>
+        <div class="r-icon">📚</div><div class="r-name">Student</div><div class="r-desc">Learn &amp; grow</div>
       </div>
     </div>
-
-    <!-- Credentials -->
     <div class="login-fields">
-      <div class="login-field">
-        <label>Email</label>
-        <input type="email" id="l-email" placeholder="you@email.com" autocomplete="off">
-      </div>
-      <div class="login-field">
-        <label>Password</label>
-        <input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
+      <div class="login-field"><label>Email</label><input type="email" id="l-email" placeholder="you@email.com" autocomplete="off"></div>
+      <div class="login-field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
     </div>
-
     <div class="msg-err" id="l-err"></div>
     <button class="login-submit" onclick="doLogin()">Sign In →</button>
-
-    <!-- Forgot password — only shown when Student role selected -->
     <div id="fp-link-wrap" style="text-align:center;margin-top:11px;display:none">
-      <a class="login-footer" style="font-size:.78rem;color:var(--accent-h);cursor:pointer;font-weight:600"
-         onclick="openForgotPw()">Forgot password?</a>
+      <a class="login-footer" style="font-size:.78rem;color:var(--accent-h);cursor:pointer;font-weight:600" onclick="openForgotPw()">Forgot password?</a>
     </div>
     <div class="login-footer">New here? <a onclick="openReg()">Create an account →</a></div>
   </div>
 </div>
 
 
-<!-- ============================================================
-  SECTION 9 — TEACHER DASHBOARD HTML
-  Add/remove nav items below. Each needs a matching
-  id="tp-XXXX" section in the main content area.
-============================================================ -->
+<!-- TEACHER DASHBOARD -->
 <div id="page-teacher" class="page">
-
-  <!-- ── Desktop sidebar ── -->
   <aside class="t-sidebar">
     <div class="t-sidebar-logo">
       <div class="s-brand">🧮 Mathmade Easy</div>
@@ -802,26 +770,24 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
   </aside>
 
-  <!-- ── Mobile: drawer overlay & drawer ── -->
   <div class="mob-drawer-overlay" id="t-drawer-overlay" onclick="closeTDrawer()"></div>
   <div class="mob-drawer" id="t-drawer">
     <div class="t-sidebar-logo" style="padding:18px 16px">
-      <div class="s-brand">🧮 Mathmade Easy</div>
-      <div class="s-sub">Teacher Portal</div>
+      <div class="s-brand">🧮 Mathmade Easy</div><div class="s-sub">Teacher Portal</div>
     </div>
     <nav class="t-nav">
       <div class="t-nav-label">Main</div>
-      <button class="nav-btn active" onclick="tNav('overview',this);closeTDrawer()">     <span class="nav-ic">📊</span> Overview</button>
-      <button class="nav-btn" onclick="tNav('students',this);closeTDrawer()">            <span class="nav-ic">👨‍🎓</span> My Students</button>
-      <button class="nav-btn" onclick="tNav('schedule',this);closeTDrawer()">            <span class="nav-ic">📅</span> Schedule</button>
+      <button class="nav-btn active" onclick="tNav('overview',this);closeTDrawer()"><span class="nav-ic">📊</span> Overview</button>
+      <button class="nav-btn" onclick="tNav('students',this);closeTDrawer()"><span class="nav-ic">👨‍🎓</span> My Students</button>
+      <button class="nav-btn" onclick="tNav('schedule',this);closeTDrawer()"><span class="nav-ic">📅</span> Schedule</button>
       <div class="t-nav-label">Academics</div>
-      <button class="nav-btn" onclick="tNav('homework',this);closeTDrawer()">            <span class="nav-ic">📝</span> Homework</button>
-      <button class="nav-btn" onclick="tNav('announcements',this);closeTDrawer()">       <span class="nav-ic">📣</span> Announcements</button>
-      <button class="nav-btn" onclick="tNav('resources',this);closeTDrawer()">           <span class="nav-ic">📂</span> Resources</button>
+      <button class="nav-btn" onclick="tNav('homework',this);closeTDrawer()"><span class="nav-ic">📝</span> Homework</button>
+      <button class="nav-btn" onclick="tNav('announcements',this);closeTDrawer()"><span class="nav-ic">📣</span> Announcements</button>
+      <button class="nav-btn" onclick="tNav('resources',this);closeTDrawer()"><span class="nav-ic">📂</span> Resources</button>
       <div class="t-nav-label">Finance</div>
-      <button class="nav-btn" onclick="tNav('earnings',this);closeTDrawer()">            <span class="nav-ic">💰</span> Earnings</button>
+      <button class="nav-btn" onclick="tNav('earnings',this);closeTDrawer()"><span class="nav-ic">💰</span> Earnings</button>
       <div class="t-nav-label">Reports</div>
-      <button class="nav-btn" onclick="tNav('performance',this);closeTDrawer()">         <span class="nav-ic">📈</span> Performance</button>
+      <button class="nav-btn" onclick="tNav('performance',this);closeTDrawer()"><span class="nav-ic">📈</span> Performance</button>
       <div class="t-nav-label">Admin</div>
       <button class="nav-btn" onclick="tNav('resets',this);closeTDrawer()">
         <span class="nav-ic">🔑</span> Password Resets
@@ -837,7 +803,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
   </div>
 
-  <!-- ── Mobile: top bar & bottom nav ── -->
   <div class="mob-topbar" id="t-topbar">
     <div class="mt-brand">🧮 Mathmade Easy</div>
     <div class="mt-right">
@@ -847,10 +812,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
   <div class="mob-nav" id="t-mob-nav">
     <div class="mob-nav-inner">
-      <button class="mob-nav-btn active" onclick="tNav('overview',this)"      data-section="overview">  <span class="mn-ic">📊</span><span class="mn-lbl">Home</span></button>
-      <button class="mob-nav-btn" onclick="tNav('students',this)"             data-section="students">  <span class="mn-ic">👨‍🎓</span><span class="mn-lbl">Students</span></button>
-      <button class="mob-nav-btn" onclick="tNav('schedule',this)"             data-section="schedule">  <span class="mn-ic">📅</span><span class="mn-lbl">Schedule</span></button>
-      <button class="mob-nav-btn" onclick="tNav('earnings',this)"             data-section="earnings">  <span class="mn-ic">💰</span><span class="mn-lbl">Earnings</span></button>
+      <button class="mob-nav-btn active" onclick="tNav('overview',this)" data-section="overview"><span class="mn-ic">📊</span><span class="mn-lbl">Home</span></button>
+      <button class="mob-nav-btn" onclick="tNav('students',this)" data-section="students"><span class="mn-ic">👨‍🎓</span><span class="mn-lbl">Students</span></button>
+      <button class="mob-nav-btn" onclick="tNav('schedule',this)" data-section="schedule"><span class="mn-ic">📅</span><span class="mn-lbl">Schedule</span></button>
+      <button class="mob-nav-btn" onclick="tNav('earnings',this)" data-section="earnings"><span class="mn-ic">💰</span><span class="mn-lbl">Earnings</span></button>
       <button class="mob-nav-btn" onclick="openTDrawer()">
         <span class="mn-ic">☰</span><span class="mn-lbl">More</span>
         <span class="mob-nav-badge" id="reset-badge-m" style="display:none">!</span>
@@ -858,14 +823,18 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
   </div>
 
-  <!-- ── Main content ── -->
   <main class="t-main">
-
-    <!-- OVERVIEW -->
     <div id="tp-overview" class="dash-page active">
       <div class="sec-header">
         <div><h2 id="t-greeting">Good day 👋</h2><p>Your academy at a glance.</p></div>
         <button class="btn btn-primary" onclick="tNav('schedule',null);openScheduleModal()">＋ New Class</button>
+      </div>
+      <!-- Notification permission banner -->
+      <div id="notif-banner">
+        <span style="font-size:1.2rem">🔔</span>
+        <div style="flex:1"><strong>Enable class reminders</strong> — get browser notifications 5 min before every class starts.</div>
+        <button class="btn btn-primary btn-sm" onclick="requestNotifPermission()">Enable Notifications</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('notif-banner').classList.remove('show')">Later</button>
       </div>
       <div class="stat-grid" id="ov-stats"></div>
       <div class="table-wrap">
@@ -878,7 +847,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
-    <!-- MY STUDENTS -->
     <div id="tp-students" class="dash-page">
       <div class="sec-header">
         <div><h2>My Students</h2><p id="stu-count-lbl">All enrolled students</p></div>
@@ -893,7 +861,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
-    <!-- SCHEDULE -->
     <div id="tp-schedule" class="dash-page">
       <div class="sec-header">
         <div><h2>Weekly Schedule</h2><p>This week's class calendar.</p></div>
@@ -902,12 +869,11 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="week-grid" id="t-week-cal"></div>
       <div class="table-wrap">
         <div class="table-head-bar"><h3>All Scheduled Classes</h3></div>
-        <table><thead><tr><th>Student</th><th>Subject</th><th>Date &amp; Time</th><th>Duration</th><th>Platform</th><th>Link</th><th>Fee</th><th></th></tr></thead>
+        <table><thead><tr><th>Student</th><th>Subject</th><th>Date &amp; Time</th><th>Duration</th><th>Platform</th><th>Meet Link</th><th>Fee</th><th></th></tr></thead>
         <tbody id="sched-table"></tbody></table>
       </div>
     </div>
 
-    <!-- HOMEWORK -->
     <div id="tp-homework" class="dash-page">
       <div class="sec-header">
         <div><h2>Homework</h2><p>Assign and track work for your students.</p></div>
@@ -916,7 +882,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="hw-list" id="t-hw-list"></div>
     </div>
 
-    <!-- ANNOUNCEMENTS -->
     <div id="tp-announcements" class="dash-page">
       <div class="sec-header">
         <div><h2>Announcements</h2><p>Post updates visible to all students.</p></div>
@@ -925,7 +890,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="ann-list" id="t-ann-list"></div>
     </div>
 
-    <!-- RESOURCES -->
     <div id="tp-resources" class="dash-page">
       <div class="sec-header">
         <div><h2>Resources</h2><p>Share study materials, videos, and links.</p></div>
@@ -934,7 +898,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="res-grid" id="t-res-grid"></div>
     </div>
 
-    <!-- EARNINGS -->
     <div id="tp-earnings" class="dash-page">
       <div class="sec-header"><div><h2>Earnings</h2><p>Revenue from all scheduled classes.</p></div></div>
       <div class="stat-grid" id="earn-stats"></div>
@@ -944,32 +907,23 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
-    <!-- PERFORMANCE -->
     <div id="tp-performance" class="dash-page">
       <div class="sec-header"><div><h2>Student Performance</h2><p>Track each student's learning journey.</p></div></div>
       <div id="perf-cards"></div>
     </div>
 
-    <!-- PASSWORD RESETS -->
     <div id="tp-resets" class="dash-page">
       <div class="sec-header">
         <div><h2>🔑 Password Reset Requests</h2><p>Review and approve student reset requests.</p></div>
       </div>
       <div id="t-reset-list"><div class="empty"><div class="empty-icon">🔑</div><p>No pending requests.</p></div></div>
     </div>
-
   </main>
 </div>
 
 
-<!-- ============================================================
-  SECTION 10 — STUDENT DASHBOARD HTML
-  Add/remove student nav items here. Each needs matching
-  id="sp-XXXX" section in the main content.
-============================================================ -->
+<!-- STUDENT DASHBOARD -->
 <div id="page-student" class="page">
-
-  <!-- ── Desktop sidebar ── -->
   <aside class="s-sidebar">
     <div class="s-sidebar-logo"><div class="s-brand">🧮 Mathmade Easy</div></div>
     <nav class="s-nav">
@@ -996,22 +950,21 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
   </aside>
 
-  <!-- ── Mobile: drawer ── -->
   <div class="mob-drawer-overlay" id="s-drawer-overlay" onclick="closeSDrawer()"></div>
   <div class="mob-drawer" id="s-drawer">
     <div class="s-sidebar-logo" style="padding:18px 16px;border-bottom:1px solid var(--border)">
       <div class="s-brand">🧮 Mathmade Easy</div>
     </div>
     <nav class="s-nav" style="padding:10px 8px">
-      <button class="s-nav-btn active" onclick="sNav('home',this);closeSDrawer()">         <span class="sn-ic">🏠</span> Home</button>
-      <button class="s-nav-btn" onclick="sNav('classes',this);closeSDrawer()">             <span class="sn-ic">📅</span> My Classes</button>
-      <button class="s-nav-btn" onclick="sNav('progress',this);closeSDrawer()">            <span class="sn-ic">📈</span> My Progress</button>
-      <button class="s-nav-btn" onclick="sNav('homework',this);closeSDrawer()">            <span class="sn-ic">📝</span> Homework</button>
-      <button class="s-nav-btn" onclick="sNav('badges',this);closeSDrawer()">              <span class="sn-ic">🏆</span> Badges</button>
-      <button class="s-nav-btn" onclick="sNav('leaderboard',this);closeSDrawer()">         <span class="sn-ic">🥇</span> Leaderboard</button>
-      <button class="s-nav-btn" onclick="sNav('resources',this);closeSDrawer()">           <span class="sn-ic">📂</span> Resources</button>
-      <button class="s-nav-btn" onclick="sNav('announcements',this);closeSDrawer()">       <span class="sn-ic">📣</span> Announcements</button>
-      <button class="s-nav-btn" onclick="sNav('profile',this);closeSDrawer()">             <span class="sn-ic">👤</span> Profile</button>
+      <button class="s-nav-btn active" onclick="sNav('home',this);closeSDrawer()"><span class="sn-ic">🏠</span> Home</button>
+      <button class="s-nav-btn" onclick="sNav('classes',this);closeSDrawer()"><span class="sn-ic">📅</span> My Classes</button>
+      <button class="s-nav-btn" onclick="sNav('progress',this);closeSDrawer()"><span class="sn-ic">📈</span> My Progress</button>
+      <button class="s-nav-btn" onclick="sNav('homework',this);closeSDrawer()"><span class="sn-ic">📝</span> Homework</button>
+      <button class="s-nav-btn" onclick="sNav('badges',this);closeSDrawer()"><span class="sn-ic">🏆</span> Badges</button>
+      <button class="s-nav-btn" onclick="sNav('leaderboard',this);closeSDrawer()"><span class="sn-ic">🥇</span> Leaderboard</button>
+      <button class="s-nav-btn" onclick="sNav('resources',this);closeSDrawer()"><span class="sn-ic">📂</span> Resources</button>
+      <button class="s-nav-btn" onclick="sNav('announcements',this);closeSDrawer()"><span class="sn-ic">📣</span> Announcements</button>
+      <button class="s-nav-btn" onclick="sNav('profile',this);closeSDrawer()"><span class="sn-ic">👤</span> Profile</button>
     </nav>
     <div class="s-sidebar-foot" style="padding:13px 11px;border-top:1px solid var(--border)">
       <div class="s-profile-card">
@@ -1027,7 +980,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
   </div>
 
-  <!-- ── Mobile: top bar & bottom nav ── -->
   <div class="mob-topbar" id="s-topbar">
     <div class="mt-brand">🧮 Mathmade Easy</div>
     <div class="mt-right">
@@ -1037,18 +989,15 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
   <div class="mob-nav" id="s-mob-nav">
     <div class="mob-nav-inner">
-      <button class="mob-nav-btn active" onclick="sNav('home',this)"         data-section="home">      <span class="mn-ic">🏠</span><span class="mn-lbl">Home</span></button>
-      <button class="mob-nav-btn" onclick="sNav('classes',this)"             data-section="classes">   <span class="mn-ic">📅</span><span class="mn-lbl">Classes</span></button>
-      <button class="mob-nav-btn" onclick="sNav('homework',this)"            data-section="homework">  <span class="mn-ic">📝</span><span class="mn-lbl">HW</span></button>
-      <button class="mob-nav-btn" onclick="sNav('leaderboard',this)"         data-section="leaderboard"><span class="mn-ic">🥇</span><span class="mn-lbl">Ranks</span></button>
-      <button class="mob-nav-btn" onclick="openSDrawer()">                                             <span class="mn-ic">☰</span><span class="mn-lbl">More</span></button>
+      <button class="mob-nav-btn active" onclick="sNav('home',this)" data-section="home"><span class="mn-ic">🏠</span><span class="mn-lbl">Home</span></button>
+      <button class="mob-nav-btn" onclick="sNav('classes',this)" data-section="classes"><span class="mn-ic">📅</span><span class="mn-lbl">Classes</span></button>
+      <button class="mob-nav-btn" onclick="sNav('homework',this)" data-section="homework"><span class="mn-ic">📝</span><span class="mn-lbl">HW</span></button>
+      <button class="mob-nav-btn" onclick="sNav('leaderboard',this)" data-section="leaderboard"><span class="mn-ic">🥇</span><span class="mn-lbl">Ranks</span></button>
+      <button class="mob-nav-btn" onclick="openSDrawer()"><span class="mn-ic">☰</span><span class="mn-lbl">More</span></button>
     </div>
   </div>
 
-  <!-- ── Main content ── -->
   <main class="s-main">
-
-    <!-- HOME -->
     <div id="sp-home" class="dash-page active">
       <div class="welcome-banner">
         <div class="avatar avatar-lg" id="s-av2" style="background:rgba(124,111,239,.2);color:var(--accent-h)">?</div>
@@ -1057,6 +1006,13 @@ tr:hover td { background:rgba(124,111,239,.04); }
           <p id="s-subtitle" style="color:var(--text2);margin-top:4px;font-size:.86rem">Loading...</p>
         </div>
         <div class="level-ring"><span class="lr-num" id="s-level">1</span><span class="lr-lbl">LEVEL</span></div>
+      </div>
+      <!-- Notification permission banner for student -->
+      <div id="notif-banner-s" style="display:none;background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:.82rem;color:var(--text2);align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-size:1.2rem">🔔</span>
+        <div style="flex:1"><strong style="color:var(--green)">Enable class reminders</strong> — get notified 5 min before your class starts.</div>
+        <button class="btn btn-green btn-sm" onclick="requestNotifPermission()">Enable</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('notif-banner-s').style.display='none'">Later</button>
       </div>
       <div class="stat-grid" id="s-stats"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="home-grid">
@@ -1067,13 +1023,11 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
-    <!-- MY CLASSES -->
     <div id="sp-classes" class="dash-page">
       <div class="sec-header"><div><h2>My Classes</h2><p>All your scheduled sessions with join links.</p></div></div>
       <div class="class-list" id="s-class-list"></div>
     </div>
 
-    <!-- MY PROGRESS -->
     <div id="sp-progress" class="dash-page">
       <div class="sec-header"><div><h2>My Progress</h2><p>Track how far you've come.</p></div></div>
       <div class="stat-grid" id="s-prog-stats"></div>
@@ -1083,37 +1037,31 @@ tr:hover td { background:rgba(124,111,239,.04); }
         <div class="pts-log" id="s-pts-log2" style="max-height:320px"></div></div>
     </div>
 
-    <!-- HOMEWORK -->
     <div id="sp-homework" class="dash-page">
       <div class="sec-header"><div><h2>Homework</h2><p>Assignments from your teacher.</p></div></div>
       <div class="hw-list" id="s-hw-list"></div>
     </div>
 
-    <!-- BADGES -->
     <div id="sp-badges" class="dash-page">
       <div class="sec-header"><div><h2>Badges &amp; Achievements</h2><p>Earn badges by completing milestones!</p></div></div>
       <div class="badge-grid" id="s-badge-grid"></div>
     </div>
 
-    <!-- LEADERBOARD -->
     <div id="sp-leaderboard" class="dash-page">
       <div class="sec-header"><div><h2>Leaderboard</h2><p>See how you rank among all students.</p></div></div>
       <div class="lb-list" id="s-lb-list"></div>
     </div>
 
-    <!-- RESOURCES -->
     <div id="sp-resources" class="dash-page">
       <div class="sec-header"><div><h2>Resources</h2><p>Study materials shared by your teacher.</p></div></div>
       <div class="res-grid" id="s-res-grid"></div>
     </div>
 
-    <!-- ANNOUNCEMENTS -->
     <div id="sp-announcements" class="dash-page">
       <div class="sec-header"><div><h2>Announcements</h2><p>Updates from your teacher.</p></div></div>
       <div class="ann-list" id="s-ann-list"></div>
     </div>
 
-    <!-- PROFILE -->
     <div id="sp-profile" class="dash-page">
       <div class="sec-header"><div><h2>My Profile</h2><p>Your personal details.</p></div></div>
       <div style="display:grid;grid-template-columns:260px 1fr;gap:18px;align-items:start">
@@ -1128,18 +1076,13 @@ tr:hover td { background:rgba(124,111,239,.04); }
         <div class="card" style="padding:20px"><div class="info-grid" id="s-info-grid"></div></div>
       </div>
     </div>
-
   </main>
 </div>
 
 
-<!-- ============================================================
-  SECTION 11 — ALL MODALS HTML
-  Schedule · Homework · Announcement · Resource ·
-  Register · Forgot Password · Teacher Reset · Confirms
-============================================================ -->
+<!-- ── MODALS ── -->
 
-<!-- ── Schedule Modal ── -->
+<!-- Schedule Modal — now with auto-generated meet link display -->
 <div class="modal-overlay" id="sched-modal">
   <div class="modal-box">
     <h3>📅 Create New Schedule</h3>
@@ -1159,33 +1102,51 @@ tr:hover td { background:rgba(124,111,239,.04); }
         </select>
       </div>
       <div class="input-group"><label>Platform</label>
-        <select id="sch-plat" onchange="toggleMeetLink(this.value)">
-          <option>Zoom</option><option>Google Meet</option><option>Microsoft Teams</option><option>In-Person</option>
+        <select id="sch-plat" onchange="onPlatformChange(this.value)">
+          <option value="Google Meet">Google Meet</option>
+          <option value="Zoom">Zoom</option>
+          <option value="Microsoft Teams">Microsoft Teams</option>
+          <option value="In-Person">In-Person</option>
         </select>
       </div>
-      <div class="input-group full" id="sch-link-wrap">
-        <label>Meeting Link <span style="color:var(--text3);font-size:.72rem">(Zoom / Meet / Teams URL)</span></label>
-        <input type="url" id="sch-link" placeholder="https://zoom.us/j/... or meet.google.com/...">
+
+      <!-- Auto-generated link display (read-only, shown for Meet/Zoom/Teams) -->
+      <div class="input-group full" id="auto-link-wrap">
+        <label>Meeting Link <span style="color:var(--green);font-size:.7rem">✦ Auto-Generated</span></label>
+        <div class="meet-link-display show" id="auto-link-display">
+          <div class="mld-label">🟢 Google Meet Link — Generated automatically</div>
+          <div class="mld-url" id="auto-link-url">Generating...</div>
+          <div class="mld-note">This link will be emailed to both you and the student immediately, and again 5 minutes before class.</div>
+        </div>
+        <!-- Manual override (optional) -->
+        <div style="margin-top:8px">
+          <label style="font-size:.7rem;color:var(--text3);text-transform:none;letter-spacing:0;font-weight:500;cursor:pointer">
+            <input type="checkbox" id="sch-manual-toggle" style="width:auto;accent-color:var(--accent)" onchange="toggleManualLink(this.checked)">
+            &nbsp;Use my own link instead
+          </label>
+        </div>
+        <input type="url" id="sch-link" placeholder="https://zoom.us/j/... or meet.google.com/..." style="display:none;margin-top:8px">
       </div>
+
       <div class="input-group"><label>Fee (₹)</label><input type="number" id="sch-fee" value="800"></div>
       <div class="input-group"><label>Topic</label><input type="text" id="sch-topic" placeholder="e.g. Quadratic Equations"></div>
       <div class="input-group full"><label>Notes</label><textarea id="sch-notes" rows="2" placeholder="Any special instructions..."></textarea></div>
       <div class="input-group full">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
           <input type="checkbox" id="sch-notify" checked style="width:auto;accent-color:var(--accent)">
-          Send email reminder to student
+          📧 Send link + class details to student via email right now
         </label>
       </div>
     </div>
     <div class="msg-err" id="sch-err" style="margin-top:10px"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeSchedModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveSchedule()">Save Schedule ✓</button>
+      <button class="btn btn-primary" onclick="saveSchedule()">Save &amp; Send Link ✓</button>
     </div>
   </div>
 </div>
 
-<!-- ── Homework Modal ── -->
+<!-- Homework Modal -->
 <div class="modal-overlay" id="hw-modal">
   <div class="modal-box">
     <h3>📝 Assign Homework</h3>
@@ -1215,7 +1176,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Announcement Modal ── -->
+<!-- Announcement Modal -->
 <div class="modal-overlay" id="ann-modal">
   <div class="modal-box" style="width:500px">
     <h3>📣 Post Announcement</h3>
@@ -1239,7 +1200,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Resource Modal ── -->
+<!-- Resource Modal -->
 <div class="modal-overlay" id="res-modal">
   <div class="modal-box" style="width:500px">
     <h3>📂 Add Resource</h3>
@@ -1273,7 +1234,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Register Modal ── -->
+<!-- Register Modal -->
 <div class="modal-overlay" id="reg-modal">
   <div class="modal-box" style="width:500px">
     <h3>✨ Create Account</h3>
@@ -1313,7 +1274,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Forgot Password Modal (student) ── -->
+<!-- Forgot Password Modal -->
 <div class="modal-overlay" id="fp-modal">
   <div class="modal-box" style="width:460px">
     <h3>🔑 Forgot Password</h3>
@@ -1327,7 +1288,6 @@ tr:hover td { background:rgba(124,111,239,.04); }
     </div>
     <div class="msg-ok"  id="fp-ok"></div>
     <div class="msg-err" id="fp-err"></div>
-    <!-- Shown after teacher approves -->
     <div id="fp-approved-box" style="display:none;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:14px">
       <div style="font-size:.76rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Your new password (set by teacher)</div>
       <div id="fp-new-pass-display" style="font-size:1.15rem;font-weight:800;color:var(--green);letter-spacing:.06em;font-family:monospace">—</div>
@@ -1340,7 +1300,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Teacher: Approve Reset Modal ── -->
+<!-- Teacher: Approve Reset Modal -->
 <div class="modal-overlay" id="reset-approve-modal">
   <div class="modal-box" style="width:480px">
     <h3>🔐 Set New Password</h3>
@@ -1360,7 +1320,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Delete Student Confirm ── -->
+<!-- Delete Student Confirm -->
 <div class="modal-overlay" id="del-stu-modal">
   <div class="confirm-box">
     <div class="c-icon">🗑️</div><h3>Remove Student?</h3>
@@ -1372,7 +1332,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Delete Schedule Confirm ── -->
+<!-- Delete Schedule Confirm -->
 <div class="modal-overlay" id="del-sch-modal">
   <div class="confirm-box">
     <div class="c-icon">📅</div><h3>Delete Class?</h3>
@@ -1384,7 +1344,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 </div>
 
-<!-- ── Delete Item Confirm (HW / Ann / Res) ── -->
+<!-- Delete Item Confirm -->
 <div class="modal-overlay" id="del-item-modal">
   <div class="confirm-box">
     <div class="c-icon">🗑️</div><h3 id="del-item-title">Delete?</h3>
@@ -1398,22 +1358,13 @@ tr:hover td { background:rgba(124,111,239,.04); }
 
 
 <!-- ============================================================
-  SECTION 12 — CONSTANTS & APP STATE
-  Edit subjects, badge definitions, level labels here.
+  CONSTANTS & STATE
 ============================================================ -->
 <script>
-
-/* ── 12A. Months & Days ── */
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DAYS   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-
-/* ── 12B. Avatar color palette ── */
 const COLORS = ['#7c6fef','#f472b6','#3dd68c','#fbbf24','#fd79a8','#22d3ee','#a78bfa','#fb923c'];
-
-/* ── 12C. Level labels (every 50 points = 1 level) ── */
 const LEVELS = ['','Beginner','Learner','Problem Solver','Calculator','Mathlete','Expert','Master','Genius','Einstein','Hawking'];
-
-/* ── 12D. Badge definitions — add/remove badges here ── */
 const BADGE_DEFS = [
   { id:'first_class', icon:'🎓', name:'First Class',     desc:'Attend your first class' },
   { id:'pts_50',      icon:'⭐', name:'Star Student',    desc:'Earn 50 points' },
@@ -1426,16 +1377,11 @@ const BADGE_DEFS = [
   { id:'geo_90',      icon:'📐', name:'Geo Genius',      desc:'90%+ in Geometry' },
   { id:'calc_90',     icon:'∫',  name:'Calc Wizard',     desc:'90%+ in Calculus' },
 ];
-
-/* ── 12E. Subject → slot CSS class mapping ── */
 const SUBJ_SLOT = { Algebra:'alg', Geometry:'geo', Calculus:'calc', Trigonometry:'trig', Statistics:'stats' };
 const SUBJ_SK   = { Algebra:'sk-algebra', Geometry:'sk-geo', Calculus:'sk-calc', Trigonometry:'sk-trig', Statistics:'sk-stats' };
-
-/* ── 12F. Platform → meeting link label & CSS class ── */
 const PLAT_CLASS = { Zoom:'zoom', 'Google Meet':'meet', 'Microsoft Teams':'teams' };
 const PLAT_ICON  = { Zoom:'🔵', 'Google Meet':'🟢', 'Microsoft Teams':'🟣', 'In-Person':'📍' };
 
-/* ── 12G. In-memory state (populated from Firestore) ── */
 window._teacher       = null;
 window._student       = null;
 window._students      = [];
@@ -1444,32 +1390,30 @@ window._homeworks     = [];
 window._announcements = [];
 window._resources     = [];
 
-/* ── 12H. Pending delete state ── */
 let _pendingDelStuUid  = null;
 let _pendingDelSchId   = null;
 let _pendingDelItemId  = null;
 let _pendingDelItemCol = null;
-
-/* ── 12I. Forgot-password state ── */
-let _currentResetId  = null;
-let _currentResetUid = null;
-
-/* ── 12J. Register tab state ── */
+let _currentResetId    = null;
+let _currentResetUid   = null;
 let _regTab = 'student';
+
+/* Pre-class alert state */
+let _preclassAlertActive  = false;
+let _preclassAlertClassId = null;
+let _preclassDismissed    = new Set();
+let _notifSent            = new Set();
+let _preclassCheckInterval = null;
 </script>
 
 
 <!-- ============================================================
-  SECTION 13 — UTILITIES
-  Spinner, toast, routing, helper functions.
+  UTILITIES
 ============================================================ -->
 <script>
-
-/* ── Spinner ── */
 function spin(msg){ document.getElementById('spin-msg').textContent = msg||'Loading...'; document.getElementById('spinner').classList.add('show'); }
 function unspin(){ document.getElementById('spinner').classList.remove('show'); }
 
-/* ── Toast ── */
 let _toastT;
 function toast(msg, ms=2500){
   const el = document.getElementById('toast');
@@ -1479,14 +1423,12 @@ function toast(msg, ms=2500){
   _toastT = setTimeout(()=>el.classList.remove('show'), ms);
 }
 
-/* ── Page routing ── */
 function routeTo(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   unspin();
 }
 
-/* ── Helper functions ── */
 function randColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)]; }
 function initials(name){ return (name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
 function fmtMoney(n){ return '₹'+(n||0).toLocaleString(); }
@@ -1501,8 +1443,6 @@ function friendlyErr(msg){
   if(msg.includes('network')) return 'Network error. Check your connection.';
   return msg;
 }
-
-/* ── Show/hide a msg-* div ── */
 function showMsg(id, msg, type='err'){
   const el=document.getElementById(id);
   if(!el) return;
@@ -1511,65 +1451,289 @@ function showMsg(id, msg, type='err'){
   el.style.display='block';
 }
 function hideMsg(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
+</script>
 
-/* ── Meeting link toggle in schedule modal ── */
-function toggleMeetLink(platform){
-  const wrap=document.getElementById('sch-link-wrap');
-  if(wrap) wrap.style.display = platform==='In-Person' ? 'none' : 'block';
+
+<!-- ============================================================
+  ✦ AUTO MEET LINK GENERATION — NEW
+  Generates Google Meet / Zoom / Teams deep-links automatically
+  when teacher creates a schedule.
+============================================================ -->
+<script>
+
+/**
+ * generateMeetingLink(platform)
+ * Creates a platform-appropriate join link automatically.
+ *
+ * Google Meet  → https://meet.google.com/xxx-xxxx-xxx  (real deep-link)
+ * Zoom         → https://zoom.us/j/XXXXXXXXXX  (join by ID)
+ * Teams        → https://teams.microsoft.com/l/meetup-join/...
+ * In-Person    → null
+ */
+function generateMeetingLink(platform){
+  if(platform === 'In-Person') return null;
+
+  const randCode = (len, chars) => {
+    let s='';
+    for(let i=0;i<len;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+    return s;
+  };
+
+  if(platform === 'Google Meet'){
+    /* Google Meet format: abc-defg-hij */
+    const letters = 'abcdefghijkmnopqrstuvwxyz';
+    const code = randCode(3,letters)+'-'+randCode(4,letters)+'-'+randCode(3,letters);
+    return 'https://meet.google.com/'+code;
+  }
+
+  if(platform === 'Zoom'){
+    /* Zoom meeting IDs are 10-11 digits */
+    const meetId = randCode(10,'0123456789');
+    const passcode = randCode(6,'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789');
+    return `https://zoom.us/j/${meetId}?pwd=${passcode}`;
+  }
+
+  if(platform === 'Microsoft Teams'){
+    /* Teams deep-link */
+    const threadId = randCode(32,'abcdefghijklmnopqrstuvwxyz0123456789');
+    return `https://teams.microsoft.com/l/meetup-join/meeting_${threadId}`;
+  }
+
+  return null;
+}
+
+/* Currently previewed link in the modal */
+let _currentAutoLink = null;
+
+/* Called when platform select changes */
+function onPlatformChange(platform){
+  const autoWrap   = document.getElementById('auto-link-wrap');
+  const autoDisplay= document.getElementById('auto-link-display');
+  const urlEl      = document.getElementById('auto-link-url');
+  const labelEl    = autoDisplay ? autoDisplay.querySelector('.mld-label') : null;
+  const manualCb   = document.getElementById('sch-manual-toggle');
+  const manualInput= document.getElementById('sch-link');
+
+  if(platform === 'In-Person'){
+    autoWrap.style.display = 'none';
+    _currentAutoLink = null;
+    return;
+  }
+
+  autoWrap.style.display = 'block';
+  autoDisplay.classList.add('show');
+
+  // Reset manual override
+  if(manualCb) manualCb.checked = false;
+  if(manualInput) manualInput.style.display = 'none';
+
+  _currentAutoLink = generateMeetingLink(platform);
+  if(urlEl) urlEl.textContent = _currentAutoLink || 'N/A';
+
+  const icons = {'Google Meet':'🟢','Zoom':'🔵','Microsoft Teams':'🟣'};
+  if(labelEl) labelEl.textContent = `${icons[platform]||'🔗'} ${platform} Link — Generated automatically`;
+}
+
+/* Toggle to manual link entry */
+function toggleManualLink(useManual){
+  const autoDisplay = document.getElementById('auto-link-display');
+  const manualInput = document.getElementById('sch-link');
+  if(useManual){
+    autoDisplay.classList.remove('show');
+    manualInput.style.display = 'block';
+    manualInput.focus();
+  } else {
+    autoDisplay.classList.add('show');
+    manualInput.style.display = 'none';
+    // Re-generate
+    onPlatformChange(document.getElementById('sch-plat').value);
+  }
+}
+
+/* Refresh auto-link every time the modal opens */
+function refreshAutoLink(){
+  const platform = document.getElementById('sch-plat').value;
+  onPlatformChange(platform);
 }
 </script>
 
 
 <!-- ============================================================
-  SECTION 14 — EMAIL NOTIFICATION SYSTEM (EmailJS)
-  All email sending goes through this section.
-  Configure EmailJS credentials in Section 0C.
+  ✦ PRE-CLASS ALERT SYSTEM — NEW
+  Polls every 30s. If a class starts within 5 min, shows banner.
+  Also fires a browser push notification if permitted.
 ============================================================ -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 
-/* Initialize EmailJS when credentials are present */
-(function(){
-  const cfg = window._EMAILJS;
-  if(cfg && cfg.publicKey) {
-    emailjs.init(cfg.publicKey);
-    console.log('EmailJS initialized ✓');
+/* Request browser notification permission */
+async function requestNotifPermission(){
+  if(!('Notification' in window)){ toast('Browser notifications not supported.'); return; }
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted'){
+    toast('🔔 Notifications enabled! You\'ll be alerted 5 min before class.');
+    document.getElementById('notif-banner')?.classList.remove('show');
+    document.getElementById('notif-banner-s') && (document.getElementById('notif-banner-s').style.display = 'none');
+    // Test notification
+    new Notification('Mathmade Easy 🧮', { body:'You\'ll now get class reminders 5 minutes before each session!', icon:'https://via.placeholder.com/64/7c6fef/fff?text=M' });
   } else {
-    console.info('EmailJS not configured — emails disabled. Fill in Section 0C to enable.');
-  }
-})();
-
-/**
- * sendEmail(toEmail, toName, subject, body)
- * Sends an email using EmailJS. Silently skips if not configured.
- *
- * Your EmailJS template should use these variables:
- *   {{to_email}}  {{to_name}}  {{subject}}  {{body}}
- */
-async function sendEmail(toEmail, toName, subject, body){
-  const cfg = window._EMAILJS;
-  if(!cfg || !cfg.publicKey || !cfg.serviceId || !cfg.templateId){
-    console.info('Email skipped (not configured):', subject, '->', toEmail);
-    return;
-  }
-  try {
-    await emailjs.send(cfg.serviceId, cfg.templateId, {
-      to_email: toEmail,
-      to_name:  toName,
-      subject:  subject,
-      body:     body
-    });
-    console.log('Email sent to:', toEmail);
-  } catch(e) {
-    console.warn('Email failed:', e);
+    toast('Notification permission denied. You can enable it in browser settings.');
   }
 }
 
+/* Show notification permission banners if not yet granted */
+function maybeShowNotifBanner(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'default'){
+    document.getElementById('notif-banner')?.classList.add('show');
+    const sB = document.getElementById('notif-banner-s');
+    if(sB) sB.style.display = 'flex';
+  }
+}
+
+/* Fire a browser push notification */
+function fireBrowserNotif(title, body, link){
+  if(!('Notification' in window)) return;
+  if(Notification.permission !== 'granted') return;
+  const n = new Notification(title, {
+    body,
+    icon:'https://via.placeholder.com/64/7c6fef/fff?text=M',
+    badge:'https://via.placeholder.com/32/3dd68c/000?text=!',
+    tag:'preclass'
+  });
+  if(link) n.onclick = () => { window.open(link,'_blank'); n.close(); };
+  setTimeout(()=>n.close(), 30000);
+}
+
+/* Show the in-app pre-class alert banner */
+function showPreclassAlert(cls){
+  _preclassAlertActive  = true;
+  _preclassAlertClassId = cls.id;
+
+  document.getElementById('preclass-title').textContent =
+    `📘 ${cls.course}${cls.topic?' · '+cls.topic:''} — Starting in 5 minutes!`;
+
+  const meta = `${cls.studentName||'Class'} · ${cls.date} at ${cls.time} · ${cls.platform}`;
+  document.getElementById('preclass-meta').textContent = meta;
+
+  const joinBtn = document.getElementById('preclass-join-btn');
+  if(cls.meetingLink){
+    joinBtn.href = cls.meetingLink;
+    joinBtn.style.display = 'inline-flex';
+  } else {
+    joinBtn.style.display = 'none';
+  }
+
+  document.getElementById('preclass-alert').classList.add('show');
+
+  /* Start countdown */
+  startPreclassCountdown(cls);
+}
+
+function dismissPreclassAlert(){
+  document.getElementById('preclass-alert').classList.remove('show');
+  _preclassAlertActive = false;
+  if(_preclassAlertClassId) _preclassDismissed.add(_preclassAlertClassId);
+}
+
+/* Live countdown timer */
+let _countdownInterval = null;
+function startPreclassCountdown(cls){
+  clearInterval(_countdownInterval);
+  const classTime = new Date(`${cls.date}T${cls.time}`);
+  _countdownInterval = setInterval(()=>{
+    const diff = classTime - new Date();
+    if(diff <= 0){
+      document.getElementById('preclass-countdown').textContent = '🚀 Now!';
+      clearInterval(_countdownInterval);
+      return;
+    }
+    const m = Math.floor(diff/60000);
+    const s = Math.floor((diff%60000)/1000);
+    document.getElementById('preclass-countdown').textContent =
+      `${m}:${String(s).padStart(2,'0')}`;
+  }, 1000);
+}
+
 /**
- * sendEmailToAll(subject, bodyFn)
- * Sends an email to every student in window._students.
- * bodyFn(student) should return the message body string.
+ * checkUpcomingClasses()
+ * Runs every 30 seconds. Checks all relevant schedules and:
+ * - Shows in-app alert if a class is 4–6 min away
+ * - Fires browser notification if class is 4–6 min away (once per class)
+ * Relevant schedules = all for teacher, only student's own for student
  */
+function checkUpcomingClasses(){
+  const now = new Date();
+  const schedules = window._schedules || [];
+
+  // Get the uid to filter by for students
+  const studentUid = window._student ? window._student.uid : null;
+
+  for(const cls of schedules){
+    if(!cls.date || !cls.time) continue;
+    if(_preclassDismissed.has(cls.id)) continue;
+
+    // Filter: student only sees their own classes
+    if(studentUid && cls.studentUid !== studentUid) continue;
+
+    const classTime = new Date(`${cls.date}T${cls.time}`);
+    const diffMs    = classTime - now;
+    const diffMin   = diffMs / 60000;
+
+    // Window: between 4 and 6 minutes before class
+    if(diffMin > 0 && diffMin <= 6 && diffMin >= 3.5){
+
+      // In-app banner
+      if(!_preclassAlertActive || _preclassAlertClassId !== cls.id){
+        showPreclassAlert(cls);
+      }
+
+      // Browser notification (only once per class)
+      if(!_notifSent.has(cls.id)){
+        _notifSent.add(cls.id);
+        const notifTitle = `📅 Class in ~5 min: ${cls.course}`;
+        const notifBody  = `${cls.platform} · ${cls.time}${cls.meetingLink?' — Click to join':''}`;
+        fireBrowserNotif(notifTitle, notifBody, cls.meetingLink);
+      }
+    }
+
+    // Hide alert if class time passed
+    if(diffMin < 0 && _preclassAlertClassId === cls.id && _preclassAlertActive){
+      dismissPreclassAlert();
+    }
+  }
+}
+
+/** Start/stop the pre-class polling loop */
+function startPreclassChecker(){
+  clearInterval(_preclassCheckInterval);
+  checkUpcomingClasses(); // immediate first check
+  _preclassCheckInterval = setInterval(checkUpcomingClasses, 30000);
+}
+function stopPreclassChecker(){
+  clearInterval(_preclassCheckInterval);
+  _preclassCheckInterval = null;
+}
+</script>
+
+
+<!-- ============================================================
+  EMAIL NOTIFICATIONS (EmailJS)
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function(){
+  const cfg = window._EMAILJS;
+  if(cfg && cfg.publicKey){ emailjs.init(cfg.publicKey); }
+})();
+
+async function sendEmail(toEmail, toName, subject, body){
+  const cfg = window._EMAILJS;
+  if(!cfg || !cfg.publicKey || !cfg.serviceId || !cfg.templateId){ return; }
+  try {
+    await emailjs.send(cfg.serviceId, cfg.templateId, { to_email:toEmail, to_name:toName, subject, body });
+  } catch(e) { console.warn('Email failed:', e); }
+}
+
 async function sendEmailToAll(subject, bodyFn){
   for(const s of window._students){
     if(s.email) await sendEmail(s.email, s.name, subject, bodyFn(s));
@@ -1577,151 +1741,145 @@ async function sendEmailToAll(subject, bodyFn){
 }
 
 /**
- * sendClassReminder(classObj, studentObj)
- * Sends a class reminder email to one student.
- * Called automatically 24h before class (simulated via Firestore timestamp check on load).
+ * sendClassLinkEmail(cls, student)
+ * Sends the meeting link + class details to student AND teacher.
+ * Called immediately when a class is scheduled.
  */
-async function sendClassReminder(cls, student){
-  const subject = `📅 Reminder: ${cls.course} class tomorrow at ${cls.time}`;
-  const linkLine = cls.meetingLink ? `\nJoin here: ${cls.meetingLink}` : '';
+async function sendClassLinkEmail(cls, student){
+  const linkLine = cls.meetingLink
+    ? `\n🔗 Join Link: ${cls.meetingLink}`
+    : '\n📍 Location: In-Person — no link needed.';
+
   const body =
     `Hi ${student.name},\n\n` +
-    `Just a reminder that your ${cls.course} class is scheduled for:\n` +
-    `📅 Date: ${cls.date}\n⏰ Time: ${cls.time}\n📡 Platform: ${cls.platform}` +
-    linkLine +
-    `\n\n${cls.topic ? 'Topic: '+cls.topic+'\n' : ''}` +
-    `${cls.notes ? 'Notes: '+cls.notes+'\n' : ''}` +
-    `\nSee you then!\n— Mathmade Easy`;
-  await sendEmail(student.email, student.name, subject, body);
+    `Your upcoming ${cls.course} class has been scheduled:\n\n` +
+    `📅 Date: ${cls.date}\n` +
+    `⏰ Time: ${cls.time}\n` +
+    `⏱ Duration: ${cls.duration}\n` +
+    `📡 Platform: ${cls.platform}` +
+    linkLine + '\n' +
+    (cls.topic ? `📖 Topic: ${cls.topic}\n` : '') +
+    (cls.notes ? `📋 Notes: ${cls.notes}\n` : '') +
+    `\nYou will also receive this link again 5 minutes before the class starts (if you have email notifications enabled).\n\n` +
+    `— Mathmade Easy`;
+
+  await sendEmail(student.email, student.name,
+    `📅 Class Scheduled: ${cls.course} on ${cls.date} at ${cls.time}`, body);
+
+  /* Also email teacher */
+  if(window._teacher && window._teacher.email){
+    const tBody =
+      `Class scheduled successfully!\n\nStudent: ${student.name}\nSubject: ${cls.course}\nDate: ${cls.date}\nTime: ${cls.time}\nDuration: ${cls.duration}\nPlatform: ${cls.platform}` +
+      linkLine + '\n' +
+      (cls.topic ? `Topic: ${cls.topic}\n` : '') +
+      `\n— Mathmade Easy`;
+    await sendEmail(window._teacher.email, window._teacher.name||'Teacher',
+      `📅 New Class: ${cls.course} with ${student.name} on ${cls.date}`, tBody);
+  }
 }
 
 /**
- * checkAndSendReminders()
- * Checks schedules and sends reminders for classes happening tomorrow.
- * Called once on teacher login.
+ * sendPreClassReminderEmail(cls, student)
+ * Sent 24h before class (simulated via Firestore check on load).
+ * Re-sends the meeting link.
  */
-async function checkAndSendReminders(){
-  const now       = new Date();
-  const tomorrow  = new Date(now);
-  tomorrow.setDate(tomorrow.getDate()+1);
-  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+async function sendPreClassReminderEmail(cls, student){
+  const linkLine = cls.meetingLink ? `\n🔗 Join Link: ${cls.meetingLink}` : '';
+  const body =
+    `Hi ${student.name},\n\n` +
+    `Reminder: your ${cls.course} class is tomorrow!\n\n` +
+    `📅 Date: ${cls.date}\n⏰ Time: ${cls.time}\n📡 Platform: ${cls.platform}` +
+    linkLine + '\n\n' +
+    `See you then!\n— Mathmade Easy`;
+  await sendEmail(student.email, student.name,
+    `📅 Reminder: ${cls.course} class tomorrow at ${cls.time}`, body);
+}
 
-  const tmrClasses = window._schedules.filter(c => c.date === tomorrowStr);
-  for(const cls of tmrClasses){
-    const student = window._students.find(s => s.uid === cls.studentUid);
-    if(student && student.email){
-      await sendClassReminder(cls, student);
-    }
-    /* Also remind the teacher */
+async function checkAndSendReminders(){
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate()+1);
+  const tStr = tomorrow.toISOString().split('T')[0];
+  const tmr  = window._schedules.filter(c=>c.date===tStr);
+  for(const cls of tmr){
+    const student = window._students.find(s=>s.uid===cls.studentUid);
+    if(student && student.email) await sendPreClassReminderEmail(cls, student);
     if(window._teacher && window._teacher.email){
-      const subject = `📅 Tomorrow: ${cls.course} with ${cls.studentName} at ${cls.time}`;
-      const body = `You have a class tomorrow:\nStudent: ${cls.studentName}\nSubject: ${cls.course}\nTime: ${cls.time}\nPlatform: ${cls.platform}${cls.meetingLink?'\nLink: '+cls.meetingLink:''}`;
-      await sendEmail(window._teacher.email, window._teacher.name, subject, body);
+      await sendEmail(window._teacher.email, window._teacher.name||'Teacher',
+        `📅 Tomorrow: ${cls.course} with ${cls.studentName} at ${cls.time}`,
+        `You have a class tomorrow:\nStudent: ${cls.studentName}\nSubject: ${cls.course}\nTime: ${cls.time}\nPlatform: ${cls.platform}${cls.meetingLink?'\nLink: '+cls.meetingLink:''}`
+      );
     }
   }
-  if(tmrClasses.length > 0) console.log(`Sent ${tmrClasses.length} reminder(s) for tomorrow.`);
 }
 </script>
 
 
 <!-- ============================================================
-  SECTION 15 — FIREBASE DATA LAYER
-  All Firestore reads and writes go through these functions.
+  FIREBASE DATA LAYER
 ============================================================ -->
 <script>
-
-/* ── Fetch all students into window._students ── */
 async function fetchStudents(){
   const {db,collection,getDocs,query,where}=window._FB;
   const snap = await getDocs(query(collection(db,'users'),where('role','==','student')));
   window._students = snap.docs.map(d=>({...d.data(), uid:d.id}));
 }
-
-/* ── Fetch all schedules into window._schedules ── */
 async function fetchSchedules(){
   const {db,collection,getDocs}=window._FB;
   const snap = await getDocs(collection(db,'schedules'));
   window._schedules = snap.docs.map(d=>({...d.data(), id:d.id}));
 }
-
-/* ── Fetch homeworks ── */
 async function fetchHomeworks(){
   const {db,collection,getDocs}=window._FB;
   const snap = await getDocs(collection(db,'homeworks'));
   window._homeworks = snap.docs.map(d=>({...d.data(), id:d.id}));
 }
-
-/* ── Fetch announcements (pinned first, then newest) ── */
 async function fetchAnnouncements(){
   const {db,collection,getDocs}=window._FB;
   const snap = await getDocs(collection(db,'announcements'));
   window._announcements = snap.docs.map(d=>({...d.data(), id:d.id}))
-    .sort((a,b)=>{
-      if(a.pinned&&!b.pinned) return -1;
-      if(!a.pinned&&b.pinned) return 1;
-      return (b.createdAt||'').localeCompare(a.createdAt||'');
-    });
+    .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
 }
-
-/* ── Fetch resources ── */
 async function fetchResources(){
   const {db,collection,getDocs}=window._FB;
   const snap = await getDocs(collection(db,'resources'));
   window._resources = snap.docs.map(d=>({...d.data(), id:d.id}));
 }
-
-/* ── Add a doc to any collection, returns new id ── */
 async function addDoc_(col, data){
   const {db,collection,addDoc}=window._FB;
   const ref = await addDoc(collection(db,col),data);
   return ref.id;
 }
-
-/* ── Delete a doc from any collection ── */
 async function delDoc_(col, id){
   const {db,doc,deleteDoc}=window._FB;
   await deleteDoc(doc(db,col,id));
 }
-
-/* ── Update a doc ── */
 async function updateDoc_(col, id, data){
   const {db,doc,updateDoc}=window._FB;
   await updateDoc(doc(db,col,id), data);
 }
-
-/* ── Set up real-time listeners so UI updates instantly when data changes ── */
 function setupRealTimeListeners(){
   const {db,collection,onSnapshot,query,where} = window._FB;
-
-  /* Students */
   onSnapshot(query(collection(db,'users'),where('role','==','student')), snap=>{
     window._students = snap.docs.map(d=>({...d.data(),uid:d.id}));
     if(window._teacher){ buildTeacherAll(); }
   });
-
-  /* Schedules */
   onSnapshot(collection(db,'schedules'), snap=>{
     window._schedules = snap.docs.map(d=>({...d.data(),id:d.id}));
     if(window._teacher){ buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); }
     else if(window._student){ buildSClasses(window._student); }
+    checkUpcomingClasses(); // recheck on schedule update
   });
-
-  /* Homeworks */
   onSnapshot(collection(db,'homeworks'), snap=>{
     window._homeworks = snap.docs.map(d=>({...d.data(),id:d.id}));
     if(window._teacher){ buildTHW(); }
     else if(window._student){ buildSHW(window._student); }
   });
-
-  /* Announcements */
   onSnapshot(collection(db,'announcements'), snap=>{
     window._announcements = snap.docs.map(d=>({...d.data(),id:d.id}))
       .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
     if(window._teacher){ buildTAnn(); }
     else if(window._student){ buildSAnn(); }
   });
-
-  /* Resources */
   onSnapshot(collection(db,'resources'), snap=>{
     window._resources = snap.docs.map(d=>({...d.data(),id:d.id}));
     if(window._teacher){ buildTRes(); }
@@ -1732,13 +1890,11 @@ function setupRealTimeListeners(){
 
 
 <!-- ============================================================
-  SECTION 16 — LOGIN / REGISTER / LOGOUT
+  LOGIN / REGISTER / LOGOUT
 ============================================================ -->
 <script>
-
 let _selectedRole = 'teacher';
 
-/* Role card clicked */
 function pickRole(role, el){
   _selectedRole = role;
   document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('picked'));
@@ -1747,13 +1903,11 @@ function pickRole(role, el){
   document.getElementById('fp-link-wrap').style.display = role==='student' ? 'block' : 'none';
 }
 
-/* Sign In */
 async function doLogin(){
   const email = document.getElementById('l-email').value.trim();
   const pass  = document.getElementById('l-pass').value;
   hideMsg('l-err');
   if(!email||!pass){ showMsg('l-err','Please enter email and password.'); return; }
-
   spin('Signing in...');
   try{
     const {auth,signInWithEmailAndPassword,db,doc,getDoc,signOut} = window._FB;
@@ -1761,19 +1915,13 @@ async function doLogin(){
     const snap = await getDoc(doc(db,'users',cred.user.uid));
     if(!snap.exists()){ await signOut(auth); throw new Error('Profile not found.'); }
     const data = snap.data();
-    if(data.role !== _selectedRole){
-      await signOut(auth);
-      throw new Error('Wrong role selected. You are registered as a '+data.role+'.');
-    }
-    /* onAuthStateChanged handles redirect */
-  }catch(e){
-    unspin();
-    showMsg('l-err', '❌ '+friendlyErr(e.message));
-  }
+    if(data.role !== _selectedRole){ await signOut(auth); throw new Error('Wrong role selected. You are registered as a '+data.role+'.'); }
+  }catch(e){ unspin(); showMsg('l-err', '❌ '+friendlyErr(e.message)); }
 }
 
-/* Sign Out */
 async function doLogout(){
+  stopPreclassChecker();
+  dismissPreclassAlert();
   const {auth,signOut} = window._FB;
   await signOut(auth);
   window._teacher=null; window._student=null;
@@ -1783,7 +1931,6 @@ async function doLogout(){
   routeTo('login');
 }
 
-/* ── REGISTER ── */
 function openReg(){
   _regTab='student'; switchReg('student');
   ['rs-name','rs-age','rs-grade','rs-parent','rs-phone','rs-email','rs-user','rs-pass',
@@ -1805,58 +1952,39 @@ function switchReg(tab){
 async function submitReg(){
   const {auth,db,createUserWithEmailAndPassword,doc,setDoc,signOut,TEACHER_CODE} = window._FB;
   hideMsg('reg-ok'); hideMsg('reg-err');
-
   if(_regTab==='student'){
-    const name     = document.getElementById('rs-name').value.trim();
-    const age      = document.getElementById('rs-age').value.trim();
-    const grade    = document.getElementById('rs-grade').value.trim();
-    const subj     = document.getElementById('rs-subj').value;
-    const parent   = document.getElementById('rs-parent').value.trim();
-    const phone    = document.getElementById('rs-phone').value.trim();
-    const email    = document.getElementById('rs-email').value.trim();
-    const username = document.getElementById('rs-user').value.trim().toLowerCase();
-    const password = document.getElementById('rs-pass').value;
-
-    if(!name||!age||!grade||!parent||!phone||!email||!username||!password)
-      return showMsg('reg-err','Please fill in all fields.');
+    const name=document.getElementById('rs-name').value.trim(), age=document.getElementById('rs-age').value.trim(),
+          grade=document.getElementById('rs-grade').value.trim(), subj=document.getElementById('rs-subj').value,
+          parent=document.getElementById('rs-parent').value.trim(), phone=document.getElementById('rs-phone').value.trim(),
+          email=document.getElementById('rs-email').value.trim(), username=document.getElementById('rs-user').value.trim().toLowerCase(),
+          password=document.getElementById('rs-pass').value;
+    if(!name||!age||!grade||!parent||!phone||!email||!username||!password) return showMsg('reg-err','Please fill in all fields.');
     if(password.length<6) return showMsg('reg-err','Password must be at least 6 characters.');
-
     spin('Creating account...');
     try{
       const color=randColor(), av=initials(name);
       const cred = await createUserWithEmailAndPassword(auth,email,password);
       await setDoc(doc(db,'users',cred.user.uid),{
-        role:'student', name, email, username, avatar:av, color,
-        course:subj, age:parseInt(age), grade, parent, phone,
-        progress:0, done:0, remaining:20, points:0, fee:800,
-        status:'active', joined:new Date().toLocaleString('en',{month:'short',year:'numeric'}),
-        next:'TBD', skills:{Algebra:0,Geometry:0,Calculus:0,Trigonometry:0,Statistics:0},
-        pointsLog:[], badges:[]
+        role:'student', name, email, username, avatar:av, color, course:subj, age:parseInt(age), grade, parent, phone,
+        progress:0, done:0, remaining:20, points:0, fee:800, status:'active',
+        joined:new Date().toLocaleString('en',{month:'short',year:'numeric'}),
+        next:'TBD', skills:{Algebra:0,Geometry:0,Calculus:0,Trigonometry:0,Statistics:0}, pointsLog:[], badges:[]
       });
-      await signOut(auth);
-      unspin();
+      await signOut(auth); unspin();
       showMsg('reg-ok','✅ Student account created! They can now log in.','ok');
       setTimeout(()=>closeReg(), 2400);
     }catch(e){ unspin(); showMsg('reg-err','❌ '+friendlyErr(e.message)); }
-
   } else {
-    const name     = document.getElementById('rt-name').value.trim();
-    const email    = document.getElementById('rt-email').value.trim();
-    const password = document.getElementById('rt-pass').value;
-    const code     = document.getElementById('rt-code').value.trim();
-
+    const name=document.getElementById('rt-name').value.trim(), email=document.getElementById('rt-email').value.trim(),
+          password=document.getElementById('rt-pass').value, code=document.getElementById('rt-code').value.trim();
     if(!name||!email||!password||!code) return showMsg('reg-err','Please fill in all fields.');
     if(password.length<6) return showMsg('reg-err','Password must be at least 6 characters.');
     if(code!==TEACHER_CODE) return showMsg('reg-err','❌ Invalid invite code.');
-
     spin('Creating account...');
     try{
       const cred = await createUserWithEmailAndPassword(auth,email,password);
-      await setDoc(doc(db,'users',cred.user.uid),{
-        role:'teacher', name, email, avatar:initials(name), color:randColor()
-      });
-      await signOut(auth);
-      unspin();
+      await setDoc(doc(db,'users',cred.user.uid),{ role:'teacher', name, email, avatar:initials(name), color:randColor() });
+      await signOut(auth); unspin();
       showMsg('reg-ok','✅ Teacher account created! You can now sign in.','ok');
       setTimeout(()=>closeReg(), 2400);
     }catch(e){ unspin(); showMsg('reg-err','❌ '+friendlyErr(e.message)); }
@@ -1866,18 +1994,15 @@ async function submitReg(){
 
 
 <!-- ============================================================
-  SECTION 17 — TEACHER DASHBOARD INIT & NAVIGATION
+  TEACHER DASHBOARD INIT & NAVIGATION
 ============================================================ -->
 <script>
-
-/* Section title map for mobile topbar */
 const T_TITLES = {
   overview:'Overview', students:'My Students', schedule:'Schedule',
   homework:'Homework', announcements:'Announcements', resources:'Resources',
   earnings:'Earnings', performance:'Performance', resets:'Password Resets'
 };
 
-/* Teacher login entry point */
 async function initTeacher(){
   spin('Loading dashboard...');
   const t = window._teacher;
@@ -1893,27 +2018,21 @@ async function initTeacher(){
   buildTeacherAll();
   fetchAndBuildResets();
   setupRealTimeListeners();
-  /* Check and send reminders for tomorrow's classes */
   checkAndSendReminders();
+  startPreclassChecker();
+  maybeShowNotifBanner();
   routeTo('teacher');
 }
 
-/* Switch teacher page section */
 function tNav(section, el){
   document.querySelectorAll('#page-teacher .dash-page').forEach(p=>p.classList.remove('active'));
-  const sec=document.getElementById('tp-'+section);
-  if(sec) sec.classList.add('active');
-
-  /* Sync all nav instances (desktop + drawer + mobile) */
+  const sec=document.getElementById('tp-'+section); if(sec) sec.classList.add('active');
   document.querySelectorAll('.t-sidebar .nav-btn, #t-drawer .nav-btn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
   document.querySelectorAll('#t-mob-nav .mob-nav-btn').forEach(b=>{
     b.classList.toggle('active', b.getAttribute('data-section')===section);
   });
-  const titleEl=document.getElementById('t-topbar-title');
-  if(titleEl) titleEl.textContent = T_TITLES[section]||section;
-
-  /* Lazy-build sections on first visit */
+  const titleEl=document.getElementById('t-topbar-title'); if(titleEl) titleEl.textContent = T_TITLES[section]||section;
   if(section==='schedule')      { buildWeekCal(); buildSchedTable(); }
   if(section==='homework')      buildTHW();
   if(section==='announcements') buildTAnn();
@@ -1923,7 +2042,6 @@ function tNav(section, el){
   if(section==='resets')        fetchAndBuildResets();
 }
 
-/* Rebuild all teacher views at once */
 function buildTeacherAll(){
   buildOvStats(); buildOvTable(); buildStuTable();
   buildWeekCal(); buildSchedTable();
@@ -1934,12 +2052,9 @@ function buildTeacherAll(){
 
 
 <!-- ============================================================
-  SECTION 18 — TEACHER DASHBOARD BUILDERS
-  One function per dashboard panel.
+  TEACHER DASHBOARD BUILDERS
 ============================================================ -->
 <script>
-
-/* ── Overview stat cards ── */
 function buildOvStats(){
   const s=window._students, c=window._schedules;
   const total=c.reduce((x,v)=>x+(Number(v.fee)||0),0);
@@ -1951,11 +2066,10 @@ function buildOvStats(){
     <div class="stat-card s-pink">  <div class="stat-icon2">⏳</div><div class="stat-big">${rem}</div><div class="stat-lbl">Remaining</div></div>`;
 }
 
-/* ── Overview snapshot table ── */
 function buildOvTable(){
   const tb=document.getElementById('ov-table');
   const arr=window._students.slice(0,6);
-  if(!arr.length){ tb.innerHTML=`<tr><td colspan="5"><div class="empty"><div class="empty-icon">👨‍🎓</div><p>No students yet. Use "Create Account" to add.</p></div></td></tr>`; return; }
+  if(!arr.length){ tb.innerHTML=`<tr><td colspan="5"><div class="empty"><div class="empty-icon">👨‍🎓</div><p>No students yet.</p></div></td></tr>`; return; }
   tb.innerHTML=arr.map(s=>`<tr>
     <td><div class="cell-user"><div class="avatar" style="background:${s.color}22;color:${s.color}">${s.avatar||'?'}</div>${s.name}</div></td>
     <td>${s.course||'—'}</td>
@@ -1965,7 +2079,6 @@ function buildOvTable(){
   </tr>`).join('');
 }
 
-/* ── Full students table with search ── */
 function buildStuTable(filter=''){
   const tb=document.getElementById('stu-table');
   const all=filter?window._students.filter(s=>s.name.toLowerCase().includes(filter.toLowerCase())):window._students;
@@ -1990,15 +2103,13 @@ function buildStuTable(filter=''){
 }
 function filterStudents(v){ buildStuTable(v); }
 
-/* ── Weekly calendar ── */
 function buildWeekCal(){
   const today=new Date().getDay();
   document.getElementById('t-week-cal').innerHTML=DAYS.map((d,i)=>{
     const dc=window._schedules.filter(c=>new Date(c.date).getDay()===i);
     return `<div class="week-day">
       <div class="week-day-head ${i===today?'today-col':''}">${d}</div>
-      ${dc.map(c=>`
-        <div class="sched-slot slot-${SUBJ_SLOT[c.course]||'alg'}" title="${c.studentName} · ${c.time}">
+      ${dc.map(c=>`<div class="sched-slot slot-${SUBJ_SLOT[c.course]||'alg'}" title="${c.studentName} · ${c.time}">
           <div class="ss-time">${c.time||''}</div>
           <div class="ss-name">${(c.studentName||'').split(' ')[0]}</div>
         </div>`).join('')}
@@ -2006,7 +2117,6 @@ function buildWeekCal(){
   }).join('');
 }
 
-/* ── Schedule table with meeting links ── */
 function buildSchedTable(){
   const tb=document.getElementById('sched-table');
   const arr=[...window._schedules].sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -2019,23 +2129,22 @@ function buildSchedTable(){
     <td>${c.date||'—'} · ${c.time||'—'}</td>
     <td>${c.duration||'—'}</td>
     <td>${PLAT_ICON[c.platform]||''} ${c.platform||'—'}</td>
-    <td>${c.meetingLink?`<a href="${c.meetingLink}" target="_blank" class="ci-link ${PLAT_CLASS[c.platform]||''}">${c.platform==='Google Meet'?'Meet':'Join'}</a>`:'<span style="color:var(--text3);font-size:.8rem">In-Person</span>'}</td>
+    <td>${c.meetingLink
+      ? `<a href="${c.meetingLink}" target="_blank" class="ci-link ${PLAT_CLASS[c.platform]||''}" style="font-size:.76rem">${c.platform==='Google Meet'?'🟢 Meet':c.platform==='Zoom'?'🔵 Zoom':'🟣 Teams'}</a>`
+      : '<span style="color:var(--text3);font-size:.8rem">📍 In-Person</span>'}</td>
     <td style="font-weight:700;color:var(--green)">${fmtMoney(c.fee)}</td>
     <td><button class="btn btn-danger btn-sm btn-icon" onclick="askDelSch('${c.id}',event)" data-name="${c.studentName||''} · ${c.date||''}">🗑</button></td>
   </tr>`).join('');
 }
 
-/* ── Homework list ── */
 function buildTHW(){
   const el=document.getElementById('t-hw-list');
   if(!window._homeworks.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📝</div><p>No homework assigned yet.</p></div>`; return; }
   el.innerHTML=window._homeworks.map(h=>`
     <div class="hw-card">
       <div class="hw-card-head">
-        <div>
-          <div class="hw-title">${h.title||'Untitled'}</div>
-          <div class="hw-meta">${h.subject||'—'} · For: ${h.studentName||'All Students'}</div>
-        </div>
+        <div><div class="hw-title">${h.title||'Untitled'}</div>
+          <div class="hw-meta">${h.subject||'—'} · For: ${h.studentName||'All Students'}</div></div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span class="hw-due ${daysLeft(h.due)<0?'overdue':daysLeft(h.due)<=2?'soon':'ok'}">
             Due: ${h.due||'—'}${daysLeft(h.due)>0?' ('+daysLeft(h.due)+'d left)':daysLeft(h.due)===0?' (today)':' (overdue)'}
@@ -2048,14 +2157,12 @@ function buildTHW(){
     </div>`).join('');
 }
 
-/* ── Announcements list ── */
 function buildTAnn(){
   const el=document.getElementById('t-ann-list');
   if(!window._announcements.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📣</div><p>No announcements yet.</p></div>`; return; }
   el.innerHTML=window._announcements.map(a=>`
     <div class="ann-card">
-      <div class="ann-head">
-        <span style="font-size:1.2rem">📣</span>
+      <div class="ann-head"><span style="font-size:1.2rem">📣</span>
         <div style="flex:1"><div class="ann-title">${a.title||'Untitled'}</div></div>
         ${a.pinned?`<span class="ann-pin">📌 Pinned</span>`:''}
         <button class="btn btn-danger btn-sm btn-icon" onclick="askDelItem('announcements','${a.id}',event)" data-name="${a.title||''}">🗑</button>
@@ -2065,7 +2172,6 @@ function buildTAnn(){
     </div>`).join('');
 }
 
-/* ── Resources grid ── */
 function buildTRes(){
   const el=document.getElementById('t-res-grid');
   if(!window._resources.length){ el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📂</div><p>No resources added yet.</p></div>`; return; }
@@ -2082,7 +2188,6 @@ function buildTRes(){
     </div>`).join('');
 }
 
-/* ── Earnings charts & stats ── */
 function buildEarnings(){
   const c=window._schedules;
   const total=c.reduce((x,v)=>x+(Number(v.fee)||0),0);
@@ -2090,12 +2195,10 @@ function buildEarnings(){
   const mFees=c.filter(v=>{const d=new Date(v.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((x,v)=>x+(Number(v.fee)||0),0);
   const yFees=c.filter(v=>new Date(v.date).getFullYear()===now.getFullYear()).reduce((x,v)=>x+(Number(v.fee)||0),0);
   const avg=c.length?Math.round(total/c.length):0;
-
   document.getElementById('earn-stats').innerHTML=`
     <div class="stat-card s-green"> <div class="stat-icon2">💵</div><div class="stat-big">${fmtMoney(mFees)}</div><div class="stat-lbl">This Month</div></div>
     <div class="stat-card s-purple"><div class="stat-icon2">📆</div><div class="stat-big">${fmtMoney(yFees)}</div><div class="stat-lbl">This Year</div></div>
     <div class="stat-card s-yellow"><div class="stat-icon2">⭐</div><div class="stat-big">${fmtMoney(avg)}</div><div class="stat-lbl">Avg Per Class</div></div>`;
-
   const byM=Array(12).fill(0);
   c.forEach(v=>{ const d=new Date(v.date); if(!isNaN(d)) byM[d.getMonth()]+=Number(v.fee)||0; });
   const mx=Math.max(...byM,1);
@@ -2105,7 +2208,6 @@ function buildEarnings(){
       <div class="earn-bar" style="height:${Math.max((v/mx)*120,4)}px;background:${v?'linear-gradient(180deg,var(--accent),#a78bfa)':'var(--border)'};"></div>
       <div class="earn-lbl">${MONTHS[i]}</div>
     </div>`).join('');
-
   const byS={};
   c.forEach(v=>{ if(!byS[v.studentName]) byS[v.studentName]={t:0,n:0,color:v.studentColor,av:v.studentAvatar}; byS[v.studentName].t+=Number(v.fee)||0; byS[v.studentName].n++; });
   const sorted=Object.entries(byS).sort((a,b)=>b[1].t-a[1].t);
@@ -2117,7 +2219,6 @@ function buildEarnings(){
     </div>`).join(''):`<div class="empty"><p>No data yet.</p></div>`;
 }
 
-/* ── Performance cards ── */
 function buildPerf(){
   const el=document.getElementById('perf-cards');
   if(!window._students.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📈</div><p>No students yet.</p></div>`; return; }
@@ -2128,22 +2229,16 @@ function buildPerf(){
           <div class="avatar avatar-lg" style="background:${s.color}22;color:${s.color}">${s.avatar||'?'}</div>
           <div><div style="font-weight:700;font-size:.93rem">${s.name}</div><div style="font-size:.74rem;color:var(--text3)">${s.course||'—'}</div></div>
         </div>
-        <div>
-          <div style="font-size:.7rem;color:var(--text3);margin-bottom:5px">PROGRESS</div>
+        <div><div style="font-size:.7rem;color:var(--text3);margin-bottom:5px">PROGRESS</div>
           <div style="display:flex;align-items:center;gap:8px">
             <div class="prog-bar" style="width:110px"><div class="prog-fill" style="width:${s.progress||0}%"></div></div>
             <span style="font-weight:700;font-size:.86rem">${s.progress||0}%</span>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CLASSES</div>
-          <div style="font-weight:700;font-size:.86rem">${s.done||0} done · <span style="color:var(--pink)">${s.remaining||0} left</span></div>
-        </div>
+          </div></div>
+        <div><div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CLASSES</div>
+          <div style="font-weight:700;font-size:.86rem">${s.done||0} done · <span style="color:var(--pink)">${s.remaining||0} left</span></div></div>
         <div style="display:flex;align-items:center;gap:9px;justify-content:flex-end;flex-wrap:wrap">
-          <div style="text-align:center">
-            <div style="font-size:1.45rem;font-weight:900;color:var(--yellow)">${s.points||0}</div>
-            <div style="font-size:.68rem;color:var(--text3)">POINTS</div>
-          </div>
+          <div style="text-align:center"><div style="font-size:1.45rem;font-weight:900;color:var(--yellow)">${s.points||0}</div>
+            <div style="font-size:.68rem;color:var(--text3)">POINTS</div></div>
           <button class="btn btn-ghost btn-sm" onclick="teacherViewStudent('${s.uid}')">Profile →</button>
           <button class="btn btn-danger btn-sm" onclick="askDelStu('${s.uid}',event)" data-name="${s.name}">🗑</button>
         </div>
@@ -2151,7 +2246,6 @@ function buildPerf(){
     </div>`).join('');
 }
 
-/* Teacher opens a student's dashboard */
 function teacherViewStudent(uid){
   const s=window._students.find(x=>x.uid===uid);
   if(!s) return;
@@ -2164,20 +2258,20 @@ function teacherViewStudent(uid){
 
 
 <!-- ============================================================
-  SECTION 19 — SCHEDULE / HW / ANN / RES SAVE LOGIC
-  Create modals → save to Firestore → send emails → update UI.
+  ✦ SCHEDULE SAVE (with auto link generation + email)
 ============================================================ -->
 <script>
-
-/* ── Schedule ── */
 function openScheduleModal(){
   if(!window._students.length){ alert('No students found. Add students via "Create Account" first.'); return; }
   document.getElementById('sch-stu').innerHTML=window._students.map(s=>
     `<option value="${s.uid}" data-name="${s.name}" data-color="${s.color||'#7c6fef'}" data-avatar="${s.avatar||'?'}" data-email="${s.email||''}">${s.name}</option>`
   ).join('');
   document.getElementById('sch-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('sch-manual-toggle').checked = false;
+  document.getElementById('sch-link').style.display = 'none';
+  document.getElementById('sch-link').value = '';
   hideMsg('sch-err');
-  toggleMeetLink(document.getElementById('sch-plat').value);
+  refreshAutoLink();
   document.getElementById('sched-modal').classList.add('show');
 }
 function closeSchedModal(){ document.getElementById('sched-modal').classList.remove('show'); }
@@ -2189,10 +2283,23 @@ async function saveSchedule(){
   const time   = document.getElementById('sch-time').value;
   if(!date||!time){ showMsg('sch-err','Date and time are required.'); return; }
 
+  const platform    = document.getElementById('sch-plat').value;
+  const useManual   = document.getElementById('sch-manual-toggle').checked;
+  const manualLink  = document.getElementById('sch-link').value.trim();
+
+  /* Determine final meeting link */
+  let meetingLink = '';
+  if(platform !== 'In-Person'){
+    if(useManual && manualLink){
+      meetingLink = manualLink;
+    } else {
+      // Use the auto-generated link that was previewed
+      meetingLink = _currentAutoLink || generateMeetingLink(platform) || '';
+    }
+  }
+
   spin('Saving schedule...');
   try{
-    const platform    = document.getElementById('sch-plat').value;
-    const meetingLink = platform!=='In-Person' ? document.getElementById('sch-link').value.trim() : '';
     const newClass = {
       studentUid:    selEl.value,
       studentName:   selOpt.getAttribute('data-name'),
@@ -2211,20 +2318,24 @@ async function saveSchedule(){
     const id = await addDoc_('schedules', newClass);
     window._schedules.push({...newClass, id});
 
-    /* Email reminder */
-    if(document.getElementById('sch-notify').checked && newClass.studentEmail){
-      const student={name:newClass.studentName, email:newClass.studentEmail};
-      await sendClassReminder({...newClass, meetingLink}, student);
+    /* Send class link + details email immediately */
+    const shouldEmail = document.getElementById('sch-notify').checked;
+    const studentEmail = selOpt.getAttribute('data-email');
+    if(shouldEmail && studentEmail){
+      const student = { name: newClass.studentName, email: studentEmail };
+      await sendClassLinkEmail({...newClass, id}, student);
+    } else if(shouldEmail && !studentEmail){
+      console.info('No email on file for student — email skipped.');
     }
 
     buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings();
     closeSchedModal();
-    toast('Schedule saved!');
+    toast(`Class scheduled! ${meetingLink ? 'Meet link generated & sent.' : 'No link (In-Person).'}`);
   }catch(e){ showMsg('sch-err','❌ '+e.message); }
   unspin();
 }
 
-/* ── Homework ── */
+/* Homework */
 function openHWModal(){
   document.getElementById('hw-stu').innerHTML='<option value="all">All Students</option>'+
     window._students.map(s=>`<option value="${s.uid}" data-email="${s.email||''}">${s.name}</option>`).join('');
@@ -2233,7 +2344,6 @@ function openHWModal(){
   document.getElementById('hw-modal').classList.add('show');
 }
 function closeHWModal(){ document.getElementById('hw-modal').classList.remove('show'); }
-
 async function saveHW(){
   const title=document.getElementById('hw-title').value.trim();
   if(!title){ toast('Please enter a title.'); return; }
@@ -2241,98 +2351,68 @@ async function saveHW(){
   const stuOpt=stuSel.options[stuSel.selectedIndex];
   spin('Saving...');
   try{
-    const data={
-      title, subject:document.getElementById('hw-subj').value,
-      studentUid:stuSel.value, studentName:stuSel.value==='all'?'All Students':stuOpt.text,
-      due:document.getElementById('hw-due').value,
-      desc:document.getElementById('hw-desc').value.trim(),
-      link:document.getElementById('hw-link').value.trim(),
-      createdAt:new Date().toISOString()
-    };
+    const data={ title, subject:document.getElementById('hw-subj').value, studentUid:stuSel.value,
+      studentName:stuSel.value==='all'?'All Students':stuOpt.text,
+      due:document.getElementById('hw-due').value, desc:document.getElementById('hw-desc').value.trim(),
+      link:document.getElementById('hw-link').value.trim(), createdAt:new Date().toISOString() };
     const id=await addDoc_('homeworks',data);
     window._homeworks.push({...data,id});
-
-    /* Send email notification */
     if(document.getElementById('hw-notify').checked){
-      const subject = `📝 New Homework: ${title}`;
-      const body    = `Hi [Student],\n\nYour teacher has assigned new homework:\n\nTitle: ${title}\nSubject: ${data.subject}\nDue: ${data.due}\n\n${data.desc?'Details: '+data.desc+'\n':''}${data.link?'Resource: '+data.link+'\n':''}\nGood luck!\n— Mathmade Easy`;
+      const subject=`📝 New Homework: ${title}`;
       if(stuSel.value==='all'){
-        await sendEmailToAll(subject, s=>`Hi ${s.name},\n\nYour teacher has assigned new homework:\n\nTitle: ${title}\nSubject: ${data.subject}\nDue: ${data.due}\n\n${data.desc?'Details: '+data.desc+'\n':''}${data.link?'Resource: '+data.link+'\n':''}\nGood luck!\n— Mathmade Easy`);
+        await sendEmailToAll(subject, s=>`Hi ${s.name},\n\nNew homework assigned:\nTitle: ${title}\nSubject: ${data.subject}\nDue: ${data.due}\n${data.desc?'Details: '+data.desc+'\n':''}${data.link?'Resource: '+data.link+'\n':''}\nGood luck!\n— Mathmade Easy`);
       } else {
         const sEmail=stuOpt.getAttribute('data-email');
-        if(sEmail) await sendEmail(sEmail, stuOpt.text, subject, body.replace('[Student]', stuOpt.text));
+        if(sEmail) await sendEmail(sEmail, stuOpt.text, subject,
+          `Hi ${stuOpt.text},\n\nNew homework assigned:\nTitle: ${title}\nSubject: ${data.subject}\nDue: ${data.due}\n${data.desc?'Details: '+data.desc+'\n':''}${data.link?'Resource: '+data.link+'\n':''}\nGood luck!\n— Mathmade Easy`);
       }
     }
-
     buildTHW(); closeHWModal(); toast('Homework assigned!');
   }catch(e){ toast('Error: '+e.message); }
   unspin();
 }
 
-/* ── Announcement ── */
+/* Announcement */
 function openAnnModal(){
   ['ann-title','ann-body'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('ann-pin').value='no';
   document.getElementById('ann-modal').classList.add('show');
 }
 function closeAnnModal(){ document.getElementById('ann-modal').classList.remove('show'); }
-
 async function saveAnn(){
   const title=document.getElementById('ann-title').value.trim();
   if(!title){ toast('Please enter a title.'); return; }
   spin('Posting...');
   try{
-    const data={
-      title, body:document.getElementById('ann-body').value.trim(),
-      pinned:document.getElementById('ann-pin').value==='yes',
-      createdAt:new Date().toISOString()
-    };
+    const data={ title, body:document.getElementById('ann-body').value.trim(), pinned:document.getElementById('ann-pin').value==='yes', createdAt:new Date().toISOString() };
     const id=await addDoc_('announcements',data);
     window._announcements.unshift({...data,id});
-
-    /* Email all students */
     if(document.getElementById('ann-notify').checked){
-      await sendEmailToAll(
-        '📣 New Announcement: '+title,
-        s=>`Hi ${s.name},\n\nYour teacher posted an announcement:\n\n"${title}"\n\n${data.body}\n\n— Mathmade Easy`
-      );
+      await sendEmailToAll('📣 New Announcement: '+title, s=>`Hi ${s.name},\n\nAnnouncement:\n\n"${title}"\n\n${data.body}\n\n— Mathmade Easy`);
     }
-
     buildTAnn(); closeAnnModal(); toast('Announcement posted!');
   }catch(e){ toast('Error: '+e.message); }
   unspin();
 }
 
-/* ── Resource ── */
+/* Resource */
 function openResModal(){
   ['res-title','res-url','res-desc'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('res-modal').classList.add('show');
 }
 function closeResModal(){ document.getElementById('res-modal').classList.remove('show'); }
-
 async function saveRes(){
   const title=document.getElementById('res-title').value.trim();
   if(!title){ toast('Please enter a title.'); return; }
   spin('Saving...');
   try{
-    const data={
-      title, type:document.getElementById('res-type').value,
-      subject:document.getElementById('res-subj').value,
-      url:document.getElementById('res-url').value.trim(),
-      desc:document.getElementById('res-desc').value.trim(),
-      createdAt:new Date().toISOString()
-    };
+    const data={ title, type:document.getElementById('res-type').value, subject:document.getElementById('res-subj').value,
+      url:document.getElementById('res-url').value.trim(), desc:document.getElementById('res-desc').value.trim(), createdAt:new Date().toISOString() };
     const id=await addDoc_('resources',data);
     window._resources.push({...data,id});
-
-    /* Email all students */
     if(document.getElementById('res-notify').checked){
-      await sendEmailToAll(
-        '📂 New Resource: '+title,
-        s=>`Hi ${s.name},\n\nYour teacher shared a new resource:\n\nTitle: ${title}\nType: ${data.type.toUpperCase()}\nSubject: ${data.subject}\n${data.desc?'About: '+data.desc+'\n':''}${data.url?'Link: '+data.url+'\n':''}\n— Mathmade Easy`
-      );
+      await sendEmailToAll('📂 New Resource: '+title, s=>`Hi ${s.name},\n\nNew resource shared:\nTitle: ${title}\nType: ${data.type.toUpperCase()}\n${data.desc?'About: '+data.desc+'\n':''}${data.url?'Link: '+data.url+'\n':''}\n— Mathmade Easy`);
     }
-
     buildTRes(); closeResModal(); toast('Resource added!');
   }catch(e){ toast('Error: '+e.message); }
   unspin();
@@ -2341,11 +2421,9 @@ async function saveRes(){
 
 
 <!-- ============================================================
-  SECTION 20 — DELETE HANDLERS
+  DELETE HANDLERS
 ============================================================ -->
 <script>
-
-/* ── Delete Student ── */
 function askDelStu(uid, evt){
   _pendingDelStuUid=uid;
   const name=(evt&&evt.target)?evt.target.getAttribute('data-name')||'this student':'this student';
@@ -2358,15 +2436,11 @@ async function confirmDelStu(){
   const uid=_pendingDelStuUid; _pendingDelStuUid=null;
   document.getElementById('del-stu-modal').classList.remove('show');
   spin('Removing...');
-  try{
-    await delDoc_('users',uid);
-    window._students=window._students.filter(s=>s.uid!==uid);
-    buildTeacherAll(); toast('Student removed.');
-  }catch(e){ alert('Error: '+e.message); }
+  try{ await delDoc_('users',uid); window._students=window._students.filter(s=>s.uid!==uid); buildTeacherAll(); toast('Student removed.'); }
+  catch(e){ alert('Error: '+e.message); }
   unspin();
 }
 
-/* ── Delete Schedule ── */
 function askDelSch(id, evt){
   _pendingDelSchId=id;
   const name=(evt&&evt.target)?evt.target.getAttribute('data-name')||'this class':'this class';
@@ -2379,15 +2453,11 @@ async function confirmDelSch(){
   const id=_pendingDelSchId; _pendingDelSchId=null;
   document.getElementById('del-sch-modal').classList.remove('show');
   spin('Deleting...');
-  try{
-    await delDoc_('schedules',id);
-    window._schedules=window._schedules.filter(c=>c.id!==id);
-    buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); toast('Class deleted.');
-  }catch(e){ alert('Error: '+e.message); }
+  try{ await delDoc_('schedules',id); window._schedules=window._schedules.filter(c=>c.id!==id); buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); toast('Class deleted.'); }
+  catch(e){ alert('Error: '+e.message); }
   unspin();
 }
 
-/* ── Delete Homework / Announcement / Resource ── */
 function askDelItem(col, id, evt){
   _pendingDelItemId=id; _pendingDelItemCol=col;
   const name=(evt&&evt.target)?evt.target.getAttribute('data-name')||'this item':'this item';
@@ -2416,37 +2486,31 @@ async function confirmDelItem(){
 
 
 <!-- ============================================================
-  SECTION 21 — STUDENT DASHBOARD INIT & NAVIGATION
+  STUDENT DASHBOARD INIT & NAVIGATION
 ============================================================ -->
 <script>
-
 const S_TITLES = {
   home:'Home', classes:'My Classes', progress:'My Progress', homework:'Homework',
   badges:'Badges', leaderboard:'Leaderboard', resources:'Resources',
   announcements:'Announcements', profile:'Profile'
 };
 
-/* Student login entry point */
 async function initStudent(){
   spin('Loading your dashboard...');
   const s=window._student;
   await Promise.all([fetchStudents(), fetchSchedules(), fetchHomeworks(), fetchAnnouncements(), fetchResources()]);
   initStudentUI(s);
   setupRealTimeListeners();
+  startPreclassChecker();
+  maybeShowNotifBanner();
   routeTo('student');
 }
 
-/* Populate every element of the student UI */
 function initStudentUI(s){
   if(!s) return;
   const av=s.avatar||'?', color=s.color||'#7c6fef';
-
-  /* Avatars */
   ['s-av','s-av2','s-av3'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.textContent=av; el.style.background=color+'22'; el.style.color=color; } });
-  /* Drawer avatar */
   const avD=document.getElementById('s-av-d'); if(avD){ avD.textContent=av; avD.style.background=color+'22'; avD.style.color=color; }
-
-  /* Names */
   document.getElementById('s-name').textContent    = s.name||'Student';
   document.getElementById('s-course').textContent  = s.course||'—';
   document.getElementById('s-pts').textContent      = (s.points||0)+' Points';
@@ -2455,34 +2519,18 @@ function initStudentUI(s){
   document.getElementById('s-pts-d').textContent   = (s.points||0)+' Points';
   document.getElementById('s-pf-name').textContent  = s.name||'—';
   document.getElementById('s-pf-course').textContent= s.course||'—';
-
-  /* Welcome */
   document.getElementById('s-welcome').textContent  = 'Welcome back, '+(s.name||'Student').split(' ')[0]+'!';
   document.getElementById('s-subtitle').textContent = (s.course||'—')+' · Enrolled since '+(s.joined||'—');
-
-  /* Level */
   const lvl=Math.max(1,Math.floor((s.points||0)/50));
   ['s-level','s-pf-lvl'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=lvl; });
   document.getElementById('s-pf-lvllbl').textContent=(LEVELS[lvl]||'Hawking')+' Mathematician';
-
-  /* Sync back button in drawer */
   const backMain=document.getElementById('s-back-btn');
   const backD   =document.getElementById('s-back-btn-d');
   if(backD && backMain) backD.style.display=backMain.style.display;
-
-  /* Build all panels */
-  buildSHome(s);
-  buildSClasses(s);
-  buildSProgress(s);
-  buildSHW(s);
-  buildSBadges(s);
-  buildSLeaderboard(s);
-  buildSRes();
-  buildSAnn();
-  buildSProfile(s);
+  buildSHome(s); buildSClasses(s); buildSProgress(s); buildSHW(s);
+  buildSBadges(s); buildSLeaderboard(s); buildSRes(); buildSAnn(); buildSProfile(s);
 }
 
-/* Switch student page section */
 function sNav(section, el){
   document.querySelectorAll('#page-student .dash-page').forEach(p=>p.classList.remove('active'));
   const sec=document.getElementById('sp-'+section); if(sec) sec.classList.add('active');
@@ -2497,12 +2545,9 @@ function sNav(section, el){
 
 
 <!-- ============================================================
-  SECTION 22 — STUDENT DASHBOARD BUILDERS
-  One function per student panel.
+  STUDENT DASHBOARD BUILDERS
 ============================================================ -->
 <script>
-
-/* ── Home panel ── */
 function buildSHome(s){
   const lvl=Math.max(1,Math.floor((s.points||0)/50));
   document.getElementById('s-level').textContent=lvl;
@@ -2513,12 +2558,9 @@ function buildSHome(s){
     <div class="stat-card s-yellow"><div class="stat-icon2">📊</div><div class="stat-big">${s.progress||0}%</div><div class="stat-lbl">Progress</div></div>`;
   buildSkillBars(s, 's-skills', 4);
   buildPtsLog(s, 's-pts-log', 4);
-  /* Make home grid stack on mobile */
-  const hg=document.querySelector('.home-grid');
-  if(hg) hg.style.gridTemplateColumns='';
+  const hg=document.querySelector('.home-grid'); if(hg) hg.style.gridTemplateColumns='';
 }
 
-/* ── Skill bars (reused in Home & Progress) ── */
 function buildSkillBars(s, elId, maxItems){
   const el=document.getElementById(elId);
   const skills=s.skills||{Algebra:0,Geometry:0,Calculus:0,Trigonometry:0,Statistics:0};
@@ -2531,7 +2573,6 @@ function buildSkillBars(s, elId, maxItems){
     </div>`).join('');
 }
 
-/* ── Points log (reused in Home & Progress) ── */
 function buildPtsLog(s, elId, maxItems){
   const el=document.getElementById(elId);
   const log=(s.pointsLog||[]).slice().reverse();
@@ -2544,7 +2585,6 @@ function buildPtsLog(s, elId, maxItems){
     </div>`).join(''):`<div class="empty" style="padding:20px"><p>No points recorded yet.</p></div>`;
 }
 
-/* ── My Classes — shows meeting link button ── */
 function buildSClasses(s){
   const el=document.getElementById('s-class-list');
   const mine=window._schedules.filter(c=>c.studentUid===s.uid).sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -2569,7 +2609,6 @@ function buildSClasses(s){
   }).join('');
 }
 
-/* ── Progress panel ── */
 function buildSProgress(s){
   const lvl=Math.max(1,Math.floor((s.points||0)/50));
   document.getElementById('s-prog-stats').innerHTML=`
@@ -2581,7 +2620,6 @@ function buildSProgress(s){
   buildPtsLog(s, 's-pts-log2');
 }
 
-/* ── Homework panel ── */
 function buildSHW(s){
   const el=document.getElementById('s-hw-list');
   const mine=window._homeworks.filter(h=>h.studentUid==='all'||h.studentUid===s.uid);
@@ -2589,8 +2627,7 @@ function buildSHW(s){
   el.innerHTML=mine.map(h=>`
     <div class="hw-card">
       <div class="hw-card-head">
-        <div>
-          <div class="hw-title">${h.title||'Untitled'}</div>
+        <div><div class="hw-title">${h.title||'Untitled'}</div>
           <div class="hw-meta">${h.subject||'—'} · Due: <span class="hw-due ${daysLeft(h.due)<0?'overdue':daysLeft(h.due)<=2?'soon':'ok'}">${h.due||'—'}${daysLeft(h.due)>0?' ('+daysLeft(h.due)+'d)':daysLeft(h.due)===0?' (today)':' (overdue)'}</span></div>
         </div>
       </div>
@@ -2599,7 +2636,6 @@ function buildSHW(s){
     </div>`).join('');
 }
 
-/* ── Badges panel ── */
 function buildSBadges(s){
   const el=document.getElementById('s-badge-grid');
   const earned=new Set(s.badges||[]);
@@ -2620,7 +2656,6 @@ function buildSBadges(s){
     </div>`).join('');
 }
 
-/* ── Leaderboard panel ── */
 function buildSLeaderboard(s){
   const el=document.getElementById('s-lb-list');
   const sorted=[...window._students].sort((a,b)=>(b.points||0)-(a.points||0));
@@ -2637,10 +2672,9 @@ function buildSLeaderboard(s){
   }).join('');
 }
 
-/* ── Resources panel ── */
 function buildSRes(){
   const el=document.getElementById('s-res-grid');
-  if(!window._resources.length){ el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📂</div><p>No resources shared by your teacher yet.</p></div>`; return; }
+  if(!window._resources.length){ el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📂</div><p>No resources shared yet.</p></div>`; return; }
   const icMap={pdf:'📄',video:'🎬',link:'🔗',note:'📝'};
   el.innerHTML=window._resources.map(r=>`
     <div class="res-card" onclick="${r.url?`window.open('${r.url.replace(/'/g,'%27')}','_blank')`:''}">
@@ -2651,14 +2685,12 @@ function buildSRes(){
     </div>`).join('');
 }
 
-/* ── Announcements panel ── */
 function buildSAnn(){
   const el=document.getElementById('s-ann-list');
   if(!window._announcements.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📣</div><p>No announcements yet.</p></div>`; return; }
   el.innerHTML=window._announcements.map(a=>`
     <div class="ann-card">
-      <div class="ann-head">
-        <span style="font-size:1.2rem">📣</span>
+      <div class="ann-head"><span style="font-size:1.2rem">📣</span>
         <div class="ann-title">${a.title||''}</div>
         ${a.pinned?`<span class="ann-pin">📌 Pinned</span>`:''}
       </div>
@@ -2667,38 +2699,24 @@ function buildSAnn(){
     </div>`).join('');
 }
 
-/* ── Profile panel ── */
 function buildSProfile(s){
   document.getElementById('s-info-grid').innerHTML=`
-    <div class="info-box"><div class="ib-lbl">Full Name</div>          <div class="ib-val">${s.name||'—'}</div></div>
-    <div class="info-box"><div class="ib-lbl">Age</div>                <div class="ib-val">${s.age||'—'} years</div></div>
-    <div class="info-box"><div class="ib-lbl">Grade</div>              <div class="ib-val">${s.grade||'—'} Standard</div></div>
-    <div class="info-box"><div class="ib-lbl">Enrolled Since</div>     <div class="ib-val">${s.joined||'—'}</div></div>
-    <div class="info-box"><div class="ib-lbl">Parent / Guardian</div>  <div class="ib-val">${s.parent||'—'}</div></div>
-    <div class="info-box"><div class="ib-lbl">Contact</div>            <div class="ib-val">${s.phone||'—'}</div></div>
-    <div class="info-box"><div class="ib-lbl">Email</div>              <div class="ib-val">${s.email||'—'}</div></div>
-    <div class="info-box"><div class="ib-lbl">Fee Per Class</div>      <div class="ib-val">₹${s.fee||800}</div></div>`;
+    <div class="info-box"><div class="ib-lbl">Full Name</div><div class="ib-val">${s.name||'—'}</div></div>
+    <div class="info-box"><div class="ib-lbl">Age</div><div class="ib-val">${s.age||'—'} years</div></div>
+    <div class="info-box"><div class="ib-lbl">Grade</div><div class="ib-val">${s.grade||'—'} Standard</div></div>
+    <div class="info-box"><div class="ib-lbl">Enrolled Since</div><div class="ib-val">${s.joined||'—'}</div></div>
+    <div class="info-box"><div class="ib-lbl">Parent / Guardian</div><div class="ib-val">${s.parent||'—'}</div></div>
+    <div class="info-box"><div class="ib-lbl">Contact</div><div class="ib-val">${s.phone||'—'}</div></div>
+    <div class="info-box"><div class="ib-lbl">Email</div><div class="ib-val">${s.email||'—'}</div></div>
+    <div class="info-box"><div class="ib-lbl">Fee Per Class</div><div class="ib-val">₹${s.fee||800}</div></div>`;
 }
 </script>
 
 
 <!-- ============================================================
-  SECTION 23 — FORGOT PASSWORD & TEACHER RESET LOGIC
-
-  HOW IT WORKS:
-  1. Student picks "Student" role → "Forgot password?" link appears
-  2. Student enters email → request saved to Firestore (password_resets)
-  3. Teacher sees red badge on "Password Resets" nav item
-  4. Teacher opens the reset → types new password → approves
-  5. New plain-text password saved to users/{uid}.tempPassword
-  6. Student reopens "Forgot Password" → password shown → logs in
-
-  WHY plain-text? No backend available. For production, use
-  Firebase Admin SDK (Cloud Functions) for real password resets.
+  FORGOT PASSWORD & TEACHER RESET
 ============================================================ -->
 <script>
-
-/* ── Student: Open forgot password modal ── */
 function openForgotPw(){
   document.getElementById('fp-email').value = document.getElementById('l-email').value||'';
   hideMsg('fp-ok'); hideMsg('fp-err');
@@ -2708,7 +2726,6 @@ function openForgotPw(){
 }
 function closeForgotPw(){ document.getElementById('fp-modal').classList.remove('show'); }
 
-/* ── Student: Submit reset request ── */
 async function submitForgotPw(){
   const email=document.getElementById('fp-email').value.trim().toLowerCase();
   if(!email){ showMsg('fp-err','Please enter your email.'); return; }
@@ -2718,63 +2735,41 @@ async function submitForgotPw(){
     const {db,collection,getDocs,query,where,addDoc}=window._FB;
     const snap=await getDocs(query(collection(db,'users'),where('email','==',email),where('role','==','student')));
     if(snap.empty){ unspin(); showMsg('fp-err','No student account found with that email.'); return; }
-
     const stuDoc=snap.docs[0], stuData=stuDoc.data();
-
-    /* Check if teacher already set a temp password */
     if(stuData.tempPassword){
       unspin();
       document.getElementById('fp-approved-box').style.display='block';
       document.getElementById('fp-new-pass-display').textContent=stuData.tempPassword;
       document.getElementById('fp-submit-btn').style.display='none';
-      showMsg('fp-ok','✅ Your teacher approved your reset. Use the password shown below to log in.','ok');
+      showMsg('fp-ok','✅ Your teacher approved your reset. Use the password shown below.','ok');
       return;
     }
-
-    /* Check if request already pending */
     const existing=await getDocs(query(collection(db,'password_resets'),where('studentUid','==',stuDoc.id),where('status','==','pending')));
-    if(!existing.empty){ unspin(); showMsg('fp-ok','Your request is already pending. Please wait for your teacher to approve it.','ok'); return; }
-
-    /* Save request */
-    await addDoc(collection(db,'password_resets'),{
-      studentUid:stuDoc.id, studentName:stuData.name||email,
-      studentEmail:email, status:'pending', createdAt:new Date().toISOString()
-    });
-
-    unspin();
-    showMsg('fp-ok','✅ Request sent! Your teacher will review it and set a new password. Check back here.','ok');
+    if(!existing.empty){ unspin(); showMsg('fp-ok','Your request is already pending. Please wait for your teacher.','ok'); return; }
+    await addDoc(collection(db,'password_resets'),{ studentUid:stuDoc.id, studentName:stuData.name||email, studentEmail:email, status:'pending', createdAt:new Date().toISOString() });
+    unspin(); showMsg('fp-ok','✅ Request sent! Your teacher will review and set a new password.','ok');
     document.getElementById('fp-submit-btn').style.display='none';
   }catch(e){ unspin(); showMsg('fp-err','Error: '+e.message); }
 }
 
-/* ── Teacher: Fetch reset requests & update badge ── */
 async function fetchAndBuildResets(){
   const {db,collection,getDocs,query,where}=window._FB;
   const snap=await getDocs(query(collection(db,'password_resets'),where('status','==','pending')));
   const resets=snap.docs.map(d=>({...d.data(),id:d.id}));
-
-  /* Update all badge locations */
   ['reset-badge','reset-badge-d','reset-badge-m'].forEach(id=>{
     const el=document.getElementById(id); if(!el) return;
-    el.textContent=resets.length;
-    el.style.display=resets.length>0?'inline-block':'none';
+    el.textContent=resets.length; el.style.display=resets.length>0?'inline-block':'none';
   });
-
   const el=document.getElementById('t-reset-list'); if(!el) return;
-  if(!resets.length){
-    el.innerHTML='<div class="empty"><div class="empty-icon">🔑</div><p>No pending password reset requests.</p></div>';
-    return;
-  }
+  if(!resets.length){ el.innerHTML='<div class="empty"><div class="empty-icon">🔑</div><p>No pending password reset requests.</p></div>'; return; }
   el.innerHTML=resets.map(r=>`
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:12px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:12px">
           <div style="font-size:1.8rem">🔑</div>
-          <div>
-            <div style="font-weight:700;font-size:.92rem">${r.studentName||'Unknown'}</div>
+          <div><div style="font-weight:700;font-size:.92rem">${r.studentName||'Unknown'}</div>
             <div style="font-size:.75rem;color:var(--text3);margin-top:2px">${r.studentEmail||''}</div>
-            <div style="font-size:.72rem;color:var(--text3);margin-top:2px">Requested: ${r.createdAt?new Date(r.createdAt).toLocaleString():''}</div>
-          </div>
+            <div style="font-size:.72rem;color:var(--text3);margin-top:2px">Requested: ${r.createdAt?new Date(r.createdAt).toLocaleString():''}</div></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-green btn-sm" onclick="openResetApprove('${r.id}','${r.studentUid}','${r.studentName}','${r.studentEmail}')">✓ Set Password</button>
@@ -2784,7 +2779,6 @@ async function fetchAndBuildResets(){
     </div>`).join('');
 }
 
-/* ── Teacher: Open approve modal ── */
 function openResetApprove(resetId, stuUid, stuName, stuEmail){
   _currentResetId=resetId; _currentResetUid=stuUid;
   document.getElementById('reset-approve-msg').textContent=`Set a new password for "${stuName}" (${stuEmail})`;
@@ -2800,36 +2794,20 @@ async function approveReset(){
   spin('Approving...');
   try{
     const {db,doc,updateDoc,deleteDoc}=window._FB;
-    /* Save temp password to student's Firestore profile */
     await updateDoc(doc(db,'users',_currentResetUid),{ tempPassword:newPass, tempPasswordSetAt:new Date().toISOString() });
-    /* Delete the request */
     await deleteDoc(doc(db,'password_resets',_currentResetId));
     _currentResetId=null; _currentResetUid=null;
-    unspin(); closeResetApprove();
-    await fetchAndBuildResets();
+    unspin(); closeResetApprove(); await fetchAndBuildResets();
     toast('Password set! Student can now check "Forgot Password" to see it.');
   }catch(e){ unspin(); showMsg('reset-err','❌ Error: '+e.message); }
 }
-
-async function declineReset(){
-  if(!_currentResetId) return;
-  await declineResetById(_currentResetId);
-  closeResetApprove();
-}
-
-async function declineResetById(id){
-  spin('Declining...');
-  try{
-    await delDoc_('password_resets',id);
-    unspin(); await fetchAndBuildResets(); toast('Request declined.');
-  }catch(e){ unspin(); alert('Error: '+e.message); }
-}
+async function declineReset(){ if(!_currentResetId) return; await declineResetById(_currentResetId); closeResetApprove(); }
+async function declineResetById(id){ spin('Declining...'); try{ await delDoc_('password_resets',id); unspin(); await fetchAndBuildResets(); toast('Request declined.'); }catch(e){ unspin(); alert('Error: '+e.message); } }
 </script>
 
 
 <!-- ============================================================
-  SECTION 24 — MOBILE DRAWER LOGIC
-  Open/close teacher & student side drawers.
+  MOBILE DRAWER & MODAL CLOSE LOGIC
 ============================================================ -->
 <script>
 function openTDrawer()  { document.getElementById('t-drawer').classList.add('open');    document.getElementById('t-drawer-overlay').classList.add('open');    document.body.style.overflow='hidden'; }
@@ -2837,16 +2815,8 @@ function closeTDrawer() { document.getElementById('t-drawer').classList.remove('
 function openSDrawer()  { document.getElementById('s-drawer').classList.add('open');    document.getElementById('s-drawer-overlay').classList.add('open');    document.body.style.overflow='hidden'; }
 function closeSDrawer() { document.getElementById('s-drawer').classList.remove('open'); document.getElementById('s-drawer-overlay').classList.remove('open'); document.body.style.overflow=''; }
 
-/* Close drawers on ESC key */
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeTDrawer(); closeSDrawer(); } });
-</script>
 
-
-<!-- ============================================================
-  SECTION 25 — MODAL OUTSIDE-CLICK CLOSE
-  Clicking the dark backdrop closes any open modal.
-============================================================ -->
-<script>
 document.addEventListener('DOMContentLoaded', ()=>{
   [
     'sched-modal','hw-modal','ann-modal','res-modal','reg-modal',
@@ -2857,7 +2827,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(el) el.addEventListener('click', function(e){
       if(e.target===this){
         this.classList.remove('show');
-        /* Reset pending delete state */
         _pendingDelStuUid=null; _pendingDelSchId=null;
         _pendingDelItemId=null; _pendingDelItemCol=null;
       }
