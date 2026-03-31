@@ -1460,41 +1460,28 @@ function hideMsg(id){ const el=document.getElementById(id); if(el) el.style.disp
 <script>
 
 /* Generates meeting links */
+
 function generateMeetingLink(platform){
 
   if(platform === 'In-Person') return null;
 
-  const randCode = (len, chars) => {
-    let s='';
-    for(let i=0;i<len;i++){
-      s += chars[Math.floor(Math.random()*chars.length)];
-    }
-    return s;
-  };
-
-  /* Google Meet link */
+  /* Google Meet – always valid */
   if(platform === 'Google Meet'){
-    const letters = 'abcdefghijkmnopqrstuvwxyz';
-    const code = randCode(3,letters) + '-' + randCode(4,letters) + '-' + randCode(3,letters);
-    return 'https://meet.google.com/' + code;
+    return "https://meet.google.com/new";
   }
 
-  /* Zoom link */
+  /* Zoom – always valid (opens instant meeting page) */
   if(platform === 'Zoom'){
-    const meetId = randCode(10,'0123456789');
-    const passcode = randCode(6,'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789');
-    return `https://zoom.us/j/${meetId}?pwd=${passcode}`;
+    return "https://zoom.us/start/videomeeting";
   }
 
-  /* Microsoft Teams link */
+  /* Microsoft Teams – always valid */
   if(platform === 'Microsoft Teams'){
-    const threadId = randCode(32,'abcdefghijklmnopqrstuvwxyz0123456789');
-    return `https://teams.microsoft.com/l/meetup-join/meeting_${threadId}`;
+    return "https://teams.microsoft.com/_#/l/meeting/new";
   }
 
   return null;
 }
-
 
 /* Stores current link */
 let _currentAutoLink = null;
