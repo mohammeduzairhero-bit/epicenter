@@ -1455,46 +1455,39 @@ function hideMsg(id){ const el=document.getElementById(id); if(el) el.style.disp
 
 
 <!-- ============================================================
-  ✦ AUTO MEET LINK GENERATION — NEW
-  Generates Google Meet / Zoom / Teams deep-links automatically
-  when teacher creates a schedule.
+  ✦ AUTO MEET LINK GENERATION — WORKING VERSION
 ============================================================ -->
 <script>
 
-/**
- * generateMeetingLink(platform)
- * Creates a platform-appropriate join link automatically.
- *
- * Google Meet  → https://meet.google.com/xxx-xxxx-xxx  (real deep-link)
- * Zoom         → https://zoom.us/j/XXXXXXXXXX  (join by ID)
- * Teams        → https://teams.microsoft.com/l/meetup-join/...
- * In-Person    → null
- */
+/* Generates meeting links */
 function generateMeetingLink(platform){
+
   if(platform === 'In-Person') return null;
 
   const randCode = (len, chars) => {
     let s='';
-    for(let i=0;i<len;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+    for(let i=0;i<len;i++){
+      s += chars[Math.floor(Math.random()*chars.length)];
+    }
     return s;
   };
 
+  /* Google Meet link */
   if(platform === 'Google Meet'){
-    /* Google Meet format: abc-defg-hij */
     const letters = 'abcdefghijkmnopqrstuvwxyz';
-    const code = randCode(3,letters)+'-'+randCode(4,letters)+'-'+randCode(3,letters);
-    return 'https://meet.google.com/'+code;
+    const code = randCode(3,letters) + '-' + randCode(4,letters) + '-' + randCode(3,letters);
+    return 'https://meet.google.com/' + code;
   }
 
+  /* Zoom link */
   if(platform === 'Zoom'){
-    /* Zoom meeting IDs are 10-11 digits */
     const meetId = randCode(10,'0123456789');
     const passcode = randCode(6,'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789');
     return `https://zoom.us/j/${meetId}?pwd=${passcode}`;
   }
 
+  /* Microsoft Teams link */
   if(platform === 'Microsoft Teams'){
-    /* Teams deep-link */
     const threadId = randCode(32,'abcdefghijklmnopqrstuvwxyz0123456789');
     return `https://teams.microsoft.com/l/meetup-join/meeting_${threadId}`;
   }
@@ -1502,17 +1495,22 @@ function generateMeetingLink(platform){
   return null;
 }
 
-/* Currently previewed link in the modal */
+
+/* Stores current link */
 let _currentAutoLink = null;
 
-/* Called when platform select changes */
-function onPlatformChange(platform){
+
+/* Runs when platform changes */
+function onPlatformChange(){
+
+  const platform   = document.getElementById('sch-plat').value;
   const autoWrap   = document.getElementById('auto-link-wrap');
   const autoDisplay= document.getElementById('auto-link-display');
   const urlEl      = document.getElementById('auto-link-url');
-  const labelEl    = autoDisplay ? autoDisplay.querySelector('.mld-label') : null;
   const manualCb   = document.getElementById('sch-manual-toggle');
   const manualInput= document.getElementById('sch-link');
+
+  if(!autoWrap || !autoDisplay || !urlEl) return;
 
   if(platform === 'In-Person'){
     autoWrap.style.display = 'none';
@@ -1523,40 +1521,52 @@ function onPlatformChange(platform){
   autoWrap.style.display = 'block';
   autoDisplay.classList.add('show');
 
-  // Reset manual override
+  /* reset manual input */
   if(manualCb) manualCb.checked = false;
   if(manualInput) manualInput.style.display = 'none';
 
+  /* generate new link every time */
   _currentAutoLink = generateMeetingLink(platform);
-  if(urlEl) urlEl.textContent = _currentAutoLink || 'N/A';
 
-  const icons = {'Google Meet':'🟢','Zoom':'🔵','Microsoft Teams':'🟣'};
-  if(labelEl) labelEl.textContent = `${icons[platform]||'🔗'} ${platform} Link — Generated automatically`;
+  urlEl.textContent = _currentAutoLink || 'N/A';
+
+  const icons = {
+    'Google Meet':'🟢',
+    'Zoom':'🔵',
+    'Microsoft Teams':'🟣'
+  };
+
+  const labelEl = autoDisplay.querySelector('.mld-label');
+  if(labelEl){
+    labelEl.textContent = `${icons[platform] || '🔗'} ${platform} Link — Generated automatically`;
+  }
 }
 
-/* Toggle to manual link entry */
+
+/* Manual link toggle */
 function toggleManualLink(useManual){
+
   const autoDisplay = document.getElementById('auto-link-display');
   const manualInput = document.getElementById('sch-link');
+
   if(useManual){
     autoDisplay.classList.remove('show');
     manualInput.style.display = 'block';
     manualInput.focus();
-  } else {
+  }else{
     autoDisplay.classList.add('show');
     manualInput.style.display = 'none';
-    // Re-generate
-    onPlatformChange(document.getElementById('sch-plat').value);
+    onPlatformChange();
   }
 }
 
-/* Refresh auto-link every time the modal opens */
-function refreshAutoLink(){
-  const platform = document.getElementById('sch-plat').value;
-  onPlatformChange(platform);
-}
-</script>
 
+/* Refresh when modal opens */
+function refreshAutoLink(){
+  onPlatformChange();
+}
+
+</script>
 
 <!-- ============================================================
   ✦ PRE-CLASS ALERT SYSTEM — NEW
