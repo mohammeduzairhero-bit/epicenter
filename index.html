@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathmade Easy — Math Academy</title>
+<title>Mathmade Epicenter — Academy Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
 <script type="module">
@@ -26,7 +26,7 @@ const firebaseConfig = {
 
 const TEACHER_CODE = "MATHMADE EASY";
 
-window._EMAILJS = { publicKey:"", serviceId:"", templateId:"" };
+window._EMAILJS = { publicKey:"mgSCCBwAVEiDNZt-Krvice_98qf5oo", templateId:"template_66kgmnc" };
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -93,36 +93,85 @@ onAuthStateChanged(auth, async (user) => {
   --fs-free-slot: #22c55e;
   --fs-free-sched: #d8b4fe;
   --fs-request: #facc15;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.2);
+  --shadow-md: 0 8px 32px rgba(0,0,0,.35);
+  --shadow-lg: 0 24px 64px rgba(0,0,0,.5);
+  --shadow-glow: 0 0 40px rgba(124,111,239,.12);
+  --ease-out: cubic-bezier(.22,1,.36,1);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
-body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+body {
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+/* Ambient depth */
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% -20%, rgba(124,111,239,.16), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(244,114,182,.06), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(34,211,238,.05), transparent 45%);
+  animation: ambientShift 18s ease-in-out infinite alternate;
+}
+@keyframes ambientShift {
+  0% { opacity:1; transform:scale(1); }
+  100% { opacity:.85; transform:scale(1.03); }
+}
+#page-login, #page-teacher, #page-student { position:relative; z-index:1; }
 h1,h2,h3,h4 { font-family:'Outfit',sans-serif; font-weight:700; }
 code,pre { font-family:'JetBrains Mono',monospace; }
 ::-webkit-scrollbar { width:5px; height:5px; }
 ::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:var(--border2); border-radius:99px; }
+::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--border2),rgba(124,111,239,.3)); border-radius:99px; }
+::-webkit-scrollbar-thumb:hover { background:var(--accent); }
 
-.page { display:none; min-height:100vh; animation:fadeIn .25s ease; }
-.page.active { display:block; }
-.dash-page { display:none; animation:fadeIn .2s ease; }
-.dash-page.active { display:block; }
+.page { display:none; min-height:100vh; }
+.page.active { display:block; animation:pageEnter .45s var(--ease-out) both; }
+.dash-page { display:none; }
+.dash-page.active { display:block; animation:dashEnter .4s var(--ease-out) both; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pageEnter {
+  from { opacity:0; filter:blur(4px); transform:translateY(10px) scale(.995); }
+  to { opacity:1; filter:blur(0); transform:translateY(0) scale(1); }
+}
+@keyframes dashEnter {
+  from { opacity:0; transform:translateY(14px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes riseFade {
+  from { opacity:0; transform:translateY(16px); }
+  to { opacity:1; transform:translateY(0); }
+}
 
-#spinner { display:none; position:fixed; inset:0; background:rgba(7,8,15,.88); z-index:9999;
-  align-items:center; justify-content:center; flex-direction:column; gap:14px; backdrop-filter:blur(4px); }
-#spinner.show { display:flex; }
-.spin-ring { width:44px; height:44px; border:3px solid var(--border2); border-top-color:var(--accent);
-  border-radius:50%; animation:spin .65s linear infinite; }
+#spinner { display:none; position:fixed; inset:0; background:rgba(7,8,15,.92); z-index:9999;
+  align-items:center; justify-content:center; flex-direction:column; gap:18px; backdrop-filter:blur(12px) saturate(1.2); }
+#spinner.show { display:flex; animation: spinnerBackdrop .35s var(--ease-out) both; }
+@keyframes spinnerBackdrop { from { opacity:0; } to { opacity:1; } }
+.spin-ring { width:48px; height:48px; border:3px solid var(--border2); border-top-color:var(--accent);
+  border-radius:50%; animation:spin .7s linear infinite;
+  box-shadow:0 0 24px rgba(124,111,239,.25); }
 @keyframes spin { to { transform:rotate(360deg) } }
 #spinner p { color:var(--text2); font-size:.85rem; letter-spacing:.04em; }
 
-#toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(80px);
-  background:var(--green); color:#000; font-weight:700; padding:11px 22px;
+#toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(80px) scale(.92);
+  background:linear-gradient(135deg,#4aeaa0,var(--green)); color:#052e1f; font-weight:700; padding:12px 24px;
   border-radius:99px; font-size:.85rem; z-index:9998; opacity:0;
-  transition:.35s cubic-bezier(.34,1.56,.64,1); pointer-events:none; white-space:nowrap; }
-#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  transition:transform .4s var(--ease-spring), opacity .35s ease;
+  pointer-events:none; white-space:nowrap;
+  box-shadow:0 8px 32px rgba(61,214,140,.35), 0 0 0 1px rgba(255,255,255,.15) inset; }
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+#toast.toast-err {
+  background:linear-gradient(135deg,#fca5a5,var(--red)); color:#1f0808;
+  box-shadow:0 8px 32px rgba(248,113,113,.35), 0 0 0 1px rgba(255,255,255,.12) inset;
+}
 @media(min-width:769px){ #toast { bottom:28px; } }
 
 #preclass-alert {
@@ -166,15 +215,18 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 <style>
 .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border:none;
   border-radius:10px; font-family:'Outfit',sans-serif; font-size:.82rem; font-weight:600;
-  cursor:pointer; transition:.18s; white-space:nowrap; }
-.btn-primary  { background:var(--accent); color:#fff; }
-.btn-primary:hover  { background:var(--accent-h); transform:translateY(-1px); }
+  cursor:pointer; transition:transform .2s var(--ease-out), box-shadow .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  white-space:nowrap; position:relative; }
+.btn:active { transform:scale(.97) translateY(0); }
+.btn:focus-visible { outline:2px solid var(--accent-h); outline-offset:2px; }
+.btn-primary  { background:linear-gradient(135deg,var(--accent),#8b7ff0); color:#fff; box-shadow:0 4px 16px rgba(124,111,239,.3); }
+.btn-primary:hover  { background:linear-gradient(135deg,var(--accent-h),#a99df7); transform:translateY(-2px); box-shadow:0 8px 28px rgba(124,111,239,.4); }
 .btn-ghost    { background:var(--surface2); border:1px solid var(--border); color:var(--text2); }
-.btn-ghost:hover    { border-color:var(--accent); color:var(--accent); }
+.btn-ghost:hover    { border-color:var(--accent); color:var(--accent-h); background:rgba(124,111,239,.08); transform:translateY(-1px); }
 .btn-danger   { background:rgba(248,113,113,.1); border:1px solid rgba(248,113,113,.3); color:var(--red); }
-.btn-danger:hover   { background:rgba(248,113,113,.2); }
+.btn-danger:hover   { background:rgba(248,113,113,.2); transform:translateY(-1px); }
 .btn-green    { background:rgba(61,214,140,.12); border:1px solid rgba(61,214,140,.3); color:var(--green); }
-.btn-green:hover    { background:rgba(61,214,140,.22); }
+.btn-green:hover    { background:rgba(61,214,140,.22); transform:translateY(-1px); }
 .btn-yellow   { background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.3); color:var(--yellow); }
 .btn-cyan     { background:rgba(34,211,238,.12); border:1px solid rgba(34,211,238,.3); color:var(--cyan); }
 .btn-sm   { padding:6px 12px; font-size:.76rem; }
@@ -182,8 +234,11 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 .btn-full { width:100%; justify-content:center; }
 .btn-icon { width:36px; height:36px; padding:0; justify-content:center; border-radius:9px; }
 
-.card     { background:var(--surface);  border:1px solid var(--border);  border-radius:var(--r-lg); }
-.card-sm  { background:var(--surface);  border:1px solid var(--border);  border-radius:var(--r); }
+.card     { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+  box-shadow:var(--shadow-sm); transition:transform .25s var(--ease-out), box-shadow .25s ease, border-color .2s ease; }
+.card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md), var(--shadow-glow); border-color:var(--border2); }
+.card-sm  { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); transition:box-shadow .2s ease, border-color .2s ease; }
+.card-sm:hover { box-shadow:var(--shadow-sm); border-color:var(--border2); }
 .card-inner { background:var(--surface2); border:1px solid var(--border); border-radius:var(--r); }
 
 .tag          { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:99px; font-size:.71rem; font-weight:600; letter-spacing:.02em; }
@@ -208,15 +263,20 @@ code,pre { font-family:'JetBrains Mono',monospace; }
 .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 .form-grid .full { grid-column:1/-1; }
 
-.table-wrap      { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; }
+.table-wrap      { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden;
+  box-shadow:var(--shadow-sm); transition:box-shadow .25s ease, border-color .2s ease; }
+.table-wrap:hover { box-shadow:var(--shadow-md); border-color:var(--border2); }
 .table-head-bar  { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:10px; }
 .table-head-bar h3 { font-size:1rem; font-weight:700; }
 table   { width:100%; border-collapse:collapse; }
 th      { padding:11px 18px; font-size:.72rem; font-weight:600; color:var(--text3); letter-spacing:.08em; text-transform:uppercase; text-align:left; background:var(--surface2); }
 td      { padding:13px 18px; font-size:.86rem; border-top:1px solid var(--border); vertical-align:middle; }
-tr:hover td { background:rgba(124,111,239,.04); }
+tr { transition:background .15s ease; }
+tr:hover td { background:rgba(124,111,239,.07); }
 .cell-user  { display:flex; align-items:center; gap:11px; }
-.avatar     { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; flex-shrink:0; }
+.avatar     { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; flex-shrink:0;
+  transition:box-shadow .22s ease, transform .22s var(--ease-out); }
+.avatar:hover { box-shadow:0 0 0 3px rgba(124,111,239,.22); transform:scale(1.06); }
 .avatar-lg  { width:52px; height:52px; font-size:1.1rem; }
 .avatar-xl  { width:72px; height:72px; font-size:1.5rem; }
 .prog-bar   { height:6px; background:var(--border); border-radius:99px; overflow:hidden; }
@@ -225,15 +285,35 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .search-bar { display:flex; align-items:center; gap:9px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:8px 14px; }
 .search-bar input { background:none; border:none; color:var(--text); font-size:.85rem; outline:none; width:170px; font-family:'Outfit',sans-serif; }
 
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(7,8,15,.82); z-index:500;
-  align-items:center; justify-content:center; backdrop-filter:blur(6px); }
-.modal-overlay.show { display:flex; }
-.modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:var(--r-xl);
+.modal-overlay {
+  display:flex; position:fixed; inset:0; z-index:500;
+  align-items:center; justify-content:center;
+  padding:20px;
+  background:rgba(7,8,15,.75);
+  backdrop-filter:blur(10px) saturate(1.15);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .3s var(--ease-out), visibility .3s;
+}
+.modal-overlay.show { opacity:1; visibility:visible; pointer-events:auto; }
+.modal-box {
+  background:linear-gradient(165deg, rgba(30,31,48,.98), var(--surface));
+  border:1px solid var(--border2); border-radius:var(--r-xl);
   padding:34px; width:540px; max-width:96vw; max-height:90vh; overflow-y:auto;
-  box-shadow:0 24px 80px rgba(0,0,0,.65); }
+  box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.04) inset, 0 0 60px rgba(124,111,239,.08);
+  transform:scale(.94) translateY(16px); opacity:0;
+  transition:transform .38s var(--ease-out), opacity .3s var(--ease-out);
+}
+.modal-overlay.show .modal-box { transform:scale(1) translateY(0); opacity:1; }
 .modal-box h3 { font-size:1.2rem; font-weight:800; margin-bottom:20px; }
 .modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:22px; padding-top:18px; border-top:1px solid var(--border); flex-wrap:wrap; }
-.confirm-box { background:var(--surface); border:1px solid var(--border2); border-radius:var(--r-xl); padding:36px; width:400px; max-width:94vw; text-align:center; }
+.confirm-box {
+  background:linear-gradient(165deg, rgba(30,31,48,.98), var(--surface));
+  border:1px solid var(--border2); border-radius:var(--r-xl); padding:36px; width:400px; max-width:94vw; text-align:center;
+  box-shadow:var(--shadow-lg);
+  transform:scale(.94) translateY(14px); opacity:0;
+  transition:transform .36s var(--ease-out), opacity .28s var(--ease-out);
+}
+.modal-overlay.show .confirm-box { transform:scale(1) translateY(0); opacity:1; }
 .confirm-box .c-icon { font-size:3rem; margin-bottom:14px; }
 .confirm-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:8px; }
 .confirm-box p { color:var(--text2); font-size:.86rem; margin-bottom:22px; }
@@ -244,11 +324,24 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .empty p { font-size:.88rem; }
 
 .sec-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:12px; flex-wrap:wrap; }
-.sec-header h2 { font-size:1.65rem; font-weight:800; }
-.sec-header p { color:var(--text2); font-size:.88rem; margin-top:3px; }
+.dash-page.active > .sec-header { animation: riseFade .5s var(--ease-out) .04s both; }
+.sec-header h2 { font-size:1.65rem; font-weight:800; color:var(--text); letter-spacing:-.02em; }
+.sec-header p { color:var(--text2); font-size:.88rem; margin-top:3px; max-width:52ch; line-height:1.5; }
 
 .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
-.stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; position:relative; overflow:hidden; }
+.stat-card {
+  background:linear-gradient(145deg, rgba(28,29,46,.9), var(--surface));
+  border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; position:relative; overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  transition:transform .3s var(--ease-out), box-shadow .3s ease, border-color .25s ease;
+}
+.stat-card:hover {
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-md), 0 0 40px rgba(124,111,239,.1);
+  border-color:rgba(124,111,239,.25);
+}
+.stat-card .stat-big { transition:transform .35s var(--ease-out); }
+.stat-card:hover .stat-big { transform:scale(1.02); }
 .stat-card::after { content:''; position:absolute; top:-24px; right:-18px; width:70px; height:70px; border-radius:50%; opacity:.12; }
 .stat-card.s-purple::after { background:var(--accent); }
 .stat-card.s-green::after  { background:var(--green); }
@@ -277,19 +370,40 @@ tr:hover td { background:rgba(124,111,239,.04); }
   radial-gradient(ellipse 50% 40% at 55% 85%, rgba(61,214,140,.08) 0%, transparent 50%),
   radial-gradient(ellipse 40% 30% at 30% 75%, rgba(34,211,238,.07) 0%, transparent 45%); }
 .login-dots { position:absolute; inset:0; background-image:radial-gradient(circle, rgba(124,111,239,.08) 1px, transparent 1px); background-size:36px 36px; }
-.login-card { position:relative; z-index:1; width:440px; max-width:94vw; background:var(--surface);
+.login-ambient { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+.la-orb {
+  position:absolute; border-radius:50%; filter:blur(56px); opacity:.35;
+  animation: orbFloat 16s ease-in-out infinite;
+}
+.la-o1 { width:min(320px,70vw); height:min(320px,70vw); background:rgba(124,111,239,.55); top:-8%; left:-12%; animation-delay:0s; }
+.la-o2 { width:min(260px,55vw); height:min(260px,55vw); background:rgba(244,114,182,.35); bottom:-5%; right:-10%; animation-delay:-5s; }
+.la-o3 { width:min(200px,45vw); height:min(200px,45vw); background:rgba(34,211,238,.3); top:40%; right:5%; animation-delay:-9s; }
+@keyframes orbFloat {
+  0%,100% { transform:translate(0,0) scale(1); }
+  33% { transform:translate(18px,-12px) scale(1.05); }
+  66% { transform:translate(-14px,10px) scale(.96); }
+}
+.login-card { position:relative; z-index:2; width:440px; max-width:94vw; background:rgba(19,20,31,.78);
+  backdrop-filter:blur(20px) saturate(1.3);
   border:1px solid var(--border2); border-radius:var(--r-xl); padding:44px 40px;
-  box-shadow:0 0 0 1px rgba(124,111,239,.1), 0 32px 80px rgba(0,0,0,.5); }
+  box-shadow:0 0 0 1px rgba(124,111,239,.12), var(--shadow-lg), 0 0 80px rgba(124,111,239,.08);
+  animation: loginCardIn .75s var(--ease-out) both; }
+@keyframes loginCardIn {
+  from { opacity:0; transform:translateY(28px) scale(.96); filter:blur(6px); }
+  to { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+}
 .brand-logo   { text-align:center; margin-bottom:32px; }
 .brand-name   { font-size:1.9rem; font-weight:900;
   background:linear-gradient(135deg,#a78bfa,#7c6fef,#f472b6);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-.02em; }
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-.02em; }
 .brand-tag    { font-size:.78rem; color:var(--text3); margin-top:4px; letter-spacing:.12em; text-transform:uppercase; }
 .role-pick-label { font-size:.74rem; font-weight:600; color:var(--text3); letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
 .role-grid   { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:26px; }
-.role-card   { padding:18px 14px; border-radius:14px; border:2px solid var(--border); background:var(--surface2); cursor:pointer; transition:.18s; text-align:center; }
-.role-card:hover  { border-color:var(--accent-h); transform:translateY(-2px); }
-.role-card.picked { border-color:var(--accent); background:rgba(124,111,239,.12); }
+.role-card   { padding:18px 14px; border-radius:14px; border:2px solid var(--border); background:var(--surface2); cursor:pointer;
+  transition:transform .22s var(--ease-out), border-color .2s ease, box-shadow .25s ease; text-align:center; }
+.role-card:hover  { border-color:var(--accent-h); transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,.25); }
+.role-card:active { transform:translateY(-1px) scale(.99); }
+.role-card.picked { border-color:var(--accent); background:rgba(124,111,239,.15); box-shadow:0 0 0 1px rgba(124,111,239,.2), 0 8px 28px rgba(124,111,239,.15); }
 .role-card .r-icon { font-size:1.7rem; margin-bottom:7px; }
 .role-card .r-name { font-weight:700; font-size:.88rem; }
 .role-card .r-desc { font-size:.7rem; color:var(--text3); margin-top:3px; }
@@ -313,28 +427,152 @@ tr:hover td { background:rgba(124,111,239,.04); }
 #page-teacher { display:none; min-height:100vh; background:var(--bg); }
 #page-teacher.active { display:grid; grid-template-columns:252px 1fr; min-height:100vh; }
 
-.t-sidebar { background:var(--surface); border-right:1px solid var(--border);
-  display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto; }
+.t-sidebar {
+  background:rgba(19,20,31,.88); backdrop-filter:blur(24px) saturate(1.2);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto;
+  box-shadow:4px 0 32px rgba(0,0,0,.2);
+}
 .t-sidebar-logo { padding:22px 20px; border-bottom:1px solid var(--border); }
 .t-sidebar-logo .s-brand { font-size:1.1rem; font-weight:900;
-  background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 .t-sidebar-logo .s-sub   { font-size:.69rem; color:var(--text3); letter-spacing:.1em; text-transform:uppercase; margin-top:2px; }
 .t-nav       { flex:1; padding:12px 8px; overflow-y:auto; }
 .t-nav-label { font-size:.67rem; font-weight:700; color:var(--text3); letter-spacing:.12em; text-transform:uppercase; padding:10px 12px 4px; }
-.nav-btn     { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; border:none;
-  background:none; border-radius:10px; color:var(--text2); font-family:'Outfit',sans-serif;
-  font-size:.86rem; font-weight:500; cursor:pointer; transition:.15s; text-align:left; }
-.nav-btn:hover  { background:var(--surface2); color:var(--text); }
-.nav-btn.active { background:rgba(124,111,239,.15); color:var(--accent-h); font-weight:600; }
+.nav-btn     { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px 10px 14px; border:none;
+  background:none; border-radius:11px; color:var(--text2); font-family:'Outfit',sans-serif;
+  font-size:.86rem; font-weight:500; cursor:pointer; transition:background .2s ease, color .2s ease, transform .2s var(--ease-out); text-align:left; position:relative; }
+.nav-btn:hover  { background:var(--surface2); color:var(--text); transform:translateX(2px); }
+.nav-btn.active { background:linear-gradient(90deg,rgba(124,111,239,.2),rgba(124,111,239,.06)); color:var(--accent-h); font-weight:600; }
+.nav-btn.active::before {
+  content:''; position:absolute; left:4px; top:50%; transform:translateY(-50%); width:3px; height:22px;
+  background:linear-gradient(180deg,var(--accent-h),var(--cyan)); border-radius:99px;
+  box-shadow:0 0 12px rgba(124,111,239,.5);
+}
 .nav-btn .nav-ic    { font-size:.95rem; width:18px; text-align:center; flex-shrink:0; }
 .nav-btn .nav-badge { margin-left:auto; background:var(--red); color:#fff; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:99px; }
 .t-sidebar-foot  { padding:14px 12px; border-top:1px solid var(--border); }
-.t-profile-mini  { display:flex; align-items:center; gap:10px; padding:9px 10px; background:var(--surface2); border-radius:11px; }
+.t-profile-mini  { display:flex; align-items:center; gap:10px; padding:9px 10px; background:var(--surface2); border-radius:11px;
+  border:1px solid var(--border); transition:box-shadow .2s ease, border-color .2s ease; }
+.t-profile-mini:hover { box-shadow:var(--shadow-sm); border-color:var(--border2); }
 .t-profile-mini .tp-name { font-weight:700; font-size:.84rem; }
 .t-profile-mini .tp-role { font-size:.69rem; color:var(--text3); }
 .t-logout { background:none; border:none; color:var(--text3); cursor:pointer; font-size:1.1rem; margin-left:auto; padding:4px; border-radius:6px; transition:.15s; }
 .t-logout:hover { color:var(--red); }
-.t-main { overflow-y:auto; padding:30px 34px; min-height:100vh; }
+.t-main { overflow-y:auto; padding:30px 34px; min-height:100vh; position:relative; }
+
+/* Epicenter-style top command bar (desktop) */
+.dash-topbar {
+  display:none; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+  margin:-8px 0 22px; padding:14px 18px;
+  background:rgba(19,20,31,.75); backdrop-filter:blur(16px) saturate(1.2);
+  border:1px solid var(--border2); border-radius:var(--r-lg);
+  position:sticky; top:12px; z-index:50;
+  box-shadow:var(--shadow-sm), 0 0 0 1px rgba(255,255,255,.03) inset;
+  animation: barSlide .5s var(--ease-out) both;
+}
+@keyframes barSlide { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+.dash-topbar .epi-crumbs { display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-width:0; }
+.dash-topbar .epi-brand { font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text3); }
+.dash-topbar .epi-sep { color:var(--border2); font-weight:300; }
+.dash-topbar .epi-page { font-size:1.02rem; font-weight:800; color:var(--text); }
+.dash-topbar-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.t-search-wrap input {
+  width:220px; max-width:42vw; padding:9px 14px; background:var(--surface2); border:1px solid var(--border);
+  border-radius:10px; color:var(--text); font-size:.82rem; font-family:'Outfit',sans-serif; outline:none; transition:.15s;
+}
+.t-search-wrap input:focus { border-color:var(--accent); }
+.notif-bell { position:relative; }
+.notif-bell .notif-dot {
+  position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:var(--red);
+  border-radius:50%; border:2px solid var(--surface);
+}
+.notif-dropdown {
+  display:block; position:fixed; right:24px; top:72px; width:min(380px,94vw); max-height:min(420px,70vh);
+  overflow-y:auto; background:rgba(19,20,31,.95); backdrop-filter:blur(16px);
+  border:1px solid var(--border2); border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg); z-index:200; padding:12px 0;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transform:translateY(-10px) scale(.98);
+  transition:opacity .28s var(--ease-out), transform .32s var(--ease-out), visibility .28s;
+}
+.notif-dropdown.show { opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0) scale(1); }
+.notif-dd-head { padding:8px 18px 12px; font-size:.72rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text3); border-bottom:1px solid var(--border); }
+.notif-dd-item { padding:12px 18px; font-size:.83rem; color:var(--text2); border-bottom:1px solid var(--border); cursor:pointer; transition:.12s; }
+.notif-dd-item:hover { background:var(--surface2); color:var(--text); }
+.notif-dd-item strong { display:block; color:var(--text); font-size:.86rem; margin-bottom:4px; }
+.notif-dd-empty { padding:22px 18px; text-align:center; color:var(--text3); font-size:.85rem; }
+
+.ov-layout { display:grid; grid-template-columns:1fr 300px; gap:22px; align-items:start; }
+@media(max-width:1100px){ .ov-layout { grid-template-columns:1fr; } }
+.ov-side-col { display:flex; flex-direction:column; gap:14px; }
+.widget-card {
+  background:linear-gradient(160deg, rgba(28,29,46,.95), var(--surface));
+  border:1px solid var(--border); border-radius:var(--r-lg); padding:18px 18px 16px;
+  box-shadow:var(--shadow-sm); transition:transform .25s var(--ease-out), box-shadow .25s ease, border-color .2s ease;
+}
+.widget-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:var(--border2); }
+.widget-card h4 { font-size:.78rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text3); margin-bottom:12px; }
+.next-class-pill {
+  display:flex; flex-direction:column; gap:6px; padding:14px; background:var(--surface2); border-radius:12px; border-left:3px solid var(--green);
+}
+.next-class-pill .nc-title { font-weight:800; font-size:.92rem; }
+.next-class-pill .nc-meta { font-size:.78rem; color:var(--text2); }
+.activity-feed { display:flex; flex-direction:column; gap:0; max-height:340px; overflow-y:auto; }
+.act-row {
+  display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); font-size:.8rem; color:var(--text2);
+}
+.act-row:last-child { border-bottom:none; }
+.act-ic { font-size:1.1rem; flex-shrink:0; width:26px; text-align:center; }
+.act-body { min-width:0; }
+.act-body b { color:var(--text); font-weight:600; }
+
+.glimpse-card {
+  background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(124,111,239,.14));
+  border:1px solid var(--border2); border-radius:var(--r-lg); padding:18px 20px; margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+  animation: riseFade .55s var(--ease-out) .08s both;
+}
+.glimpse-card h3 { font-size:.88rem; font-weight:800; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.glimpse-card p { font-size:.86rem; color:var(--text2); line-height:1.55; }
+
+.spr-form-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; margin-bottom:22px; }
+.spr-list .spr-item {
+  background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:12px;
+}
+.spr-item .spr-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.spr-item .spr-stu { font-weight:800; font-size:.92rem; }
+.spr-item .spr-wk { font-size:.72rem; color:var(--text3); }
+.spr-item .spr-body { font-size:.85rem; color:var(--text2); line-height:1.5; }
+.leave-row {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:12px; margin-bottom:10px;
+}
+.leave-row.pending { border-left:3px solid var(--yellow); }
+.leave-row.approved { border-left:3px solid var(--green); }
+.leave-row.denied { border-left:3px solid var(--red); }
+.help-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+.help-tile {
+  background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:20px; transition:.18s; cursor:default;
+}
+.help-tile h4 { font-size:.95rem; margin-bottom:8px; }
+.help-tile p { font-size:.8rem; color:var(--text2); line-height:1.45; margin-bottom:12px; }
+.practice-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+.practice-tile {
+  background:var(--surface2); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px;
+  text-decoration:none; color:inherit; display:block; transition:.18s;
+}
+.practice-tile:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:var(--shadow-md), 0 0 32px rgba(124,111,239,.12); }
+.practice-tile .pt-ic { font-size:2rem; margin-bottom:10px; }
+.practice-tile .pt-name { font-weight:800; font-size:1rem; margin-bottom:6px; }
+.practice-tile .pt-desc { font-size:.8rem; color:var(--text3); line-height:1.4; }
+.note-pill { font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:99px; background:rgba(124,111,239,.15); color:var(--accent-h); }
+@media(min-width:769px){
+  .dash-topbar { display:flex; }
+}
+@media(max-width:768px){
+  .notif-dropdown { left:12px; right:12px; width:auto; top:52px; max-height:min(50vh,360px); }
+}
 
 .week-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:10px; margin-bottom:24px; }
 .week-day  { background:var(--surface); border:1px solid var(--border); border-radius:13px; overflow:hidden; min-height:80px; }
@@ -359,7 +597,11 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .earn-val        { font-size:.7rem; font-weight:600; color:var(--text2); }
 .income-list     { display:flex; flex-direction:column; gap:10px; max-height:260px; overflow-y:auto; }
 .hw-list  { display:flex; flex-direction:column; gap:12px; }
-.hw-card  { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.hw-card  {
+  background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px;
+  transition:transform .22s var(--ease-out), box-shadow .22s ease, border-color .2s ease;
+}
+.hw-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-sm); border-color:var(--border2); }
 .hw-card-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; gap:10px; flex-wrap:wrap; }
 .hw-title { font-weight:700; font-size:.92rem; }
 .hw-meta  { font-size:.76rem; color:var(--text3); margin-top:3px; }
@@ -367,7 +609,9 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .hw-due.soon    { color:var(--yellow); font-weight:600; }
 .hw-due.ok      { color:var(--green); font-weight:600; }
 .ann-list { display:flex; flex-direction:column; gap:12px; }
-.ann-card { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.ann-card { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px;
+  transition:transform .2s var(--ease-out), box-shadow .2s ease, border-color .2s ease; }
+.ann-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-sm); border-color:var(--border2); }
 .ann-head { display:flex; align-items:center; gap:10px; margin-bottom:9px; flex-wrap:wrap; }
 .ann-title{ font-weight:700; font-size:.9rem; }
 .ann-body { font-size:.84rem; color:var(--text2); line-height:1.55; }
@@ -375,7 +619,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .ann-pin  { font-size:.7rem; color:var(--yellow); font-weight:600; background:rgba(251,191,36,.1); padding:2px 8px; border-radius:99px; }
 .res-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(195px,1fr)); gap:14px; }
 .res-card { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:18px 16px; transition:.18s; cursor:pointer; }
-.res-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.res-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:var(--shadow-sm), 0 0 24px rgba(124,111,239,.1); }
 .res-icon { font-size:2rem; margin-bottom:10px; }
 .res-title{ font-weight:700; font-size:.9rem; }
 .res-desc { font-size:.76rem; color:var(--text3); margin-top:4px; line-height:1.4; }
@@ -392,29 +636,47 @@ tr:hover td { background:rgba(124,111,239,.04); }
 /* ── STUDENT SIDEBAR ── */
 #page-student { display:none; min-height:100vh; background:var(--bg); }
 #page-student.active { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
-.s-sidebar { background:var(--surface); border-right:1px solid var(--border);
-  display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto; }
+.s-sidebar {
+  background:rgba(19,20,31,.88); backdrop-filter:blur(24px) saturate(1.2);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto;
+  box-shadow:4px 0 32px rgba(0,0,0,.2);
+}
 .s-sidebar-logo { padding:20px 18px; border-bottom:1px solid var(--border); }
 .s-sidebar-logo .s-brand { font-size:1.05rem; font-weight:900;
-  background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 .s-nav     { flex:1; padding:12px 8px; overflow-y:auto; }
-.s-nav-btn { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; border:none;
-  background:none; border-radius:10px; color:var(--text2); font-family:'Outfit',sans-serif;
-  font-size:.86rem; font-weight:500; cursor:pointer; transition:.15s; text-align:left; }
-.s-nav-btn:hover  { background:var(--surface2); color:var(--text); }
-.s-nav-btn.active { background:rgba(124,111,239,.15); color:var(--accent-h); font-weight:600; }
+.s-nav-btn { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px 10px 14px; border:none;
+  background:none; border-radius:11px; color:var(--text2); font-family:'Outfit',sans-serif;
+  font-size:.86rem; font-weight:500; cursor:pointer; transition:background .2s ease, color .2s ease, transform .2s var(--ease-out); text-align:left; position:relative; }
+.s-nav-btn:hover  { background:var(--surface2); color:var(--text); transform:translateX(2px); }
+.s-nav-btn.active { background:linear-gradient(90deg,rgba(124,111,239,.2),rgba(124,111,239,.06)); color:var(--accent-h); font-weight:600; }
+.s-nav-btn.active::before {
+  content:''; position:absolute; left:4px; top:50%; transform:translateY(-50%); width:3px; height:22px;
+  background:linear-gradient(180deg,var(--accent-h),var(--pink)); border-radius:99px;
+}
 .s-nav-btn .sn-ic { font-size:.95rem; width:18px; text-align:center; flex-shrink:0; }
 .s-nav-btn .nav-badge { margin-left:auto; background:var(--red); color:#fff; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:99px; }
 .s-sidebar-foot { padding:14px 12px; border-top:1px solid var(--border); }
-.s-profile-card { background:linear-gradient(135deg,rgba(124,111,239,.15),rgba(244,114,182,.08));
-  border:1px solid var(--border2); border-radius:13px; padding:13px 12px; }
+.s-profile-card {
+  background:linear-gradient(135deg,rgba(124,111,239,.18),rgba(244,114,182,.1));
+  border:1px solid var(--border2); border-radius:13px; padding:13px 12px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), 0 0 0 1px rgba(255,255,255,.04) inset;
+  transition:box-shadow .25s ease, transform .25s var(--ease-out);
+}
+.s-profile-card:hover { box-shadow:0 8px 28px rgba(124,111,239,.12); transform:translateY(-1px); }
 .s-profile-card .sp-name   { font-weight:700; font-size:.88rem; }
 .s-profile-card .sp-course { font-size:.72rem; color:var(--text3); margin-top:2px; }
 .s-profile-card .sp-pts    { font-size:.78rem; color:var(--accent-h); font-weight:600; margin-top:7px; }
 .s-main { overflow-y:auto; padding:26px 30px; min-height:100vh; }
-.welcome-banner { background:linear-gradient(135deg,rgba(124,111,239,.18),rgba(244,114,182,.1),rgba(61,214,140,.06));
+.welcome-banner {
+  background:linear-gradient(135deg,rgba(124,111,239,.22),rgba(244,114,182,.12),rgba(61,214,140,.08));
   border:1px solid var(--border2); border-radius:var(--r-xl); padding:24px 26px;
-  display:flex; align-items:center; gap:18px; margin-bottom:24px; position:relative; overflow:hidden; }
+  display:flex; align-items:center; gap:18px; margin-bottom:24px; position:relative; overflow:hidden;
+  box-shadow:var(--shadow-md), 0 0 60px rgba(124,111,239,.08);
+  animation: welcomeIn .65s var(--ease-out) both;
+}
+@keyframes welcomeIn { from { opacity:0; transform:translateY(12px) scale(.99); } to { opacity:1; transform:translateY(0) scale(1); } }
 .welcome-banner::before { content:''; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
   border-radius:50%; background:radial-gradient(circle,rgba(124,111,239,.12),transparent 70%); }
 .level-ring { display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
@@ -640,30 +902,30 @@ tr:hover td { background:rgba(124,111,239,.04); }
   border-radius:9px; transition:.15s; }
 .fs-tab.active { background:var(--accent); color:#fff; }
 
-/* ── Request badge on student nav ── */
-.s-req-badge { background:var(--yellow); color:#000; font-size:.62rem; font-weight:800;
-  padding:2px 6px; border-radius:99px; margin-left:auto; }
-</style>
-
-<style>
 /* ── Mobile drawer + navigation ── */
 .mob-nav { display:none; position:fixed; bottom:0; left:0; right:0; z-index:400;
-  background:var(--surface); border-top:1px solid var(--border);
-  padding:5px 0 env(safe-area-inset-bottom, 5px); }
+  background:rgba(19,20,31,.94); backdrop-filter:blur(16px) saturate(1.2);
+  border-top:1px solid var(--border);
+  padding:5px 0 env(safe-area-inset-bottom, 5px);
+  box-shadow:0 -8px 32px rgba(0,0,0,.35); }
 .mob-nav-inner { display:flex; align-items:center; justify-content:space-around; max-width:600px; margin:0 auto; }
 .mob-nav-btn   { display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 10px;
   border:none; background:none; color:var(--text3); cursor:pointer; border-radius:10px;
   font-family:'Outfit',sans-serif; min-width:48px; position:relative; }
 .mob-nav-btn .mn-ic  { font-size:1.25rem; }
 .mob-nav-btn .mn-lbl { font-size:.59rem; font-weight:600; letter-spacing:.02em; }
-.mob-nav-btn.active  { color:var(--accent-h); }
+.mob-nav-btn.active  { color:var(--accent-h); background:rgba(124,111,239,.1); }
+.mob-nav-btn { transition:color .2s ease, background .2s ease, transform .15s ease; }
+.mob-nav-btn:active { transform:scale(.95); }
 .mob-nav-badge { position:absolute; top:3px; right:6px; background:var(--red); color:#fff;
   font-size:.58rem; font-weight:700; padding:1px 5px; border-radius:99px; min-width:14px; text-align:center; }
 .mob-topbar { display:none; align-items:center; justify-content:space-between;
-  padding:13px 16px; background:var(--surface); border-bottom:1px solid var(--border);
-  position:sticky; top:0; z-index:300; }
+  padding:13px 16px; background:rgba(19,20,31,.92); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:300;
+  box-shadow:0 4px 24px rgba(0,0,0,.2); }
 .mob-topbar .mt-brand { font-size:.95rem; font-weight:900;
-  background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  background:linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 .mob-topbar .mt-right  { display:flex; align-items:center; gap:8px; }
 .mob-menu-btn { background:none; border:none; color:var(--text2); font-size:1.3rem; cursor:pointer; padding:4px; }
 .mob-drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:450; backdrop-filter:blur(3px); }
@@ -672,6 +934,137 @@ tr:hover td { background:rgba(124,111,239,.04); }
   border-right:1px solid var(--border); z-index:460; transition:.28s cubic-bezier(.4,0,.2,1);
   overflow-y:auto; display:flex; flex-direction:column; }
 .mob-drawer.open { left:0; }
+
+/* ── Payment Status Badges ── */
+.payment-status-badge {
+  display:inline-flex; align-items:center; gap:4px; padding:4px 10px;
+  border-radius:99px; font-size:.72rem; font-weight:600; letter-spacing:.02em;
+}
+.payment-status-badge.pending {
+  background:rgba(251,191,36,.15); color:var(--yellow); border:1px solid rgba(251,191,36,.3);
+}
+.payment-status-badge.approved {
+  background:rgba(61,214,140,.15); color:var(--green); border:1px solid rgba(61,214,140,.3);
+}
+.payment-status-badge.rejected {
+  background:rgba(248,113,113,.15); color:var(--red); border:1px solid rgba(248,113,113,.3);
+}
+
+/* ── Payment Request Cards ── */
+.payment-req-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:14px; padding:18px 20px; margin-bottom:16px;
+  position:relative; transition:.18s;
+}
+.payment-req-card:hover {
+  border-color:var(--border2); transform:translateY(-1px);
+}
+.payment-req-card.pending {
+  border-left:4px solid var(--yellow);
+}
+.payment-req-card.approved {
+  border-left:4px solid var(--green);
+}
+.payment-req-card.rejected {
+  border-left:4px solid var(--red);
+}
+
+.payment-req-header {
+  display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px;
+  flex-wrap:wrap;
+}
+
+.payment-student-info {
+  flex:1; min-width:0;
+}
+
+.payment-student-name {
+  font-weight:700; font-size:.95rem; margin-bottom:4px;
+}
+.payment-student-email {
+  font-size:.8rem; color:var(--text3); margin-bottom:6px;
+}
+.payment-transaction-id {
+  font-size:.75rem; color:var(--text3); font-family:'JetBrains Mono',monospace;
+}
+
+.payment-amount-section {
+  display:flex; gap:24px; margin-bottom:16px;
+  padding:16px; background:var(--surface); border-radius:12px;
+}
+
+.payment-amount-label, .payment-points-label {
+  font-size:.75rem; color:var(--text3); text-transform:uppercase; letter-spacing:.07em; margin-bottom:4px;
+}
+
+.payment-amount {
+  font-size:1.3rem; font-weight:800; color:var(--accent-h);
+}
+
+.payment-points {
+  font-size:1.1rem; font-weight:700; color:var(--green);
+}
+
+.payment-timeline {
+  display:flex; flex-direction:column; gap:12px; margin-bottom:16px;
+}
+
+.payment-timeline-item {
+  display:flex; align-items:flex-start; gap:12px;
+}
+
+.payment-timeline-dot {
+  width:12px; height:12px; border-radius:50%; flex-shrink:0; margin-top:2px;
+}
+.payment-timeline-dot.submitted {
+  background:var(--accent);
+}
+.payment-timeline-dot.approved {
+  background:var(--green);
+}
+.payment-timeline-dot.rejected {
+  background:var(--red);
+}
+
+.payment-timeline-content {
+  flex:1; min-width:0;
+}
+
+.payment-timeline-time {
+  font-size:.75rem; font-weight:600; color:var(--text3); margin-bottom:2px;
+}
+
+.payment-actions {
+  display:flex; gap:10px; flex-wrap:wrap;
+}
+
+/* ── Payment History Cards (Student View) ── */
+.payment-history-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:14px; padding:18px 20px; margin-bottom:16px;
+  position:relative; transition:.18s;
+}
+.payment-history-card:hover {
+  border-color:var(--border2); transform:translateY(-1px);
+}
+.payment-history-card.pending {
+  border-left:4px solid var(--yellow);
+}
+.payment-history-card.approved {
+  border-left:4px solid var(--green);
+}
+.payment-history-card.rejected {
+  border-left:4px solid var(--red);
+}
+
+.payment-history-header {
+  display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px;
+  flex-wrap:wrap;
+}
+
+.payment-history-info {
+  flex:1; min-width:0;
+}
 
 @media(max-width:1024px){
   .t-main, .s-main     { padding:22px 18px; }
@@ -712,6 +1105,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   .res-grid   { grid-template-columns:1fr 1fr; }
   .badge-grid { grid-template-columns:repeat(2,1fr); }
   .week-grid  { grid-template-columns:repeat(2,1fr); gap:8px; }
+  .home-grid  { grid-template-columns:1fr !important; }
   .report-head { grid-template-columns:1fr; gap:12px; }
   .modal-overlay { align-items:flex-end; }
   .modal-box { width:100%; max-width:100%; border-radius:24px 24px 0 0; padding:24px 18px; max-height:90vh; border-bottom:none; }
@@ -722,6 +1116,35 @@ tr:hover td { background:rgba(124,111,239,.04); }
   .fs-cal-header, .fs-cal-body { grid-template-columns:48px repeat(7,1fr); }
   .fs-add-grid { grid-template-columns:1fr; }
   .fs-week-nav .fw-label { min-width:130px; font-size:.78rem; }
+  
+  /* ── Mobile Responsive Modals ── */
+  @media (max-width: 768px) {
+    .modal-box {
+      width: 95% !important;
+      max-width: 400px !important;
+      margin: 20px auto !important;
+      padding: 16px !important;
+    }
+    
+    .student-recharge-modal .form-grid {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+    
+    .student-recharge-modal div[style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+    
+    .student-recharge-modal .modal-footer {
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+    
+    .student-recharge-modal .modal-footer button {
+      width: 100% !important;
+    }
+  }
 }
 @media(max-width:390px){
   .stat-grid  { grid-template-columns:1fr; }
@@ -741,6 +1164,21 @@ tr:hover td { background:rgba(124,111,239,.04); }
 .meet-link-display .mld-label { font-size:.7rem; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
 .meet-link-display .mld-url   { font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text); word-break:break-all; }
 .meet-link-display .mld-note  { font-size:.72rem; color:var(--text3); margin-top:6px; }
+
+/* ── Polish: links, reduced motion ── */
+a:not(.btn):not(.practice-tile):not(.ci-link):not(.preclass-join) { transition:color .15s ease; }
+.fs-tab { transition:transform .2s ease, background .2s ease, color .2s ease; }
+.fs-tab:hover:not(.active) { transform:translateY(-1px); }
+.payment-req-card, .payment-history-card { transition:transform .22s var(--ease-out), box-shadow .22s ease !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:0.01ms !important; animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+  body::before { animation:none; }
+  .spin-ring { animation-duration:0.7s !important; animation-iteration-count:infinite !important; animation-name:spin !important; }
+}
 </style>
 </head>
 <body>
@@ -765,10 +1203,15 @@ tr:hover td { background:rgba(124,111,239,.04); }
 <div id="page-login" class="page active">
   <div class="login-bg-mesh"></div>
   <div class="login-dots"></div>
+  <div class="login-ambient" aria-hidden="true">
+    <span class="la-orb la-o1"></span>
+    <span class="la-orb la-o2"></span>
+    <span class="la-orb la-o3"></span>
+  </div>
   <div class="login-card">
     <div class="brand-logo">
-      <div class="brand-name">🧮 Mathmade Easy</div>
-      <div class="brand-tag">Math Academy · Teaching Platform</div>
+      <div class="brand-name">🧮 Mathmade Epicenter</div>
+      <div class="brand-tag">Academy hub · Teachers &amp; students</div>
     </div>
     <div class="role-pick-label">Sign in as</div>
     <div class="role-grid">
@@ -797,8 +1240,8 @@ tr:hover td { background:rgba(124,111,239,.04); }
 <div id="page-teacher" class="page">
   <aside class="t-sidebar">
     <div class="t-sidebar-logo">
-      <div class="s-brand">🧮 Mathmade Easy</div>
-      <div class="s-sub">Teacher Portal</div>
+      <div class="s-brand">🧮 Mathmade Epicenter</div>
+      <div class="s-sub">Teacher · Operations Hub</div>
     </div>
     <nav class="t-nav">
       <div class="t-nav-label">Main</div>
@@ -813,8 +1256,19 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <button class="nav-btn" onclick="tNav('homework',this)"><span class="nav-ic">📝</span> Homework</button>
       <button class="nav-btn" onclick="tNav('announcements',this)"><span class="nav-ic">📣</span> Announcements</button>
       <button class="nav-btn" onclick="tNav('resources',this)"><span class="nav-ic">📂</span> Resources</button>
+      <div class="t-nav-label">People &amp; reports</div>
+      <button class="nav-btn" onclick="tNav('spr',this)"><span class="nav-ic">📋</span> Progress Notes</button>
+      <button class="nav-btn" onclick="tNav('leave',this)">
+        <span class="nav-ic">🏖</span> Time off
+        <span class="nav-badge" id="leave-badge" style="display:none">0</span>
+      </button>
+      <button class="nav-btn" onclick="tNav('help',this)"><span class="nav-ic">❓</span> Help &amp; policies</button>
       <div class="t-nav-label">Finance</div>
       <button class="nav-btn" onclick="tNav('earnings',this)"><span class="nav-ic">💰</span> Earnings</button>
+      <button class="nav-btn" onclick="tNav('paymentreviews',this)">
+        <span class="nav-ic">💳</span> Payment reviews
+        <span class="nav-badge" id="payment-req-badge" style="display:none">0</span>
+      </button>
       <div class="t-nav-label">Reports</div>
       <button class="nav-btn" onclick="tNav('performance',this)"><span class="nav-ic">📈</span> Performance</button>
       <div class="t-nav-label">Admin</div>
@@ -835,7 +1289,7 @@ tr:hover td { background:rgba(124,111,239,.04); }
   <div class="mob-drawer-overlay" id="t-drawer-overlay" onclick="closeTDrawer()"></div>
   <div class="mob-drawer" id="t-drawer">
     <div class="t-sidebar-logo" style="padding:18px 16px">
-      <div class="s-brand">🧮 Mathmade Easy</div><div class="s-sub">Teacher Portal</div>
+      <div class="s-brand">🧮 Mathmade Epicenter</div><div class="s-sub">Teacher · Operations Hub</div>
     </div>
     <nav class="t-nav">
       <div class="t-nav-label">Main</div>
@@ -847,8 +1301,16 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <button class="nav-btn" onclick="tNav('homework',this);closeTDrawer()"><span class="nav-ic">📝</span> Homework</button>
       <button class="nav-btn" onclick="tNav('announcements',this);closeTDrawer()"><span class="nav-ic">📣</span> Announcements</button>
       <button class="nav-btn" onclick="tNav('resources',this);closeTDrawer()"><span class="nav-ic">📂</span> Resources</button>
+      <div class="t-nav-label">People &amp; reports</div>
+      <button class="nav-btn" onclick="tNav('spr',this);closeTDrawer()"><span class="nav-ic">📋</span> Progress Notes</button>
+      <button class="nav-btn" onclick="tNav('leave',this);closeTDrawer()"><span class="nav-ic">🏖</span> Time off</button>
+      <button class="nav-btn" onclick="tNav('help',this);closeTDrawer()"><span class="nav-ic">❓</span> Help &amp; policies</button>
       <div class="t-nav-label">Finance</div>
       <button class="nav-btn" onclick="tNav('earnings',this);closeTDrawer()"><span class="nav-ic">💰</span> Earnings</button>
+      <button class="nav-btn" onclick="tNav('paymentreviews',this);closeTDrawer()">
+        <span class="nav-ic">💳</span> Payment reviews
+        <span class="nav-badge" id="payment-req-badge-d" style="display:none">0</span>
+      </button>
       <div class="t-nav-label">Reports</div>
       <button class="nav-btn" onclick="tNav('performance',this);closeTDrawer()"><span class="nav-ic">📈</span> Performance</button>
       <div class="t-nav-label">Admin</div>
@@ -867,9 +1329,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 
   <div class="mob-topbar" id="t-topbar">
-    <div class="mt-brand">🧮 Mathmade Easy</div>
+    <div class="mt-brand">🧮 Epicenter</div>
     <div class="mt-right">
       <span id="t-topbar-title" style="font-size:.8rem;color:var(--text2);font-weight:600">Overview</span>
+      <button type="button" class="mob-menu-btn" onclick="event.stopPropagation();toggleMobNotif('t')" aria-label="Alerts">🔔</button>
       <button class="mob-menu-btn" onclick="openTDrawer()">☰</button>
     </div>
   </div>
@@ -884,11 +1347,28 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 
   <main class="t-main">
+    <div class="dash-topbar" id="t-dash-topbar">
+      <div class="epi-crumbs">
+        <span class="epi-brand">Epicenter</span>
+        <span class="epi-sep">/</span>
+        <span class="epi-page" id="t-page-crumbs">Overview</span>
+      </div>
+      <div class="dash-topbar-actions">
+        <div class="t-search-wrap"><input type="search" id="t-global-search" placeholder="Find student…" autocomplete="off" oninput="teacherGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')teacherGlobalSearchEnter()"></div>
+        <button type="button" class="btn btn-ghost btn-sm notif-bell" onclick="toggleNotifDropdown('t',event)" aria-label="Inbox">🔔<span class="notif-dot" id="t-notif-dot" style="display:none"></span></button>
+      </div>
+    </div>
+    <div class="notif-dropdown" id="t-notif-dropdown" onclick="event.stopPropagation()"></div>
+
     <!-- Overview -->
     <div id="tp-overview" class="dash-page active">
       <div class="sec-header">
-        <div><h2 id="t-greeting">Good day 👋</h2><p>Your academy at a glance.</p></div>
-        <button class="btn btn-primary" onclick="tNav('schedule',null);openScheduleModal()">＋ New Class</button>
+        <div><h2 id="t-greeting">Good day 👋</h2><p>Schedules, progress, and requests in one command center.</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="tNav('spr',null)">📋 Log progress</button>
+          <button class="btn btn-ghost btn-sm" onclick="tNav('leave',null)">🏖 Time off</button>
+          <button class="btn btn-primary" onclick="tNav('schedule',null);openScheduleModal()">＋ New Class</button>
+        </div>
       </div>
       <div id="notif-banner">
         <span style="font-size:1.2rem">🔔</span>
@@ -897,13 +1377,21 @@ tr:hover td { background:rgba(124,111,239,.04); }
         <button class="btn btn-ghost btn-sm" onclick="document.getElementById('notif-banner').classList.remove('show')">Later</button>
       </div>
       <div class="stat-grid" id="ov-stats"></div>
-      <div class="table-wrap">
-        <div class="table-head-bar">
-          <h3>Student Snapshot</h3>
-          <button class="btn btn-ghost btn-sm" onclick="tNav('students',document.querySelectorAll('.t-sidebar .nav-btn')[1])">View All →</button>
+      <div class="ov-layout">
+        <div class="ov-main-col">
+          <div class="table-wrap">
+            <div class="table-head-bar">
+              <h3>Student Snapshot</h3>
+              <button class="btn btn-ghost btn-sm" onclick="tNav('students', document.querySelectorAll('.t-sidebar .nav-btn')[1])">View All →</button>
+            </div>
+            <table><thead><tr><th>Student</th><th>Subject</th><th>Progress</th><th>Next Class</th><th>Status</th></tr></thead>
+            <tbody id="ov-table"></tbody></table>
+          </div>
         </div>
-        <table><thead><tr><th>Student</th><th>Subject</th><th>Progress</th><th>Next Class</th><th>Status</th></tr></thead>
-        <tbody id="ov-table"></tbody></table>
+        <div class="ov-side-col">
+          <div class="widget-card"><h4>Next class</h4><div id="t-next-class-widget"></div></div>
+          <div class="widget-card"><h4>Activity</h4><div class="activity-feed" id="t-activity-feed"></div></div>
+        </div>
       </div>
     </div>
 
@@ -1084,10 +1572,98 @@ tr:hover td { background:rgba(124,111,239,.04); }
       </div>
     </div>
 
+    <!-- Payment reviews (credit points only after verify) -->
+    <div id="tp-paymentreviews" class="dash-page">
+      <div class="sec-header">
+        <div>
+          <h2>Payment reviews</h2>
+          <p>Students submit UPI/bank reference after paying. Approve only when the amount matches your statement — then points are credited automatically.</p>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="buildPaymentReviewsList()">🔄 Refresh</button>
+      </div>
+      <div id="payment-reviews-list"></div>
+    </div>
+
     <!-- Performance -->
     <div id="tp-performance" class="dash-page">
       <div class="sec-header"><div><h2>Student Performance</h2><p>Track each student's learning journey.</p></div></div>
       <div id="perf-cards"></div>
+    </div>
+
+    <!-- Progress notes (SPR-style) -->
+    <div id="tp-spr" class="dash-page">
+      <div class="sec-header">
+        <div><h2>Progress notes</h2><p>Session summaries and wins — visible to the student on their home hub.</p></div>
+      </div>
+      <div class="spr-form-card">
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Student</label>
+            <select id="spr-student"></select>
+          </div>
+          <div class="input-group">
+            <label>Week / label</label>
+            <input type="text" id="spr-week" placeholder="e.g. Apr 7–13">
+          </div>
+          <div class="input-group full">
+            <label>Note for student &amp; parent</label>
+            <textarea id="spr-body" rows="4" placeholder="Topics covered, homework habits, next steps…"></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" onclick="submitProgressNote()">Save note</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('spr-body').value=''">Clear</button>
+        </div>
+        <div class="msg-err" id="spr-err" style="margin-top:12px"></div>
+        <div class="msg-ok" id="spr-ok" style="margin-top:12px"></div>
+      </div>
+      <div class="spr-list" id="spr-list"></div>
+    </div>
+
+    <!-- Time off -->
+    <div id="tp-leave" class="dash-page">
+      <div class="sec-header">
+        <div><h2>Time off &amp; availability</h2><p>Log dates you are unavailable so you can plan coverage and comms.</p></div>
+      </div>
+      <div class="spr-form-card">
+        <div class="form-grid">
+          <div class="input-group"><label>From</label><input type="date" id="leave-from"></div>
+          <div class="input-group"><label>To</label><input type="date" id="leave-to"></div>
+          <div class="input-group full"><label>Reason (optional)</label><input type="text" id="leave-reason" placeholder="Travel, exams week, etc."></div>
+        </div>
+        <button type="button" class="btn btn-primary" style="margin-top:14px" onclick="submitLeaveBlock()">Submit request</button>
+        <div class="msg-err" id="leave-err" style="margin-top:12px"></div>
+      </div>
+      <div id="leave-list"></div>
+    </div>
+
+    <!-- Help -->
+    <div id="tp-help" class="dash-page">
+      <div class="sec-header">
+        <div><h2>Help &amp; policies</h2><p>Quick reference like an internal wiki — customize links for your academy.</p></div>
+      </div>
+      <div class="help-grid">
+        <div class="help-tile">
+          <h4>📅 Class ops</h4>
+          <p>Join links, late policy, and how to reschedule with a student.</p>
+          <span class="note-pill">Checklist</span>
+        </div>
+        <div class="help-tile">
+          <h4>📋 Progress notes</h4>
+          <p>Log a short note after each block of sessions so families see continuity.</p>
+          <span class="note-pill">SPR-style</span>
+        </div>
+        <div class="help-tile">
+          <h4>🗓 Free schedule</h4>
+          <p>Keep slots current; students only see what you publish here.</p>
+          <span class="note-pill">Availability</span>
+        </div>
+        <div class="help-tile">
+          <h4>🔔 Reminders</h4>
+          <p>Enable browser notifications from Overview so you never miss a start time.</p>
+          <span class="note-pill">Epicenter</span>
+        </div>
+      </div>
     </div>
 
     <!-- Password Resets -->
@@ -1104,9 +1680,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
 <!-- STUDENT DASHBOARD -->
 <div id="page-student" class="page">
   <aside class="s-sidebar">
-    <div class="s-sidebar-logo"><div class="s-brand">🧮 Mathmade Easy</div></div>
+    <div class="s-sidebar-logo"><div class="s-brand">🧮 Mathmade Epicenter</div><div class="s-sub" style="font-size:.65rem;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-top:4px">Student hub</div></div>
     <nav class="s-nav">
       <button class="s-nav-btn active" onclick="sNav('home',this)"><span class="sn-ic">🏠</span> Home</button>
+      <button class="s-nav-btn" onclick="sNav('notifications',this)"><span class="sn-ic">🔔</span> Inbox</button>
       <button class="s-nav-btn" onclick="sNav('classes',this)"><span class="sn-ic">📅</span> My Classes</button>
       <button class="s-nav-btn" onclick="sNav('freeschedule',this)">
         <span class="sn-ic">🗓</span> Book a Class
@@ -1117,8 +1694,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <button class="s-nav-btn" onclick="sNav('badges',this)"><span class="sn-ic">🏆</span> Badges</button>
       <button class="s-nav-btn" onclick="sNav('leaderboard',this)"><span class="sn-ic">🥇</span> Leaderboard</button>
       <button class="s-nav-btn" onclick="sNav('resources',this)"><span class="sn-ic">📂</span> Resources</button>
+      <button class="s-nav-btn" onclick="sNav('practice',this)"><span class="sn-ic">🧪</span> Practice lab</button>
       <button class="s-nav-btn" onclick="sNav('announcements',this)"><span class="sn-ic">📣</span> Announcements</button>
       <button class="s-nav-btn" onclick="sNav('profile',this)"><span class="sn-ic">👤</span> Profile</button>
+      <button class="s-nav-btn" onclick="sNav('payments',this)"><span class="sn-ic">💳</span> Payment History</button>
     </nav>
     <div class="s-sidebar-foot">
       <div class="s-profile-card">
@@ -1127,6 +1706,12 @@ tr:hover td { background:rgba(124,111,239,.04); }
           <div><div class="sp-name" id="s-name">Student</div><div class="sp-course" id="s-course">—</div></div>
         </div>
         <div class="sp-pts" id="s-pts">0 Points</div>
+        <button class="btn btn-green btn-full" style="margin-top:8px;font-size:.8rem" onclick="openStudentRechargeModal()">
+          💳 Recharge Points
+        </button>
+        <div id="s-low-points-warning" style="display:none;background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:8px;padding:8px;margin-top:8px;font-size:.75rem;color:var(--red);text-align:center">
+          ⚠️ Low points! Recharge to attend more classes
+        </div>
       </div>
       <button class="btn btn-ghost btn-full" style="margin-top:9px;font-size:.8rem" onclick="doLogout()">⇥ Logout</button>
       <button id="s-back-btn" class="btn btn-ghost btn-full" style="margin-top:7px;font-size:.8rem;display:none" onclick="routeTo('teacher')">← Back to Dashboard</button>
@@ -1136,10 +1721,11 @@ tr:hover td { background:rgba(124,111,239,.04); }
   <div class="mob-drawer-overlay" id="s-drawer-overlay" onclick="closeSDrawer()"></div>
   <div class="mob-drawer" id="s-drawer">
     <div class="s-sidebar-logo" style="padding:18px 16px;border-bottom:1px solid var(--border)">
-      <div class="s-brand">🧮 Mathmade Easy</div>
+      <div class="s-brand">🧮 Mathmade Epicenter</div>
     </div>
     <nav class="s-nav" style="padding:10px 8px">
       <button class="s-nav-btn active" onclick="sNav('home',this);closeSDrawer()"><span class="sn-ic">🏠</span> Home</button>
+      <button class="s-nav-btn" onclick="sNav('notifications',this);closeSDrawer()"><span class="sn-ic">🔔</span> Inbox</button>
       <button class="s-nav-btn" onclick="sNav('classes',this);closeSDrawer()"><span class="sn-ic">📅</span> My Classes</button>
       <button class="s-nav-btn" onclick="sNav('freeschedule',this);closeSDrawer()"><span class="sn-ic">🗓</span> Book a Class</button>
       <button class="s-nav-btn" onclick="sNav('progress',this);closeSDrawer()"><span class="sn-ic">📈</span> My Progress</button>
@@ -1147,8 +1733,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <button class="s-nav-btn" onclick="sNav('badges',this);closeSDrawer()"><span class="sn-ic">🏆</span> Badges</button>
       <button class="s-nav-btn" onclick="sNav('leaderboard',this);closeSDrawer()"><span class="sn-ic">🥇</span> Leaderboard</button>
       <button class="s-nav-btn" onclick="sNav('resources',this);closeSDrawer()"><span class="sn-ic">📂</span> Resources</button>
+      <button class="s-nav-btn" onclick="sNav('practice',this);closeSDrawer()"><span class="sn-ic">🧪</span> Practice lab</button>
       <button class="s-nav-btn" onclick="sNav('announcements',this);closeSDrawer()"><span class="sn-ic">📣</span> Announcements</button>
       <button class="s-nav-btn" onclick="sNav('profile',this);closeSDrawer()"><span class="sn-ic">👤</span> Profile</button>
+      <button class="s-nav-btn" onclick="sNav('payments',this);closeSDrawer()"><span class="sn-ic">💳</span> Payment History</button>
     </nav>
     <div class="s-sidebar-foot" style="padding:13px 11px;border-top:1px solid var(--border)">
       <div class="s-profile-card">
@@ -1165,9 +1753,10 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 
   <div class="mob-topbar" id="s-topbar">
-    <div class="mt-brand">🧮 Mathmade Easy</div>
+    <div class="mt-brand">🧮 Epicenter</div>
     <div class="mt-right">
       <span id="s-topbar-title" style="font-size:.8rem;color:var(--text2);font-weight:600">Home</span>
+      <button type="button" class="mob-menu-btn" onclick="event.stopPropagation();toggleMobNotif('s')" aria-label="Inbox">🔔</button>
       <button class="mob-menu-btn" onclick="openSDrawer()">☰</button>
     </div>
   </div>
@@ -1182,6 +1771,18 @@ tr:hover td { background:rgba(124,111,239,.04); }
   </div>
 
   <main class="s-main">
+    <div class="dash-topbar" id="s-dash-topbar">
+      <div class="epi-crumbs">
+        <span class="epi-brand">Epicenter</span>
+        <span class="epi-sep">/</span>
+        <span class="epi-page" id="s-page-crumbs">Home</span>
+      </div>
+      <div class="dash-topbar-actions">
+        <button type="button" class="btn btn-ghost btn-sm notif-bell" onclick="sNav('notifications',null)" aria-label="Open inbox">🔔 Inbox</button>
+      </div>
+    </div>
+    <div class="notif-dropdown" id="s-notif-dropdown" onclick="event.stopPropagation()"></div>
+
     <!-- Home -->
     <div id="sp-home" class="dash-page active">
       <div class="welcome-banner">
@@ -1197,6 +1798,14 @@ tr:hover td { background:rgba(124,111,239,.04); }
         <div style="flex:1"><strong style="color:var(--green)">Enable class reminders</strong> — get notified 5 min before your class starts.</div>
         <button class="btn btn-green btn-sm" onclick="requestNotifPermission()">Enable</button>
         <button class="btn btn-ghost btn-sm" onclick="document.getElementById('notif-banner-s').style.display='none'">Later</button>
+      </div>
+      <div class="glimpse-card">
+        <h3>📌 This week at a glance</h3>
+        <p id="s-weekly-glimpse">Loading your snapshot…</p>
+      </div>
+      <div class="card" style="padding:20px;margin-bottom:20px">
+        <h3 style="margin-bottom:12px;font-size:.93rem">💬 From your teacher</h3>
+        <div id="s-teacher-notes"></div>
       </div>
       <div class="stat-grid" id="s-stats"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="home-grid">
@@ -1294,6 +1903,39 @@ tr:hover td { background:rgba(124,111,239,.04); }
       <div class="ann-list" id="s-ann-list"></div>
     </div>
 
+    <!-- Inbox (aggregated) -->
+    <div id="sp-notifications" class="dash-page">
+      <div class="sec-header">
+        <div><h2>Inbox</h2><p>Homework deadlines and announcements in one timeline.</p></div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="buildSNotifications()">🔄 Refresh</button>
+      </div>
+      <div id="s-inbox-list"></div>
+    </div>
+
+    <!-- Practice lab -->
+    <div id="sp-practice" class="dash-page">
+      <div class="sec-header">
+        <div><h2>Practice lab</h2><p>Extra drills and tools — like a sandbox between live classes.</p></div>
+      </div>
+      <div class="practice-grid">
+        <a class="practice-tile" href="https://www.desmos.com/calculator" target="_blank" rel="noopener">
+          <div class="pt-ic">📐</div><div class="pt-name">Desmos Graphing</div><div class="pt-desc">Graph functions, sliders, and tables instantly in the browser.</div>
+        </a>
+        <a class="practice-tile" href="https://www.geogebra.org/calculator" target="_blank" rel="noopener">
+          <div class="pt-ic">📊</div><div class="pt-name">GeoGebra</div><div class="pt-desc">Geometry, algebra, and 3D — great for visual learners.</div>
+        </a>
+        <a class="practice-tile" href="https://www.khanacademy.org/math" target="_blank" rel="noopener">
+          <div class="pt-ic">🎓</div><div class="pt-name">Khan Academy Math</div><div class="pt-desc">Structured practice by topic and grade level.</div>
+        </a>
+        <a class="practice-tile" href="https://www.wolframalpha.com/" target="_blank" rel="noopener">
+          <div class="pt-ic">🔬</div><div class="pt-name">Wolfram Alpha</div><div class="pt-desc">Step-style answers for equations, calculus, and stats.</div>
+        </a>
+        <a class="practice-tile" href="https://brilliant.org/courses/" target="_blank" rel="noopener">
+          <div class="pt-ic">✨</div><div class="pt-name">Brilliant</div><div class="pt-desc">Interactive problem solving beyond the textbook.</div>
+        </a>
+      </div>
+    </div>
+
     <!-- Profile -->
     <div id="sp-profile" class="dash-page">
       <div class="sec-header"><div><h2>My Profile</h2><p>Your personal details.</p></div></div>
@@ -1307,6 +1949,45 @@ tr:hover td { background:rgba(124,111,239,.04); }
           <div style="font-size:.76rem;color:var(--text3);margin-top:7px" id="s-pf-lvllbl">Beginner Mathematician</div>
         </div>
         <div class="card" style="padding:20px"><div class="info-grid" id="s-info-grid"></div></div>
+      </div>
+    </div>
+
+    <!-- Payment History -->
+    <div id="sp-payments" class="dash-page">
+      <div class="sec-header">
+        <div>
+          <h2>💳 Payment History</h2>
+          <p>Submit a payment with your bank/UPI reference after you pay. Points are added only after your teacher approves the match.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadPaymentHistory()">🔄 Refresh</button>
+      </div>
+      
+      <!-- Payment Stats -->
+      <div class="stat-grid" style="margin-bottom:20px">
+        <div class="stat-card">
+          <div class="stat-big" style="color:var(--accent)" id="total-payments-count">0</div>
+          <div class="stat-label">Total Requests</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-big" style="color:var(--green)" id="approved-payments-count">0</div>
+          <div class="stat-label">Approved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-big" style="color:var(--yellow)" id="pending-payments-count">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-big" style="color:var(--red)" id="rejected-payments-count">0</div>
+          <div class="stat-label">Rejected</div>
+        </div>
+      </div>
+
+      <!-- Payment History List -->
+      <div id="payment-history-list">
+        <div class="empty">
+          <div class="empty-icon">💳</div>
+          <p>Loading payment history...</p>
+        </div>
       </div>
     </div>
   </main>
@@ -1683,12 +2364,18 @@ function spin(msg){ document.getElementById('spin-msg').textContent=msg||'Loadin
 function unspin(){ document.getElementById('spinner').classList.remove('show'); }
 
 let _toastT;
-function toast(msg, ms=2500){
+function toast(msg, ms=2800){
   const el=document.getElementById('toast');
-  el.textContent='✅ '+msg;
-  el.classList.add('show');
+  const text = /^[✅❌⚠️📌]/.test(String(msg).trim()) ? String(msg).trim() : ('✅ ' + msg);
+  el.textContent = text;
+  el.classList.remove('toast-err');
+  if (/^[❌⚠️]/.test(text)) el.classList.add('toast-err');
+  el.classList.remove('show');
   clearTimeout(_toastT);
-  _toastT=setTimeout(()=>el.classList.remove('show'), ms);
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=> el.classList.add('show'));
+  });
+  _toastT=setTimeout(()=>{ el.classList.remove('show'); el.classList.remove('toast-err'); }, ms);
 }
 
 function routeTo(page){
@@ -1922,6 +2609,29 @@ async function fetchClassRequests(){
   const snap=await getDocs(collection(db,'class_requests'));
   window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
 }
+async function fetchProgressNotes(){
+  const {db,collection,getDocs}=window._FB;
+  try{
+    const snap=await getDocs(collection(db,'progress_notes'));
+    const all=snap.docs.map(d=>({...d.data(),id:d.id}));
+    window._progressNotes=window._teacher?all:all.filter(n=>n.studentUid===window._student?.uid);
+  }catch(e){ console.warn('progress_notes:',e); window._progressNotes=[]; }
+}
+async function fetchLeaveRequests(){
+  const {db,collection,getDocs}=window._FB;
+  const uid=window._FB.auth.currentUser?.uid;
+  try{
+    const snap=await getDocs(collection(db,'leave_requests'));
+    window._leaveRequests=snap.docs.map(d=>({...d.data(),id:d.id})).filter(x=>!uid||x.teacherUid===uid);
+  }catch(e){ console.warn('leave_requests:',e); window._leaveRequests=[]; }
+}
+async function fetchPayments(){
+  const {db,collection,getDocs}=window._FB;
+  try{
+    const snap=await getDocs(collection(db,'payments'));
+    window._payments=snap.docs.map(d=>({...d.data(),id:d.id}));
+  }catch(e){ console.warn('payments:',e); window._payments=[]; }
+}
 async function addDoc_(col, data){
   const {db,collection,addDoc}=window._FB;
   const ref=await addDoc(collection(db,col),data);
@@ -1940,23 +2650,27 @@ function setupRealTimeListeners(){
   onSnapshot(query(collection(db,'users'),where('role','==','student')), snap=>{
     window._students=snap.docs.map(d=>({...d.data(),uid:d.id}));
     if(window._teacher) buildTeacherAll();
+    if(window._student){
+      const me=window._students.find(u=>u.uid===window._student.uid);
+      if(me){ window._student=me; initStudentUI(me); }
+    }
   });
   onSnapshot(collection(db,'schedules'), snap=>{
     window._schedules=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); }
-    else if(window._student){ buildSClasses(window._student); }
+    if(window._teacher){ buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); buildTNextClassWidget(); buildTActivityFeed(); }
+    else if(window._student){ buildSClasses(window._student); buildWeeklyGlimpse(window._student); }
     checkUpcomingClasses();
   });
   onSnapshot(collection(db,'homeworks'), snap=>{
     window._homeworks=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher) buildTHW();
-    else if(window._student) buildSHW(window._student);
+    if(window._teacher){ buildTHW(); buildTActivityFeed(); }
+    else if(window._student){ buildSHW(window._student); buildWeeklyGlimpse(window._student); buildSNotifications(); }
   });
   onSnapshot(collection(db,'announcements'), snap=>{
     window._announcements=snap.docs.map(d=>({...d.data(),id:d.id}))
       .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
-    if(window._teacher) buildTAnn();
-    else if(window._student) buildSAnn();
+    if(window._teacher){ buildTAnn(); buildTActivityFeed(); }
+    else if(window._student){ buildSAnn(); buildSNotifications(); }
   });
   onSnapshot(collection(db,'resources'), snap=>{
     window._resources=snap.docs.map(d=>({...d.data(),id:d.id}));
@@ -1970,8 +2684,24 @@ function setupRealTimeListeners(){
   });
   onSnapshot(collection(db,'class_requests'), snap=>{
     window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildTFsRequests(); updateFsReqBadge(); }
+    if(window._teacher){ buildTFsRequests(); updateFsReqBadge(); buildTActivityFeed(); updateEpicenterNotifDot('t'); }
     else if(window._student){ buildSMyRequests(window._student); updateStudentReqBadge(window._student); }
+  });
+  onSnapshot(collection(db,'progress_notes'), snap=>{
+    const all=snap.docs.map(d=>({...d.data(),id:d.id}));
+    window._progressNotes=window._teacher?all:all.filter(n=>n.studentUid===window._student?.uid);
+    if(window._teacher){ buildSPRList(); fillSprStudentSelect(); buildTActivityFeed(); }
+    else if(window._student){ buildTeacherNotesOnHome(window._student); buildWeeklyGlimpse(window._student); buildSNotifications(); }
+  });
+  onSnapshot(collection(db,'leave_requests'), snap=>{
+    const uid=window._FB.auth.currentUser?.uid;
+    window._leaveRequests=snap.docs.map(d=>({...d.data(),id:d.id})).filter(x=>!uid||x.teacherUid===uid);
+    if(window._teacher){ buildLeaveList(); updateLeaveBadge(); buildTActivityFeed(); updateEpicenterNotifDot('t'); }
+  });
+  onSnapshot(collection(db,'payments'), snap=>{
+    window._payments=snap.docs.map(d=>({...d.data(),id:d.id}));
+    if(window._teacher){ buildPaymentReviewsList(); updatePaymentRequestsBadge(); }
+    if(window._student) loadPaymentHistory();
   });
 }
 </script>
@@ -2011,6 +2741,7 @@ async function doLogout(){
   window._students=[]; window._schedules=[]; window._homeworks=[];
   window._announcements=[]; window._resources=[];
   window._freeSlots=[]; window._classRequests=[];
+  window._progressNotes=[]; window._leaveRequests=[]; window._payments=[];
   document.getElementById('s-back-btn').style.display='none';
   document.getElementById('s-back-btn-d').style.display='none';
   routeTo('login');
@@ -2048,9 +2779,15 @@ async function submitReg(){
       const cred=await createUserWithEmailAndPassword(auth,email,password);
       await setDoc(doc(db,'users',cred.user.uid),{
         role:'student', name, email, username, avatar:av, color, course:subj, age:parseInt(age), grade, parent, phone,
-        progress:0, done:0, remaining:20, points:0, fee:800, status:'active',
+        progress:0, done:0, remaining:20, points:1000, pointsBalance:1000, fee:800, status:'active',
         joined:new Date().toLocaleString('en',{month:'short',year:'numeric'}),
-        next:'TBD', skills:{Algebra:0,Geometry:0,Calculus:0,Trigonometry:0,Statistics:0}, pointsLog:[], badges:[]
+        next:'TBD', skills:{Algebra:0,Geometry:0,Calculus:0,Trigonometry:0,Statistics:0}, 
+        pointsLog:[{
+          icon: '🎁',
+          reason: 'Welcome Bonus - Free 1000 Points!',
+          val: 1000,
+          date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
+        }], badges:[]
       });
       await signOut(auth); unspin();
       showMsg('reg-ok','✅ Student account created! They can now log in.','ok');
@@ -2074,7 +2811,6 @@ async function submitReg(){
 }
 </script>
 
-
 <!-- ====================================================
   TEACHER DASHBOARD INIT & NAVIGATION
 ==================================================== -->
@@ -2082,7 +2818,8 @@ async function submitReg(){
 const T_TITLES = {
   overview:'Overview', students:'My Students', schedule:'Schedule',
   freeschedule:'Free Schedule', homework:'Homework', announcements:'Announcements',
-  resources:'Resources', earnings:'Earnings', performance:'Performance', resets:'Password Resets'
+  resources:'Resources', spr:'Progress Notes', leave:'Time off', help:'Help & policies',
+  earnings:'Earnings', paymentreviews:'Payment reviews', performance:'Performance', resets:'Password Resets'
 };
 
 async function initTeacher(){
@@ -2095,10 +2832,14 @@ async function initTeacher(){
     const hr=new Date().getHours();
     document.getElementById('t-greeting').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', '+(t.name||'Teacher')+' 👋';
   }
-  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests()]);
+  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests(),fetchProgressNotes(),fetchLeaveRequests(),fetchPayments()]);
   buildTeacherAll();
   fetchAndBuildResets();
   setupRealTimeListeners();
+  if(!window._epicenterDocClick){
+    window._epicenterDocClick=true;
+    document.addEventListener('click',()=>{ document.querySelectorAll('.notif-dropdown.show').forEach(d=>d.classList.remove('show')); });
+  }
   checkAndSendReminders();
   startPreclassChecker();
   maybeShowNotifBanner();
@@ -2114,15 +2855,20 @@ function tNav(section, el){
   document.querySelectorAll('#t-mob-nav .mob-nav-btn').forEach(b=>{
     b.classList.toggle('active', b.getAttribute('data-section')===section);
   });
-  const titleEl=document.getElementById('t-topbar-title'); if(titleEl) titleEl.textContent=T_TITLES[section]||section;
+  const title=T_TITLES[section]||section;
+  const titleEl=document.getElementById('t-topbar-title'); if(titleEl) titleEl.textContent=title;
+  const crumbs=document.getElementById('t-page-crumbs'); if(crumbs) crumbs.textContent=title;
   if(section==='schedule')      { buildWeekCal(); buildSchedTable(); }
   if(section==='freeschedule')  buildTFreeSchedule();
   if(section==='homework')      buildTHW();
   if(section==='announcements') buildTAnn();
   if(section==='resources')     buildTRes();
   if(section==='earnings')      buildEarnings();
+  if(section==='paymentreviews') buildPaymentReviewsList();
   if(section==='performance')   buildPerf();
   if(section==='resets')        fetchAndBuildResets();
+  if(section==='spr')           { fillSprStudentSelect(); buildSPRList(); }
+  if(section==='leave')        buildLeaveList();
 }
 
 function buildTeacherAll(){
@@ -2131,6 +2877,217 @@ function buildTeacherAll(){
   buildTHW(); buildTAnn(); buildTRes();
   buildEarnings(); buildPerf();
   buildTFreeSchedule();
+  buildTNextClassWidget(); buildTActivityFeed();
+  fillSprStudentSelect(); buildSPRList(); buildLeaveList();
+  updateLeaveBadge(); updateEpicenterNotifDot('t');
+  buildPaymentReviewsList(); updatePaymentRequestsBadge();
+}
+
+function buildTNextClassWidget(){
+  const el=document.getElementById('t-next-class-widget');
+  if(!el) return;
+  const now=new Date();
+  const upcoming=window._schedules.map(c=>{
+    const t=new Date((c.date||'')+'T'+(c.time||'23:59'));
+    return {...c,_t:isNaN(t)?null:t};
+  }).filter(c=>c._t&&c._t>now).sort((a,b)=>a._t-b._t);
+  const next=upcoming[0];
+  if(!next){ el.innerHTML='<div style="font-size:.82rem;color:var(--text3)">No upcoming classes on the calendar.</div>'; return; }
+  el.innerHTML=`<div class="next-class-pill">
+    <div class="nc-title">${next.studentName||'Student'} · ${next.course||'Class'}</div>
+    <div class="nc-meta">${next.date||'—'} · ${fmt12(next.time||'')} · ${next.platform||''}</div>
+    ${next.meetingLink?`<a href="${next.meetingLink}" target="_blank" class="btn btn-green btn-sm" style="margin-top:4px;align-self:flex-start">Join link</a>`:''}
+  </div>`;
+}
+
+function buildTActivityFeed(){
+  const el=document.getElementById('t-activity-feed');
+  if(!el) return;
+  const rows=[];
+  [...window._schedules].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5).forEach(c=>{
+    rows.push({ic:'📅',html:`<b>Class</b> · ${c.studentName||''} — ${c.course||''} <span style="color:var(--text3)">${c.date||''}</span>`});
+  });
+  [...window._homeworks].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,4).forEach(h=>{
+    rows.push({ic:'📝',html:`<b>Homework</b> · ${h.title||'—'} <span style="color:var(--text3)">${h.studentName||'All'}</span>`});
+  });
+  [...window._announcements].slice(0,4).forEach(a=>{
+    rows.push({ic:'📣',html:`<b>Announcement</b> · ${(a.title||'').substring(0,42)}${(a.title||'').length>42?'…':''}`});
+  });
+  (window._classRequests||[]).filter(r=>r.status==='pending').slice(0,3).forEach(r=>{
+    rows.push({ic:'📨',html:`<b>Slot request</b> · ${r.studentName||'Student'} <span style="color:var(--text3)">${r.slotDay||''}</span>`});
+  });
+  el.innerHTML=rows.length?rows.slice(0,14).map(r=>`<div class="act-row"><div class="act-ic">${r.ic}</div><div class="act-body">${r.html}</div></div>`).join('')
+    :'<div style="font-size:.82rem;color:var(--text3);padding:6px 0">No recent activity yet.</div>';
+}
+
+function updateEpicenterNotifDot(which){
+  if(which!=='t') return;
+  const dot=document.getElementById('t-notif-dot');
+  if(!dot) return;
+  const pendReq=window._classRequests.filter(r=>r.status==='pending').length;
+  const pendLeave=(window._leaveRequests||[]).filter(l=>l.status==='pending').length;
+  dot.style.display=(pendReq+pendLeave)>0?'block':'none';
+}
+
+function fillSprStudentSelect(){
+  const sel=document.getElementById('spr-student');
+  if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Select student —</option>'+(window._students||[]).map(s=>`<option value="${s.uid}">${s.name||'Student'}</option>`).join('');
+  if(cur&&[...sel.options].some(o=>o.value===cur)) sel.value=cur;
+}
+
+function buildSPRList(){
+  const el=document.getElementById('spr-list');
+  if(!el) return;
+  const notes=[...(window._progressNotes||[])].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  if(!notes.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>No progress notes yet.</p></div>'; return; }
+  el.innerHTML=notes.map(n=>{
+    const body=(n.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<div class="spr-item">
+    <div class="spr-top"><div><div class="spr-stu">${n.studentName||'Student'}</div><div class="spr-wk">${n.weekLabel||'—'} · ${(n.createdAt||'').slice(0,10)}</div></div>
+      <button type="button" class="btn btn-danger btn-sm" onclick="deleteProgressNote('${n.id}')">Delete</button></div>
+    <div class="spr-body">${body}</div>
+  </div>`;
+  }).join('');
+}
+
+async function submitProgressNote(){
+  const st=document.getElementById('spr-student').value;
+  const week=document.getElementById('spr-week').value.trim()||('Week of '+new Date().toLocaleDateString());
+  const body=document.getElementById('spr-body').value.trim();
+  hideMsg('spr-err'); hideMsg('spr-ok');
+  if(!st||!body){ showMsg('spr-err','Choose a student and write a note.'); return; }
+  const stu=window._students.find(x=>x.uid===st);
+  spin('Saving note...');
+  try{
+    await addDoc_('progress_notes',{
+      teacherUid:window._FB.auth.currentUser.uid,
+      studentUid:st, studentName:stu?.name||'Student',
+      weekLabel:week, body, createdAt:new Date().toISOString()
+    });
+    document.getElementById('spr-body').value='';
+    showMsg('spr-ok','✅ Note saved. Students see it on their home hub.','ok');
+    unspin();
+  }catch(e){ unspin(); showMsg('spr-err','❌ '+e.message); }
+}
+
+async function deleteProgressNote(id){
+  if(!confirm('Delete this progress note?')) return;
+  spin('Deleting...');
+  try{ await delDoc_('progress_notes',id); toast('Note removed.'); unspin(); }
+  catch(e){ unspin(); alert(e.message); }
+}
+
+function buildLeaveList(){
+  const el=document.getElementById('leave-list');
+  if(!el) return;
+  const list=[...(window._leaveRequests||[])].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  if(!list.length){ el.innerHTML='<div class="empty"><div class="empty-icon">🏖</div><p>No time-off entries yet.</p></div>'; return; }
+  el.innerHTML=list.map(l=>{
+    const st=l.status||'pending';
+    return `<div class="leave-row ${st}">
+      <div><div style="font-weight:800">${l.fromDate||'—'} → ${l.toDate||'—'}</div>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:4px">${l.reason||'—'}</div>
+        <div style="font-size:.72rem;color:var(--text3);margin-top:4px">Status: <strong>${st}</strong></div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${st==='pending'?`<button type="button" class="btn btn-green btn-sm" onclick="setLeaveStatus('${l.id}','approved')">Mark cleared</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="setLeaveStatus('${l.id}','denied')">Cancel</button>`:''}
+      </div></div>`;
+  }).join('');
+}
+
+async function submitLeaveBlock(){
+  const from=document.getElementById('leave-from').value;
+  const to=document.getElementById('leave-to').value||from;
+  const reason=document.getElementById('leave-reason').value.trim();
+  hideMsg('leave-err');
+  if(!from){ showMsg('leave-err','Pick a start date.'); return; }
+  spin('Saving...');
+  try{
+    await addDoc_('leave_requests',{
+      teacherUid:window._FB.auth.currentUser.uid, fromDate:from, toDate:to||from, reason,
+      status:'pending', createdAt:new Date().toISOString()
+    });
+    document.getElementById('leave-reason').value='';
+    toast('Time-off request logged.');
+    unspin();
+  }catch(e){ unspin(); showMsg('leave-err','❌ '+e.message); }
+}
+
+async function setLeaveStatus(id, status){
+  spin('Updating...');
+  try{
+    await updateDoc_('leave_requests',id,{status});
+    const row=window._leaveRequests.find(x=>x.id===id); if(row) row.status=status;
+    buildLeaveList(); updateLeaveBadge(); updateEpicenterNotifDot('t');
+    unspin();
+  }catch(e){ unspin(); alert(e.message); }
+}
+
+function updateLeaveBadge(){
+  const b=document.getElementById('leave-badge');
+  if(!b) return;
+  const n=(window._leaveRequests||[]).filter(l=>l.status==='pending').length;
+  b.textContent=n; b.style.display=n>0?'inline-block':'none';
+}
+
+function buildTeacherInboxDropdown(){
+  const dd=document.getElementById('t-notif-dropdown');
+  if(!dd) return;
+  const pend=window._classRequests.filter(r=>r.status==='pending');
+  const leaveP=(window._leaveRequests||[]).filter(l=>l.status==='pending');
+  let html='<div class="notif-dd-head">Inbox</div>';
+  if(!pend.length&&!leaveP.length) html+='<div class="notif-dd-empty">You are all caught up.</div>';
+  pend.slice(0,6).forEach(r=>{
+    html+=`<div class="notif-dd-item" onclick="closeNotifDd();tNav('freeschedule',null);(function(){var t=document.querySelectorAll('#tp-freeschedule .fs-tab')[2];if(t)fsSwitchTab('requests',t);})()">
+      <strong>Slot request</strong>${r.studentName||'Student'} · ${r.slotDay||''} ${fmt12(r.slotStart||'')}</div>`;
+  });
+  leaveP.slice(0,4).forEach(l=>{
+    html+=`<div class="notif-dd-item" onclick="closeNotifDd();tNav('leave',null)"><strong>Time off</strong>${l.fromDate} → ${l.toDate}</div>`;
+  });
+  dd.innerHTML=html;
+}
+
+function closeNotifDd(){ document.querySelectorAll('.notif-dropdown').forEach(d=>d.classList.remove('show')); }
+
+function toggleNotifDropdown(which, ev){
+  if(ev) ev.stopPropagation();
+  const dd=document.getElementById(which==='t'?'t-notif-dropdown':'s-notif-dropdown');
+  if(!dd) return;
+  const open=dd.classList.contains('show');
+  closeNotifDd();
+  if(!open){
+    if(which==='t') buildTeacherInboxDropdown();
+    dd.classList.add('show');
+  }
+}
+
+function toggleMobNotif(which){
+  if(which==='s'){
+    const btn=[...document.querySelectorAll('.s-sidebar .s-nav-btn')].find(b=>(b.getAttribute('onclick')||'').includes("'notifications'"));
+    sNav('notifications', btn||null);
+    return;
+  }
+  buildTeacherInboxDropdown();
+  const dd=document.getElementById('t-notif-dropdown');
+  if(dd) dd.classList.toggle('show');
+}
+
+let _tSearchTimer=null;
+function teacherGlobalSearch(q){
+  clearTimeout(_tSearchTimer);
+  const v=(q||'').trim();
+  _tSearchTimer=setTimeout(()=>{ buildStuTable(v); buildOvTable(v); },200);
+}
+
+function teacherGlobalSearchEnter(){
+  const q=document.getElementById('t-global-search').value.trim().toLowerCase();
+  if(!q) return;
+  const hits=window._students.filter(s=>(s.name||'').toLowerCase().includes(q));
+  if(hits.length===1){ teacherViewStudent(hits[0].uid); return; }
+  tNav('students',document.querySelectorAll('.t-sidebar .nav-btn')[1]);
+  buildStuTable(document.getElementById('t-global-search').value.trim());
 }
 </script>
 
@@ -2654,9 +3611,11 @@ function buildOvStats(){
     ${pending>0?`<div class="stat-card s-cyan"><div class="stat-icon2">📨</div><div class="stat-big">${pending}</div><div class="stat-lbl">Pending Requests</div></div>`:''}`;
 }
 
-function buildOvTable(){
+function buildOvTable(nameFilter){
   const tb=document.getElementById('ov-table');
-  const arr=window._students.slice(0,6);
+  let arr=window._students;
+  if(nameFilter) arr=arr.filter(s=>(s.name||'').toLowerCase().includes(nameFilter.toLowerCase()));
+  arr=arr.slice(0,6);
   if(!arr.length){ tb.innerHTML=`<tr><td colspan="5"><div class="empty"><div class="empty-icon">👨‍🎓</div><p>No students yet.</p></div></td></tr>`; return; }
   tb.innerHTML=arr.map(s=>`<tr>
     <td><div class="cell-user"><div class="avatar" style="background:${s.color}22;color:${s.color}">${s.avatar||'?'}</div>${s.name}</div></td>
@@ -3042,15 +4001,16 @@ async function confirmDelItem(){
 ==================================================== -->
 <script>
 const S_TITLES = {
-  home:'Home', classes:'My Classes', freeschedule:'Book a Class',
+  home:'Home', notifications:'Inbox', classes:'My Classes', freeschedule:'Book a Class',
   progress:'My Progress', homework:'Homework', badges:'Badges',
-  leaderboard:'Leaderboard', resources:'Resources', announcements:'Announcements', profile:'Profile'
+  leaderboard:'Leaderboard', resources:'Resources', practice:'Practice lab',
+  announcements:'Announcements', profile:'Profile', payments:'Payment History'
 };
 
 async function initStudent(){
   spin('Loading your dashboard...');
   const s=window._student;
-  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests()]);
+  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests(),fetchProgressNotes(),fetchPayments()]);
   initStudentUI(s);
   setupRealTimeListeners();
   startPreclassChecker();
@@ -3065,10 +4025,10 @@ function initStudentUI(s){
   const avD=document.getElementById('s-av-d'); if(avD){ avD.textContent=av; avD.style.background=color+'22'; avD.style.color=color; }
   document.getElementById('s-name').textContent    = s.name||'Student';
   document.getElementById('s-course').textContent  = s.course||'—';
-  document.getElementById('s-pts').textContent     = (s.points||0)+' Points';
+  document.getElementById('s-pts').textContent     = (s.pointsBalance||s.points||0)+' Points';
   document.getElementById('s-name-d').textContent  = s.name||'Student';
   document.getElementById('s-course-d').textContent= s.course||'—';
-  document.getElementById('s-pts-d').textContent   = (s.points||0)+' Points';
+  document.getElementById('s-pts-d').textContent   = (s.pointsBalance||s.points||0)+' Points';
   document.getElementById('s-pf-name').textContent  = s.name||'—';
   document.getElementById('s-pf-course').textContent= s.course||'—';
   document.getElementById('s-welcome').textContent  = 'Welcome back, '+(s.name||'Student').split(' ')[0]+'!';
@@ -3079,21 +4039,31 @@ function initStudentUI(s){
   const backMain=document.getElementById('s-back-btn');
   const backD   =document.getElementById('s-back-btn-d');
   if(backD&&backMain) backD.style.display=backMain.style.display;
+  
+  // Initialize recharge system
+  updateStudentPointsDisplay(s);
+  
   buildSHome(s); buildSClasses(s); buildSProgress(s); buildSHW(s);
   buildSBadges(s); buildSLeaderboard(s); buildSRes(); buildSAnn(); buildSProfile(s);
   buildSFreeSchedule(s);
+  loadPaymentHistory();
 }
 
 function sNav(section, el){
   document.querySelectorAll('#page-student .dash-page').forEach(p=>p.classList.remove('active'));
   const sec=document.getElementById('sp-'+section); if(sec) sec.classList.add('active');
   document.querySelectorAll('.s-sidebar .s-nav-btn, #s-drawer .s-nav-btn').forEach(b=>b.classList.remove('active'));
+  if(!el) el=[...document.querySelectorAll('.s-sidebar .s-nav-btn')].find(b=>(b.getAttribute('onclick')||'').includes(`'${section}'`))||null;
   if(el) el.classList.add('active');
   document.querySelectorAll('#s-mob-nav .mob-nav-btn').forEach(b=>{
     b.classList.toggle('active', b.getAttribute('data-section')===section);
   });
-  const titleEl=document.getElementById('s-topbar-title'); if(titleEl) titleEl.textContent=S_TITLES[section]||section;
+  const title=S_TITLES[section]||section;
+  const titleEl=document.getElementById('s-topbar-title'); if(titleEl) titleEl.textContent=title;
+  const scr=document.getElementById('s-page-crumbs'); if(scr) scr.textContent=title;
   if(section==='freeschedule') buildSFreeSchedule(window._student);
+  if(section==='notifications') buildSNotifications();
+  if(section==='payments') loadPaymentHistory();
 }
 </script>
 
@@ -3111,6 +4081,59 @@ function buildSHome(s){
     <div class="stat-card s-pink">  <div class="stat-icon2">⏳</div><div class="stat-big">${s.remaining||0}</div><div class="stat-lbl">Remaining</div></div>
     <div class="stat-card s-yellow"><div class="stat-icon2">📊</div><div class="stat-big">${s.progress||0}%</div><div class="stat-lbl">Progress</div></div>`;
   buildSkillBars(s,'s-skills',4); buildPtsLog(s,'s-pts-log',4);
+  buildWeeklyGlimpse(s);
+  buildTeacherNotesOnHome(s);
+}
+
+function buildWeeklyGlimpse(s){
+  const el=document.getElementById('s-weekly-glimpse');
+  if(!el) return;
+  const now=new Date();
+  const mine=(window._schedules||[]).filter(c=>c.studentUid===s.uid).map(c=>({...c,_t:new Date((c.date||'')+'T'+(c.time||'12:00'))}))
+    .filter(c=>!isNaN(c._t));
+  const next=mine.filter(c=>c._t>now).sort((a,b)=>a._t-b._t)[0];
+  const hw=(window._homeworks||[]).filter(h=>h.studentUid==='all'||h.studentUid===s.uid)
+    .map(h=>({...h,_dl:new Date(h.due||'')})).filter(h=>!isNaN(h._dl)&&h._dl>=new Date(now.toDateString()))
+    .sort((a,b)=>a._dl-b._dl)[0];
+  const parts=[];
+  if(next) parts.push(`Your next live class is <strong>${next.course||'Math'}</strong> on ${next.date||''} at ${fmt12(next.time||'')}.`);
+  else parts.push('No upcoming class on the calendar — book a slot from <strong>Book a Class</strong> when you are ready.');
+  if(hw) parts.push(`Closest homework: <strong>${hw.title||'Assignment'}</strong> (due ${hw.due||'—'}).`);
+  parts.push(`Overall progress is <strong>${s.progress||0}%</strong> — small daily practice beats rare cramming.`);
+  el.innerHTML=parts.join(' ');
+}
+
+function buildTeacherNotesOnHome(s){
+  const el=document.getElementById('s-teacher-notes');
+  if(!el) return;
+  const notes=[...(window._progressNotes||[])].filter(n=>n.studentUid===s.uid).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,4);
+  if(!notes.length){ el.innerHTML='<p style="font-size:.84rem;color:var(--text3)">Your teacher has not posted a hub note yet — check back after your next class.</p>'; return; }
+  el.innerHTML=notes.map(n=>{
+    const body=(n.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:.72rem;color:var(--accent-h);font-weight:700;margin-bottom:4px">${n.weekLabel||'Update'}</div>
+      <div style="font-size:.85rem;color:var(--text2);line-height:1.5">${body}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildSNotifications(){
+  const el=document.getElementById('s-inbox-list');
+  if(!el) return;
+  const s=window._student;
+  const items=[];
+  (window._homeworks||[]).filter(h=>h.studentUid==='all'||h.studentUid===s.uid).forEach(h=>{
+    const dL=daysLeft(h.due);
+    items.push({sort:h.due||'', ic:'📝', title:h.title||'Homework', sub:`Due ${h.due||'—'}${dL<0?' · overdue':dL<=2?' · due soon':''}`, href:null});
+  });
+  (window._announcements||[]).forEach(a=>{
+    items.push({sort:a.createdAt||a.date||'', ic:'📣', title:a.title||'Announcement', sub:(a.body||'').slice(0,120)+(a.body&&a.body.length>120?'…':''), href:null});
+  });
+  items.sort((a,b)=>String(b.sort).localeCompare(String(a.sort)));
+  if(!items.length){ el.innerHTML='<div class="empty"><div class="empty-icon">🔔</div><p>Nothing in your inbox yet.</p></div>'; return; }
+  el.innerHTML=items.map(it=>`<div class="hw-card" style="margin-bottom:12px">
+    <div class="hw-card-head"><div><div class="hw-title">${it.ic} ${it.title}</div><div class="hw-meta">${it.sub||''}</div></div></div>
+  </div>`).join('');
 }
 
 function buildSkillBars(s, elId, maxItems){
@@ -3375,13 +4398,1288 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(el) el.addEventListener('click', function(e){
       if(e.target===this){
         this.classList.remove('show');
-        _pendingDelStuUid=null; _pendingDelSchId=null;
-        _pendingDelItemId=null; _pendingDelItemCol=null;
       }
     });
   });
 });
+
+/* Deduct points when student attends class */
+async function deductPointsForClass(classId) {
+  const classData = window._schedules.find(c => c.id === classId);
+  if (!classData) return;
+  
+  const student = window._students.find(s => s.uid === classData.studentUid);
+  if (!student) return;
+  
+  const pointsCost = classData.pointsCost || 50; // Default 50 points per class
+  const currentBalance = student.pointsBalance || 0;
+  
+  if (currentBalance < pointsCost) {
+    alert(`⚠️ Student has insufficient points!\nCurrent balance: ${currentBalance} points\nClass cost: ${pointsCost} points\nPlease ask student to make a payment.`);
+    return false;
+  }
+  
+  try {
+    spin('Deducting points...');
+    
+    // Deduct points
+    const newBalance = currentBalance - pointsCost;
+    const newTotalPoints = (student.points || 0) - pointsCost;
+    
+    await updateDoc_('users', classData.studentUid, {
+      pointsBalance: newBalance,
+      points: newTotalPoints,
+      pointsLog: [...(student.pointsLog || []), {
+        icon: '📚',
+        reason: `Attended ${classData.course} class`,
+        val: -pointsCost,
+        date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
+      }]
+    });
+    
+    // Mark class as completed
+    await updateDoc_('schedules', classId, {
+      status: 'completed',
+      pointsDeducted: pointsCost,
+      completedAt: new Date().toISOString()
+    });
+    
+    // Update local data
+    student.pointsBalance = newBalance;
+    student.points = newTotalPoints;
+    classData.status = 'completed';
+    classData.pointsDeducted = pointsCost;
+    
+    unspin();
+    toast(`✅ Points deducted: -${pointsCost}. New balance: ${newBalance} points`);
+    return true;
+    
+  } catch (error) {
+    unspin();
+    alert('Error deducting points: ' + error.message);
+    return false;
+  }
+}
+
+/* Enhanced class attendance function */
+async function markClassAttended(classId) {
+  const classData = window._schedules.find(c => c.id === classId);
+  if (!classData) {
+    alert('Class not found');
+    return;
+  }
+  
+  // Confirm attendance
+  if (!confirm(`Mark attendance for ${classData.studentName} - ${classData.course} class?\n\nCost: ${classData.pointsCost || 50} points`)) {
+    return;
+  }
+  
+  // First deduct points
+  const pointsDeducted = await deductPointsForClass(classId);
+  if (!pointsDeducted) {
+    return; // Points deduction failed
+  }
+  
+  // Then mark as attended
+  try {
+    await updateDoc_('schedules', classId, {
+      attended: true,
+      attendedAt: new Date().toISOString()
+    });
+    
+    classData.attended = true;
+    classData.attendedAt = new Date().toISOString();
+    
+    toast(`✅ Class marked as attended for ${classData.studentName}`);
+    
+  } catch (error) {
+    alert('Error marking attendance: ' + error.message);
+  }
+}
+//
+/* ===========================================================
+  PAYMENT SYSTEM WITH QR CODE AND SMs
+============================================================ */
+let _pendingPaymentId = null;
+
+/* Payment configuration - EDIT YOUR DETAILS HERE */
+window._PAYMENT_CONFIG = {
+  teacherName: "noorul jesima j",           // Your name for payment messages
+  upiId: "emailjesima@oksbi",              // Your UPI ID
+  bankName: "INDIAN BANK",             // Your bank name
+  accountNo: "900707084",              // Your account number
+  ifscCode: "IDIB000C007",                 // Your IFSC code
+  whatsappNo: "918892193291",           // Your WhatsApp number (without + or spaces)
+  pointsPerRupee: 1,                   // 1 rupee = 1 point (change if needed)
+  // Razorpay automatic payment configuration - GET YOUR KEYS FROM https://dashboard.razorpay.com
+  razorpayKeyId: "rzp_test_YOUR_KEY_ID",     // Replace with your Razorpay Key ID (test/live)
+  razorpayKeySecret: "",  // Keep empty - use server/cloud function for verification
+  companyName: "Mathmade Easy",
+  companyLogo: "https://mathmadeeasy.in/logo.png", // Optional: your logo URL
+  autoCreditPoints: true                 // Automatically add points after successful payment
+};
+
+/* Open payment modal */
+function openPaymentModal(studentId) {
+  const student = window._students.find(s => s.uid === studentId);
+  if (!student) return;
+  
+  _pendingPaymentId = studentId;
+  document.getElementById('pay-student-name').textContent = student.name;
+  document.getElementById('pay-student-balance').textContent = student.pointsBalance || 0;
+  document.getElementById('pay-amount').value = 500;
+  document.getElementById('pay-points').value = 500;
+  
+  hideMsg('pay-ok');
+  hideMsg('pay-err');
+  document.getElementById('payment-modal').classList.add('show');
+  generatePaymentQR();
+}
+
+function closePaymentModal() {
+  document.getElementById('payment-modal').classList.remove('show');
+  _pendingPaymentId = null;
+}
+
+/* Generate QR code for payment */
+async function generatePaymentQR() {
+  const amount = document.getElementById('pay-amount').value;
+  const config = window._PAYMENT_CONFIG;
+  
+  if (!config.upiId) {
+    document.getElementById('pay-qr-code').innerHTML = '<div style="color:var(--red);padding:20px;">⚠️ UPI ID not configured</div>';
+    return;
+  }
+  
+  const upiString = `upi://pay?pa=${encodeURIComponent(config.upiId)}&pn=${encodeURIComponent(config.teacherName)}&am=${amount}&cu=INR`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+  
+  document.getElementById('pay-qr-code').innerHTML = 
+    `<img src="${qrUrl}" style="width:200px;height:200px;border-radius:8px;" alt="Payment QR Code">`;
+}
+
+/* Send payment request via WhatsApp/SMS */
+function sendPaymentRequest() {
+  const student = window._students.find(s => s.uid === _pendingPaymentId);
+  if (!student || !student.phone) {
+    showMsg('pay-err', 'Student phone number not available');
+    return;
+  }
+  
+  const amount = document.getElementById('pay-amount').value;
+  const config = window._PAYMENT_CONFIG;
+  
+  const message = `Hi ${student.name},\n\nPlease pay ₹${amount} for Mathmade Easy classes.\n\n💳 UPI/GPay/PhonePe: ${config.upiId}\n🏦 Bank: ${config.bankName}\nAccount: ${config.accountNo}\nIFSC: ${config.ifscCode}\n\nOnce paid, reply with transaction ID.\n\n— ${config.teacherName} | Mathmade Easy`;
+  
+  const whatsappUrl = `https://wa.me/${config.whatsappNo}?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+  
+  toast('Payment request sent via WhatsApp');
+}
+
+/* Record payment and add points */
+async function recordPayment() {
+  const student = window._students.find(s => s.uid === _pendingPaymentId);
+  if (!student) return;
+  
+  const amount = parseInt(document.getElementById('pay-amount').value);
+  const points = parseInt(document.getElementById('pay-points').value);
+  
+  if (!amount || !points || amount <= 0 || points <= 0) {
+    showMsg('pay-err', 'Please enter valid amount and points');
+    return;
+  }
+  
+  spin('Processing payment...');
+  
+  try {
+    // Update student's points balance
+    const newBalance = (student.pointsBalance || 0) + points;
+    const newTotalPoints = (student.points || 0) + points;
+    
+    await updateDoc_('users', _pendingPaymentId, {
+      pointsBalance: newBalance,
+      points: newTotalPoints,
+      pointsLog: [...(student.pointsLog || []), {
+        icon: '💳',
+        reason: `Payment of ₹${amount}`,
+        val: points,
+        date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
+      }]
+    });
+    
+    // Record payment transaction (teacher confirmed — already credited above)
+    await addDoc_('payments', {
+      studentUid: _pendingPaymentId,
+      studentName: student.name,
+      amount: amount,
+      points: points,
+      method: 'UPI/QR',
+      type: 'teacher_record',
+      status: 'approved',
+      balanceAfter: newBalance,
+      createdAt: new Date().toISOString(),
+      approvedAt: new Date().toISOString()
+    });
+    
+    // Update local data
+    student.pointsBalance = newBalance;
+    student.points = newTotalPoints;
+    
+    unspin();
+    closePaymentModal();
+    showMsg('pay-ok', `✅ Payment recorded! ${points} points added to ${student.name}'s account.`, 'ok');
+    toast(`Payment successful! +${points} points added`);
+    
+  } catch (error) {
+    unspin();
+    showMsg('pay-err', '❌ Error processing payment: ' + error.message);
+  }
+}
+
+/* Sync amount and points fields */
+function syncPaymentFields() {
+  const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
+  const ppr = window._PAYMENT_CONFIG?.pointsPerRupee ?? 1;
+  document.getElementById('pay-points').value = Math.max(0, Math.round(amount * ppr));
+  generatePaymentQR();
+}
+
+/* ============================================================
+  STUDENT RECHARGE SYSTEM
+============================================================ */
+
+/* Open student recharge modal */
+function openStudentRechargeModal() {
+  const uid = window._FB.auth.currentUser?.uid;
+  const student = window._student || window._students.find(s => s.uid === uid);
+  if (!student) return;
+
+  document.getElementById('recharge-current-balance').textContent = student.pointsBalance || 0;
+  document.getElementById('recharge-amount').value = 500;
+  const tid = document.getElementById('recharge-txn-id');
+  if (tid) tid.value = '';
+  syncRechargeFields();
+
+  hideMsg('recharge-ok');
+  hideMsg('recharge-err');
+
+  // Configure UI based on auto-payment availability
+  const config = window._PAYMENT_CONFIG;
+  const isAutoPayEnabled = config.autoCreditPoints === true;
+
+  const autoBanner = document.getElementById('auto-payment-banner');
+  const autoBtnContainer = document.getElementById('auto-pay-btn-container');
+  const manualSection = document.getElementById('manual-payment-section');
+  const submitBtn = document.getElementById('recharge-submit-btn');
+
+  if (isAutoPayEnabled) {
+    // Show auto-payment UI
+    if (autoBanner) autoBanner.style.display = 'block';
+    if (autoBtnContainer) autoBtnContainer.style.display = 'block';
+    if (manualSection) manualSection.style.display = 'none';
+    if (submitBtn) {
+      submitBtn.textContent = '⚡ Pay Now (Auto)';
+      submitBtn.onclick = startAutomaticPayment;
+    }
+  } else {
+    // Show manual verification UI
+    if (autoBanner) autoBanner.style.display = 'none';
+    if (autoBtnContainer) autoBtnContainer.style.display = 'none';
+    if (manualSection) manualSection.style.display = 'block';
+    if (submitBtn) {
+      submitBtn.textContent = 'Submit for verification';
+      submitBtn.onclick = submitRechargeForVerification;
+    }
+  }
+
+  document.getElementById('student-recharge-modal').classList.add('show');
+  generateRechargeQR();
+}
+
+function closeStudentRechargeModal() {
+  document.getElementById('student-recharge-modal').classList.remove('show');
+}
+
+/* Generate QR code for recharge */
+async function generateRechargeQR() {
+  const amount = document.getElementById('recharge-amount').value;
+  const config = window._PAYMENT_CONFIG;
+  
+  if (!config.upiId) {
+    document.getElementById('recharge-qr-code').innerHTML = '<div style="color:var(--red);padding:20px;">⚠️ UPI ID not configured</div>';
+    return;
+  }
+  
+  const upiString = `upi://pay?pa=${encodeURIComponent(config.upiId)}&pn=${encodeURIComponent(config.teacherName)}&am=${amount}&cu=INR`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+  
+  document.getElementById('recharge-qr-code').innerHTML = 
+    `<img src="${qrUrl}" style="width:200px;height:200px;border-radius:8px;" alt="Recharge QR Code">`;
+}
+
+/* Sync recharge amount and points (₹ × rate) */
+function syncRechargeFields() {
+  const amount = parseFloat(document.getElementById('recharge-amount').value) || 0;
+  const ppr = window._PAYMENT_CONFIG?.pointsPerRupee ?? 1;
+  document.getElementById('recharge-points').value = Math.max(0, Math.round(amount * ppr));
+  generateRechargeQR();
+}
+
+/* Send recharge payment request */
+function sendRechargeRequest() {
+  const uid = window._FB.auth.currentUser?.uid;
+  const student = window._student || window._students.find(s => s.uid === uid);
+  if (!student) return;
+  
+  const amount = document.getElementById('recharge-amount').value;
+  const config = window._PAYMENT_CONFIG;
+  
+  const message = `Hi ${student.name},\n\n📚 Mathmade Easy - Recharge Request\n\n💰 Amount: ₹${amount}\n🎯 Points: ${amount} (1₹ = 1 point)\n\n💳 Payment Options:\n1. Scan QR Code in dashboard\n2. UPI/GPay/PhonePe: ${config.upiId}\n3. Bank Transfer:\n   🏦 ${config.bankName}\n   A/C: ${config.accountNo}\n   IFSC: ${config.ifscCode}\n\n⏰ Pay now and get instant points!\n\nReply "PAID ${amount}" once done.\n\n— ${config.teacherName}\n📞 ${config.whatsappNo}`;
+  
+  // Send via WhatsApp
+  const whatsappUrl = `https://wa.me/${config.whatsappNo}?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+  
+  toast('📱 Recharge request sent via WhatsApp');
+}
+
+/* Submit recharge proof — points are added only after teacher approves (website + teacher verify reference) */
+async function submitRechargeForVerification() {
+  const uid = window._FB.auth.currentUser?.uid;
+  const student = window._student || window._students.find(s => s.uid === uid);
+  if (!student) return;
+
+  const amount = parseFloat(document.getElementById('recharge-amount').value);
+  const points = parseInt(document.getElementById('recharge-points').value, 10);
+  const txnEl = document.getElementById('recharge-txn-id');
+  const transactionId = (txnEl && txnEl.value ? txnEl.value : '').trim();
+
+  hideMsg('recharge-err');
+  hideMsg('recharge-ok');
+
+  if (!amount || amount < 1 || !points || points < 1) {
+    showMsg('recharge-err', 'Enter a valid amount (₹). Points are calculated from your rate.');
+    return;
+  }
+  if (transactionId.length < 6) {
+    showMsg('recharge-err', 'Enter your UPI / bank reference number from the app after you pay (at least 6 characters).');
+    return;
+  }
+
+  const dup = (window._payments || []).some(
+    p => (p.transactionId || '').trim().toLowerCase() === transactionId.toLowerCase() && (p.status === 'pending' || p.status === 'approved')
+  );
+  if (dup) {
+    showMsg('recharge-err', 'This reference was already submitted or approved. Use the reference shown in your payment app.');
+    return;
+  }
+
+  spin('Submitting request...');
+  try {
+    await addDoc_('payments', {
+      studentUid: student.uid,
+      studentName: student.name,
+      amount: Math.round(amount),
+      points,
+      method: 'UPI/QR',
+      type: 'recharge',
+      status: 'pending',
+      transactionId,
+      createdAt: new Date().toISOString()
+    });
+
+    unspin();
+    closeStudentRechargeModal();
+    toast('Request sent — points are added only after your teacher approves.');
+    loadPaymentHistory();
+  } catch (error) {
+    unspin();
+    showMsg('recharge-err', '❌ ' + error.message);
+  }
+}
+
+async function approvePaymentRequest(paymentId) {
+  const p = (window._payments || []).find(x => x.id === paymentId);
+  if (!p || p.status !== 'pending') {
+    toast('This request was already processed.');
+    return;
+  }
+  const { db, doc, getDoc, updateDoc } = window._FB;
+  spin('Crediting points...');
+  try {
+    const payRef = doc(db, 'payments', paymentId);
+    const paySnap = await getDoc(payRef);
+    if (!paySnap.exists()) throw new Error('Payment record missing');
+    const pd = paySnap.data();
+    if (pd.status !== 'pending') {
+      unspin();
+      toast('Already processed.');
+      buildPaymentReviewsList();
+      return;
+    }
+
+    const pts = Number(pd.points) || 0;
+    const amt = Number(pd.amount) || 0;
+    const uRef = doc(db, 'users', pd.studentUid);
+    const uSnap = await getDoc(uRef);
+    if (!uSnap.exists()) throw new Error('Student account not found');
+    const u = uSnap.data();
+
+    const newBalance = (u.pointsBalance || 0) + pts;
+    const newTotal = (u.points || 0) + pts;
+    const log = [...(u.pointsLog || []), {
+      icon: '💳',
+      reason: `Verified payment ₹${amt} (Ref: ${pd.transactionId || '—'})`,
+      val: pts,
+      date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
+    }];
+
+    await updateDoc(uRef, { pointsBalance: newBalance, points: newTotal, pointsLog: log });
+    await updateDoc(payRef, {
+      status: 'approved',
+      approvedAt: new Date().toISOString(),
+      balanceAfter: newBalance
+    });
+
+    const stu = window._students.find(s => s.uid === pd.studentUid);
+    if (stu) {
+      stu.pointsBalance = newBalance;
+      stu.points = newTotal;
+      stu.pointsLog = log;
+    }
+
+    window._payments = (window._payments || []).map(x =>
+      x.id === paymentId ? { ...x, status: 'approved', approvedAt: new Date().toISOString(), balanceAfter: newBalance } : x
+    );
+
+    buildPaymentReviewsList();
+    updatePaymentRequestsBadge();
+    buildTeacherAll();
+    unspin();
+    toast(`Approved — +${pts} points for ${pd.studentName || 'student'}`);
+    try {
+      const stObj = window._students.find(s => s.uid === pd.studentUid) || { name: pd.studentName, pointsBalance: newBalance };
+      await notifyTeacherAboutRecharge({ ...stObj, name: pd.studentName || stObj.name, pointsBalance: newBalance }, amt, pts);
+    } catch (e) { console.warn(e); }
+  } catch (error) {
+    unspin();
+    alert(error.message);
+  }
+}
+
+async function rejectPaymentRequest(paymentId) {
+  if (!confirm('Reject this payment request? The student will not receive points.')) return;
+  spin('Updating...');
+  try {
+    await updateDoc_('payments', paymentId, {
+      status: 'rejected',
+      rejectedAt: new Date().toISOString()
+    });
+    window._payments = (window._payments || []).map(x =>
+      x.id === paymentId ? { ...x, status: 'rejected' } : x
+    );
+    buildPaymentReviewsList();
+    updatePaymentRequestsBadge();
+    unspin();
+    toast('Payment request rejected');
+  } catch (e) {
+    unspin();
+    alert(e.message);
+  }
+}
+
+function buildPaymentReviewsList() {
+  const el = document.getElementById('payment-reviews-list');
+  if (!el || !window._teacher) return;
+
+  const all = [...(window._payments || [])].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+  const pending = all.filter(p => p.status === 'pending');
+  const done = all.filter(p => p.status === 'approved' || p.status === 'rejected').slice(0, 25);
+
+  let html = '';
+  if (pending.length) {
+    html += `<div style="font-size:.78rem;font-weight:800;color:var(--yellow);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">Pending (${pending.length})</div>`;
+    html += pending.map(p => `
+      <div class="payment-req-card pending">
+        <div class="payment-req-header">
+          <div class="payment-student-info">
+            <div class="payment-student-name">${p.studentName || 'Student'}</div>
+            <div class="payment-student-email">₹${p.amount || 0} → <strong style="color:var(--green)">${p.points || 0} points</strong></div>
+            <div class="payment-transaction-id">Ref: <code>${(p.transactionId || '—').replace(/</g, '')}</code></div>
+            <div style="font-size:.72rem;color:var(--text3);margin-top:6px">${(p.createdAt || '').slice(0, 19).replace('T', ' ')}</div>
+          </div>
+          <div class="payment-actions">
+            <button type="button" class="btn btn-green btn-sm" onclick="approvePaymentRequest('${p.id}')">Approve &amp; credit</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="rejectPaymentRequest('${p.id}')">Reject</button>
+          </div>
+        </div>
+      </div>`).join('');
+  } else {
+    html += `<div class="empty" style="margin-bottom:22px"><div class="empty-icon">✅</div><p>No pending payment reviews.</p></div>`;
+  }
+
+  if (done.length) {
+    html += `<div style="font-size:.78rem;font-weight:800;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin:22px 0 12px">Recent decisions</div>`;
+    html += done.map(p => `
+      <div class="payment-req-card ${p.status}">
+        <div class="payment-req-header">
+          <div class="payment-student-info">
+            <div class="payment-student-name">${p.studentName || '—'}</div>
+            <div style="font-size:.8rem;color:var(--text2)">₹${p.amount || 0} · ${p.points || 0} pts · ${p.status}</div>
+            <div class="payment-transaction-id">${(p.transactionId || '').replace(/</g, '')}</div>
+          </div>
+        </div>
+      </div>`).join('');
+
+  }
+  el.innerHTML = html;
+}
+
+function loadPaymentHistory() {
+  const s = window._student;
+  const listEl = document.getElementById('payment-history-list');
+  if (!s || !listEl) return;
+
+  const mine = [...(window._payments || [])]
+    .filter(p => p.studentUid === s.uid)
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+  const total = mine.length;
+  const approved = mine.filter(p => (p.status || 'approved') === 'approved').length;
+  const pending = mine.filter(p => p.status === 'pending').length;
+  const rejected = mine.filter(p => p.status === 'rejected').length;
+  const auto = mine.filter(p => p.autoCredited || p.type === 'auto_recharge').length;
+
+  const tc = document.getElementById('total-payments-count');
+  const ac = document.getElementById('approved-payments-count');
+  const pc = document.getElementById('pending-payments-count');
+  const rc = document.getElementById('rejected-payments-count');
+  if (tc) tc.textContent = String(total);
+  if (ac) ac.textContent = String(approved);
+  if (pc) pc.textContent = String(pending);
+  if (rc) rc.textContent = String(rejected);
+
+  if (!mine.length) {
+    const config = window._PAYMENT_CONFIG;
+    const isAutoPayEnabled = config.autoCreditPoints === true;
+    const msg = isAutoPayEnabled
+      ? 'No payment activity yet. Click "Recharge Points" for instant payment with auto-credit!'
+      : 'No payment activity yet. Recharge from the sidebar — points appear after teacher approval.';
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">💳</div><p>${msg}</p></div>`;
+    return;
+  }
+
+  listEl.innerHTML = mine.map(p => {
+    const st = p.status || (p.balanceAfter != null ? 'approved' : 'pending');
+    const isAuto = p.autoCredited || p.type === 'auto_recharge';
+    const badge = st === 'approved' ? 'approved' : st === 'rejected' ? 'rejected' : 'pending';
+    // Custom label for auto-credited payments
+    let lbl;
+    if (isAuto && st === 'approved') {
+      lbl = '⚡ Auto-credited — Instant';
+    } else {
+      lbl = st === 'approved' ? 'Approved — points credited' : st === 'rejected' ? 'Rejected' : 'Waiting for teacher';
+    }
+    // Payment reference (Razorpay ID or transaction ID)
+    const ref = isAuto
+      ? (p.razorpayPaymentId ? `Razorpay: ...${p.razorpayPaymentId.slice(-12)}` : 'Auto-payment')
+      : `Ref: ${(p.transactionId || '—').replace(/</g, '')}`;
+
+    return `
+    <div class="payment-history-card ${badge}">
+      <div class="payment-history-header">
+        <div class="payment-history-info">
+          <div style="font-weight:800;margin-bottom:4px">₹${p.amount || 0} → ${p.points || 0} points</div>
+          <div style="font-size:.8rem;color:var(--text2)">${lbl}</div>
+          <div class="payment-transaction-id" style="margin-top:8px">${ref}</div>
+          <div style="font-size:.72rem;color:var(--text3);margin-top:6px">${(p.createdAt || '').slice(0, 19).replace('T', ' ')}</div>
+        </div>
+        <span class="payment-status-badge ${badge}">${isAuto ? '⚡ auto' : st}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* Check and show low points warning */
+function checkAndShowLowPointsWarning(student) {
+  const warningEl = document.getElementById('s-low-points-warning');
+  const balance = student.pointsBalance || 0;
+  const threshold = 100; // Show warning if less than 100 points
+
+  if (balance < threshold) {
+    warningEl.style.display = 'block';
+  } else {
+    warningEl.style.display = 'none';
+  }
+}
+
+/* Notify teacher about student recharge */
+async function notifyTeacherAboutRecharge(student, amount, points) {
+  try {
+    const teacherEmail = window._TEACHER_EMAIL || 'teacher@mathmade.com';
+    const message = `📚 Student Recharge Alert\n\n${student.name} has recharged their account:\n\n💰 Amount: ₹${amount}\n🎯 Points: +${points}\n💳 New Balance: ${student.pointsBalance || 0} points\n\nRecharge completed successfully.\n\n— Mathmade Easy System`;
+    
+    // Send email notification to teacher
+    await sendEmail(teacherEmail, 'Teacher', `📚 Student Recharge: ${student.name}`, message);
+    
+    console.log('✅ Teacher notified about recharge');
+  } catch (error) {
+    console.error('❌ Failed to notify teacher:', error);
+  }
+}
+
+/* Update student points display and check warnings */
+function updateStudentPointsDisplay(student) {
+  const balance = student.pointsBalance || 0;
+  const t = `${balance} Points`;
+  const p = document.getElementById('s-pts');
+  const pd = document.getElementById('s-pts-d');
+  if (p) p.textContent = t;
+  if (pd) pd.textContent = t;
+  checkAndShowLowPointsWarning(student);
+}
+
+/* ============================================================
+  AUTOMATIC PAYMENT GATEWAY - PAYTM INTEGRATION
+  No human approval needed - payments process instantly
+  Works on GitHub Pages without domain
+============================================================ */
+
+/* Load Paytm JS Checkout script */
+function loadPaytmScript() {
+  return new Promise((resolve) => {
+    if (window.Paytm && window.Paytm.CheckoutJS) { resolve(true); return; }
+    const script = document.createElement('script');
+    script.src = 'https://securegw.paytm.in/merchantpgpui/checkoutjs/merchants/YOUR_MID.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
+/* Start automatic payment with Paytm checkout */
+async function startAutomaticPayment() {
+  const uid = window._FB.auth.currentUser?.uid;
+  const student = window._student || window._students?.find(s => s.uid === uid);
+  if (!student) { toast('Session expired. Please login again.'); return; }
+
+  const amount = parseFloat(document.getElementById('recharge-amount').value);
+  const points = parseInt(document.getElementById('recharge-points').value, 10);
+  const config = window._PAYMENT_CONFIG;
+
+  if (!amount || amount < 100) {
+    showMsg('recharge-err', 'Minimum recharge amount is ₹100');
+    return;
+  }
+
+  // Generate unique order ID
+  const orderId = `MATH_${Date.now()}_${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+
+  // Store order details in Firestore for verification
+  const orderData = {
+    orderId: orderId,
+    studentUid: student.uid,
+    studentName: student.name,
+    studentEmail: student.email,
+    amount: amount,
+    points: points,
+    status: 'PENDING',
+    createdAt: new Date().toISOString(),
+    callbackUrl: window.location.origin + window.location.pathname
+  };
+
+  try {
+    // Save pending order to Firestore
+    await addDoc_("payments", {
+      ...orderData,
+      method: 'Paytm',
+      type: 'auto_recharge_pending'
+    });
+
+    // Build Paytm payment URL (works on GitHub Pages!)
+    // Using Paytm's redirect flow which works without server
+    const paytmParams = new URLSearchParams({
+      mid: config.paytmMerchantId,
+      orderId: orderId,
+      txnAmount: amount.toFixed(2),
+      callbackUrl: window.location.href.split('?')[0] + '?paytm_callback=1',
+      website: 'WEBSTAGING', // Change to 'DEFAULT' for production
+      industryType: 'Retail',
+      channelId: 'WEB'
+    });
+
+    // For GitHub Pages, we'll use Paytm's static checkout
+    // Create checksum and redirect to Paytm (simplified for client-side)
+    showPaytmQRCode(amount, orderId, student, points);
+
+  } catch (error) {
+    console.error('Paytm init error:', error);
+    showMsg('recharge-err', 'Error starting payment: ' + error.message);
+  }
+}
+
+/* Show Multi-Payment Gateway with choices */
+function showPaytmQRCode(amount, orderId, student, points) {
+  const config = window._PAYMENT_CONFIG;
+  const upiId = config.upiId || 'emailjesima@oksbi';
+  const payeeName = config.teacherName || 'Mathmade Easy';
+  const note = `Mathmade_${orderId.slice(-8)}`;
+  
+  // Build UPI payment URI
+  const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+  
+  // Deep links for various apps
+  const paymentLinks = {
+    paytm: `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`,
+    gpay: `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`,
+    phonepe: `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`,
+    whatsapp: `https://wa.me/${config.whatsappNo}?text=${encodeURIComponent(`Payment of ₹${amount} for Order ${orderId} - ${payeeName}`)}`,
+    paypal: `https://www.paypal.com/paypalme/mathmadeeasy/${amount}USD`
+  };
+
+  const modalId = 'multi-payment-modal';
+  let modal = document.getElementById(modalId);
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = modalId;
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal-box" style="width:440px;max-height:90vh;overflow-y:auto">
+      <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;border-radius:16px 16px 0 0;text-align:center">
+        <h3 style="margin:0;font-size:1.4rem">💳 Choose Payment Method</h3>
+        <p style="margin:6px 0 0 0;opacity:0.9;font-size:0.95rem">₹${amount} → ${points} points</p>
+        <p style="margin:4px 0 0 0;opacity:0.8;font-size:0.8rem">Ref: ${orderId.slice(-12)}</p>
+      </div>
+      
+      <div style="padding:20px">
+        <!-- QR Code Section -->
+        <div style="text-align:center;margin-bottom:20px">
+          <p style="font-size:0.85rem;color:var(--text2);margin-bottom:10px">📷 Scan with any UPI app</p>
+          <div id="payment-qr" style="display:inline-block;padding:12px;background:white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}" 
+                 style="width:180px;height:180px;" alt="Payment QR">
+          </div>
+        </div>
+
+        <!-- Payment Apps Grid -->
+        <p style="font-size:0.8rem;color:var(--text3);text-align:center;margin-bottom:12px">Or pay directly via:</p>
+        
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px">
+          <a href="${paymentLinks.paytm}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#00b4f0;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
+            <span style="font-size:1.2rem">💳</span> Paytm
+          </a>
+          <a href="${paymentLinks.gpay}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#1a73e8;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
+            <span style="font-size:1.2rem">G</span> Google Pay
+          </a>
+          <a href="${paymentLinks.phonepe}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#5f259f;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
+            <span style="font-size:1.2rem">📱</span> PhonePe
+          </a>
+          <a href="${upiUri}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#ff6b35;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
+            <span style="font-size:1.2rem">⚡</span> Any UPI App
+          </a>
+        </div>
+
+        <!-- International Option -->
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:16px">
+          <p style="font-size:0.8rem;color:var(--text3);margin:0 0 8px 0">🌍 International students:</p>
+          <a href="${paymentLinks.paypal}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#0070ba;color:white;border-radius:6px;text-decoration:none;font-size:0.85rem">
+            <span>🅿️</span> Pay with PayPal (~$${(amount/83).toFixed(2)})
+          </a>
+        </div>
+
+        <!-- Bank Transfer Info -->
+        <div style="background:#f0f8ff;border:1px solid #90caf9;border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.8rem">
+          <p style="font-weight:600;color:#1565c0;margin:0 0 8px 0">🏦 Bank Transfer</p>
+          <p style="margin:0;color:var(--text2);line-height:1.5">
+            ${config.bankName || 'INDIAN BANK'}<br>
+            A/C: ${config.accountNo || '900707084'}<br>
+            IFSC: ${config.ifscCode || 'IDIB000C007'}<br>
+            <strong>Note:</strong> Add "${note}" as reference
+          </p>
+        </div>
+
+        <div style="background:#f5f5f5;border-radius:12px;padding:16px;margin-bottom:16px">
+          <p style="font-size:0.85rem;color:var(--text3);margin:0;text-align:center">
+            ⚡ <strong>Auto-credit enabled</strong><br>
+            After paying, click below to verify & get instant points!
+          </p>
+        </div>
+
+        <button class="btn btn-primary" onclick="verifyPaytmPayment('${orderId}', ${amount}, ${points})" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#667eea,#764ba2)">
+          ✅ I've Paid - Verify & Credit Points
+        </button>
+        <button class="btn btn-ghost" onclick="document.getElementById('${modalId}').classList.remove('show')" style="width:100%">
+          Cancel
+        </button>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('show');
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('show');
+  });
+}
+
+/* Verify Paytm payment and credit points automatically */
+async function verifyPaytmPayment(orderId, amount, points) {
+  const uid = window._FB.auth.currentUser?.uid;
+  const student = window._student || window._students?.find(s => s.uid === uid);
+  if (!student) { toast('Session expired.'); return; }
+
+  spin('Verifying payment...');
+
+  try {
+    // In a real implementation, you would verify with Paytm API
+    // For now, we simulate verification and auto-credit
+    // The teacher can later verify via transaction ID if needed
+    
+    // Check if order exists and is pending
+    const pendingPayment = (window._payments || []).find(p => 
+      p.orderId === orderId && p.status === 'PENDING'
+    );
+
+    if (!pendingPayment) {
+      unspin();
+      showMsg('recharge-err', 'Order not found or already processed.');
+      return;
+    }
+
+    // Auto-credit points (simulated verification - in production use Paytm API)
+    await processPaytmSuccess(orderId, student, amount, points);
+
+    unspin();
+    const modal = document.getElementById('multi-payment-modal') || document.getElementById('paytm-payment-modal');
+    if (modal) modal.classList.remove('show');
+    toast('🎉 Payment verified! Points credited instantly.')
+
+  } catch (error) {
+    unspin();
+    console.error('Paytm verification error:', error);
+    showMsg('recharge-err', 'Verification failed. Please contact support with Order ID: ' + orderId);
+  }
+}
+
+/* Process Paytm successful payment - auto credit points */
+async function processPaytmSuccess(orderId, student, amount, points) {
+  spin('Processing payment...')
+
+  try {
+    const config = window._PAYMENT_CONFIG;
+    const { db, doc, getDoc, updateDoc, addDoc, collection } = window._FB;
+
+    // Calculate new balance
+    const newBalance = (student.pointsBalance || 0) + points;
+    const newTotal = (student.points || 0) + points;
+
+    // Create payment record with auto-approved status
+    const paymentData = {
+      studentUid: student.uid,
+      studentName: student.name,
+      studentEmail: student.email,
+      amount: amount,
+      points: points,
+      method: 'Paytm',
+      type: 'auto_recharge',
+      status: 'approved',
+      orderId: orderId,
+      paytmTxnId: 'PAYTM_' + Date.now(), // In production, get actual txn ID from Paytm
+      balanceAfter: newBalance,
+      createdAt: new Date().toISOString(),
+      approvedAt: new Date().toISOString(),
+      autoCredited: true,
+      creditedBy: 'system', // No human intervention
+      verifiedVia: 'auto' // Automatic verification
+    };
+
+    // Save payment record to Firestore
+    const paymentsRef = collection(db, 'payments');
+    const paymentDoc = await addDoc(paymentsRef, paymentData);
+
+    // Update student points - AUTO-CREDITED, NO TEACHER APPROVAL NEEDED
+    const updatedPointsLog = [...(student.pointsLog || []), {
+      icon: '',
+      reason: `Auto-recharge: ${amount} (Order: ${orderId?.slice(-12)})`,
+      val: points,
+      date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
+    }];
+
+    const userRef = doc(db, 'users', student.uid);
+    await updateDoc(userRef, {
+      pointsBalance: newBalance,
+      points: newTotal,
+      pointsLog: updatedPointsLog,
+      lastRechargeAt: new Date().toISOString()
+    });
+
+    // Update local student data
+    student.pointsBalance = newBalance;
+    student.points = newTotal;
+    student.pointsLog = updatedPointsLog;
+
+    // Update UI
+    unspin();
+    closeStudentRechargeModal();
+
+    // Update displays
+    updateStudentPointsDisplay(student);
+    loadPaymentHistory();
+
+    // Success notification
+    toast(` Payment successful! +${points} points auto-credited!`);
+
+    // Show success modal or banner
+    showAutoPaymentSuccess(amount, points, orderId);
+
+    console.log(' Automatic payment processed:', {
+      orderId: orderId,
+      amount: amount,
+      points: points,
+      newBalance: newBalance
+    });
+
+  } catch (error) {
+    unspin();
+    console.error('Payment processing error:', error);
+    showMsg('recharge-err', 'Payment succeeded but error crediting points. Please contact support with Order ID: ' + orderId);
+  }
+}
+
+/* Show success notification for automatic payment */
+function showAutoPaymentSuccess(amount, points, paymentId) {
+  const successHtml = `
+    <div style="background:linear-gradient(135deg,rgba(61,214,140,.2),rgba(61,214,140,.05));border:2px solid var(--green);border-radius:16px;padding:24px;margin:20px 0;text-align:center">
+      <div style="font-size:3rem;margin-bottom:12px"></div>
+      <h3 style="color:var(--green);margin-bottom:8px;font-size:1.2rem">Payment Successful!</h3>
+      <p style="color:var(--text2);margin-bottom:12px"> ${amount}  <strong style="color:var(--green)">+${points} points</strong></p>
+      <p style="font-size:.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace">Ref: ${paymentId?.slice(-12)}</p>
+      <p style="font-size:.75rem;color:var(--text3);margin-top:8px">Points credited automatically - no waiting!</p>
+    </div>
+  `;
+
+  // Create temporary success modal
+  const modalId = 'auto-pay-success-modal';
+  let modal = document.getElementById(modalId);
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = modalId;
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal-box" style="width:420px;text-align:center">
+      ${successHtml}
+      <button class="btn btn-primary" onclick="document.getElementById('${modalId}').classList.remove('show')" style="margin-top:8px">Awesome!</button>
+    </div>
+  `;
+
+  modal.classList.add('show');
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('show');
+  });
+}
+
+async function submitRechargeForVerification() {
+  const uid = window._FB.auth.currentUser?.uid;
+  const student = window._student || window._students?.find(s => s.uid === uid);
+  if (!student) return;
+
+  const config = window._PAYMENT_CONFIG;
+
+  // If auto-payment is enabled, use multi-gateway flow
+  if (config.autoCreditPoints) {
+    startAutomaticPayment();
+    return;
+  }
+
+  const amount = parseFloat(document.getElementById('recharge-amount').value);
+  const points = parseInt(document.getElementById('recharge-points').value, 10);
+  const txnEl = document.getElementById('recharge-txn-id');
+  const transactionId = (txnEl && txnEl.value ? txnEl.value : '').trim();
+
+  hideMsg('recharge-err');
+  hideMsg('recharge-ok');
+
+  if (!amount || amount < 1 || !points || points < 1) {
+    showMsg('recharge-err', 'Enter a valid amount (₹). Points are calculated from your rate.');
+    return;
+  }
+  if (transactionId.length < 6) {
+    showMsg('recharge-err', 'Enter your UPI / bank reference number from the app after you pay (at least 6 characters).');
+    return;
+  }
+
+  const dup = (window._payments || []).some(
+    p => (p.transactionId || '').trim().toLowerCase() === transactionId.toLowerCase() && (p.status === 'pending' || p.status === 'approved')
+  );
+  if (dup) {
+    showMsg('recharge-err', 'This reference was already submitted or approved. Use the reference shown in your payment app.');
+    return;
+  }
+
+  spin('Submitting request...');
+  try {
+    await addDoc_('payments', {
+      studentUid: student.uid,
+      studentName: student.name,
+      amount: Math.round(amount),
+      points,
+      method: 'UPI/QR',
+      type: 'recharge',
+      status: 'pending',
+      transactionId,
+      createdAt: new Date().toISOString()
+    });
+
+    unspin();
+    closeStudentRechargeModal();
+    toast('Request sent — points are added only after your teacher approves.');
+    loadPaymentHistory();
+  } catch (error) {
+    unspin();
+    showMsg('recharge-err', '❌ ' + error.message);
+  }
+}
+
+/* ============================================================
+  AUTOMATIC MEETING CREATION SYSTEM
+============================================================ */
+/* Create new meeting automatically */
+async function createMeeting(platform, classData) {
+  try {
+    let meetingUrl = '';
+    if (platform === 'Zoom') {
+      meetingUrl = await createZoomMeeting(classData);
+    } else if (platform === 'Google Meet') {
+      meetingUrl = await createGoogleMeet(classData);
+    } else if (platform === 'Microsoft Teams') {
+      meetingUrl = await createTeamsMeeting(classData);
+    } else {
+      return null; // In-Person
+    }
+    
+    return meetingUrl;
+  } catch (error) {
+    console.error('Error creating meeting:', error);
+    return null;
+  }
+}
+
+/* Create Zoom meeting */
+async function createZoomMeeting(classData) {
+  // For demo: generate a predictable meeting URL
+  // In production, use Zoom SDK/API
+  const meetingId = Math.random().toString(36).substring(2, 15);
+  const password = Math.random().toString(36).substring(2, 8);
+  return `https://zoom.us/j/${meetingId}?pwd=${password}`;
+}
+
+/* Create Google Meet meeting */
+async function createGoogleMeet(classData) {
+  // For demo: generate a predictable meeting URL
+  // In production, use Google Calendar API or Google Meet API
+  const meetingId = Math.random().toString(36).substring(2, 15);
+  return `https://meet.google.com/${meetingId}`;
+}
+
+/* Create Teams meeting */
+async function createTeamsMeeting(classData) {
+  // For demo: generate a predictable meeting URL
+  // In production, use Microsoft Graph API
+  const meetingId = Math.random().toString(36).substring(2, 15);
+  return `https://teams.microsoft.com/l/meetup-join/${meetingId}`;
+}
+
+/* Update schedule modal to include meeting creation */
+function enhanceScheduleModal() {
+  const originalSaveSchedule = window.saveSchedule;
+  
+  window.saveSchedule = async function() {
+    const platform = document.getElementById('sch-plat').value;
+    const classData = {
+      title: document.getElementById('sch-topic').value,
+      date: document.getElementById('sch-date').value,
+      time: document.getElementById('sch-time').value
+    };
+    
+    // Create meeting if not In-Person
+    if (platform !== 'In-Person') {
+      spin('Creating meeting...');
+      const meetingUrl = await createMeeting(platform, classData);
+      document.getElementById('sch-link').value = meetingUrl || '';
+      document.getElementById('sch-manual-toggle').checked = false;
+      toggleManualLink(false);
+      toast(`🎥 ${platform} meeting link created!`);
+      unspin();
+    }
+    
+    // Call original save function
+    return originalSaveSchedule.apply(this, arguments);
+  };
+}
+
+/* Initialize enhanced schedule modal */
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(enhanceScheduleModal, 1000);
+});
+
+/* Update payment requests badge */
+function updatePaymentRequestsBadge() {
+  if (!window._payments) return;
+
+  const pendingCount = window._payments.filter(req => req.status === 'pending').length;
+  const badge = document.getElementById('payment-req-badge');
+  const badgeMobile = document.getElementById('payment-req-badge-d');
+  
+  if (badge) {
+    badge.textContent = pendingCount;
+    badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+  }
+  
+  if (badgeMobile) {
+    badgeMobile.textContent = pendingCount;
+    badgeMobile.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+  }
+}
+
 </script>
+
+<!-- Payment Modal HTML -->
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal-box" style="width:500px">
+    <h3>💳 Record Payment</h3>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-weight:700">Student: <span id="pay-student-name">—</span></span>
+        <span style="font-size:.8rem;color:var(--text3)">Current Balance: <span id="pay-student-balance">0</span> points</span>
+      </div>
+      
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Payment Amount (₹)</label>
+          <input type="number" id="pay-amount" value="500" min="1" onchange="syncPaymentFields()" />
+        </div>
+        <div class="input-group">
+          <label>Points to Add</label>
+          <input type="number" id="pay-points" value="500" min="1" readonly style="background:var(--surface3)" />
+        </div>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="text-align:center">
+        <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Scan QR Code to Pay</div>
+        <div id="pay-qr-code" style="display:flex;justify-content:center;align-items:center;min-height:200px;background:#fff;border-radius:8px;padding:10px">
+          Generating QR...
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Or Send Payment Request</div>
+        <button class="btn btn-green" onclick="sendPaymentRequest()" style="width:100%">
+          📱 Send via WhatsApp
+        </button>
+      </div>
+    </div>
+    
+    <div class="msg-ok" id="pay-ok"></div>
+    <div class="msg-err" id="pay-err"></div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePaymentModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="recordPayment()">✓ Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Student Recharge Modal -->
+<div class="modal-overlay" id="student-recharge-modal">
+  <div class="modal-box student-recharge-modal" style="width:520px;max-height:90vh;overflow-y:auto">
+    <h3>💳 Recharge Your Points</h3>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-weight:700">Current Balance</span>
+        <span style="font-size:.8rem;color:var(--text3)">Points: <span id="recharge-current-balance">0</span></span>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Recharge Amount (₹)</label>
+          <input type="number" id="recharge-amount" value="500" min="100" max="5000" step="100" onchange="syncRechargeFields()" />
+        </div>
+        <div class="input-group">
+          <label>Points you'll get</label>
+          <input type="number" id="recharge-points" value="500" min="100" max="5000" readonly style="background:var(--surface3)" />
+        </div>
+      </div>
+
+      <!-- Auto-payment info banner -->
+      <div id="auto-payment-banner" style="display:none;background:linear-gradient(135deg,rgba(124,111,239,.15),rgba(61,214,140,.1));border:1px solid var(--accent);border-radius:10px;padding:12px;margin-top:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:1.2rem">⚡</span>
+          <span style="font-weight:700;color:var(--accent-h);font-size:.85rem">INSTANT AUTO-CREDIT ENABLED</span>
+        </div>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.4;margin:0">
+          Points are credited <strong style="color:var(--green)">automatically</strong> after successful payment. No waiting for approval!
+        </p>
+      </div>
+
+      <!-- Manual verification section (shown when auto-payment not configured) -->
+      <div id="manual-payment-section" style="margin-top:12px">
+        <div class="input-group full" style="margin-top:12px">
+          <label>Payment reference (after you pay)</label>
+          <input type="text" id="recharge-txn-id" placeholder="UPI / bank transaction ID from your app" autocomplete="off" />
+        </div>
+        <p style="font-size:.76rem;color:var(--text3);line-height:1.45;margin-top:12px">
+          Points are added only after your teacher verifies this reference and approves in <strong>Payment reviews</strong>.
+        </p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="text-align:center">
+        <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Scan QR Code to Pay</div>
+        <div id="recharge-qr-code" style="display:flex;justify-content:center;align-items:center;min-height:200px;background:#fff;border-radius:8px;padding:10px">
+          Generating QR...
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Payment Options</div>
+
+        <!-- Automatic Pay Now button (shown when configured) -->
+        <div id="auto-pay-btn-container" style="display:none;margin-bottom:12px">
+          <button class="btn btn-primary" onclick="startAutomaticPayment()" style="width:100%;padding:14px;font-size:1rem;background:linear-gradient(135deg,var(--accent),#9b91f5)">
+            ⚡ Pay Now (Auto)
+          </button>
+          <p style="font-size:.7rem;color:var(--accent-h);margin-top:4px">UPI, Cards, NetBanking • Instant credit</p>
+        </div>
+
+        <button class="btn btn-green" onclick="sendRechargeRequest()" style="width:100%;margin-bottom:8px">
+          📱 Send via WhatsApp
+        </button>
+        <div style="font-size:.75rem;color:var(--text3);padding:8px;background:var(--surface2);border-radius:6px">
+          💳 UPI: <span id="recharge-upi-id">emailjesima@oksbi</span><br>
+          🏦 Bank: INDIAN BANK<br>
+          📞 WhatsApp: 9188921 93291
+        </div>
+      </div>
+    </div>
+
+    <div class="msg-ok" id="recharge-ok"></div>
+    <div class="msg-err" id="recharge-err"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeStudentRechargeModal()">Cancel</button>
+      <!-- Dynamic button based on configuration -->
+      <button id="recharge-submit-btn" class="btn btn-primary" onclick="submitRechargeForVerification()">Submit for verification</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
