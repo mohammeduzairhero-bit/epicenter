@@ -1698,6 +1698,7 @@ a:not(.btn):not(.practice-tile):not(.ci-link):not(.preclass-join) { transition:c
       <button class="s-nav-btn" onclick="sNav('announcements',this)"><span class="sn-ic">📣</span> Announcements</button>
       <button class="s-nav-btn" onclick="sNav('profile',this)"><span class="sn-ic">👤</span> Profile</button>
       <button class="s-nav-btn" onclick="sNav('payments',this)"><span class="sn-ic">💳</span> Payment History</button>
+      <button class="s-nav-btn" onclick="sNav('aitutor',this)"><span class="sn-ic">🤖</span> AI Math Tutor</button>
     </nav>
     <div class="s-sidebar-foot">
       <div class="s-profile-card">
@@ -1737,6 +1738,7 @@ a:not(.btn):not(.practice-tile):not(.ci-link):not(.preclass-join) { transition:c
       <button class="s-nav-btn" onclick="sNav('announcements',this);closeSDrawer()"><span class="sn-ic">📣</span> Announcements</button>
       <button class="s-nav-btn" onclick="sNav('profile',this);closeSDrawer()"><span class="sn-ic">👤</span> Profile</button>
       <button class="s-nav-btn" onclick="sNav('payments',this);closeSDrawer()"><span class="sn-ic">💳</span> Payment History</button>
+      <button class="s-nav-btn" onclick="sNav('aitutor',this);closeSDrawer()"><span class="sn-ic">🤖</span> AI Math Tutor</button>
     </nav>
     <div class="s-sidebar-foot" style="padding:13px 11px;border-top:1px solid var(--border)">
       <div class="s-profile-card">
@@ -1961,7 +1963,7 @@ a:not(.btn):not(.practice-tile):not(.ci-link):not(.preclass-join) { transition:c
         </div>
         <button class="btn btn-ghost btn-sm" onclick="loadPaymentHistory()">🔄 Refresh</button>
       </div>
-      
+
       <!-- Payment Stats -->
       <div class="stat-grid" style="margin-bottom:20px">
         <div class="stat-card">
@@ -1987,6 +1989,82 @@ a:not(.btn):not(.practice-tile):not(.ci-link):not(.preclass-join) { transition:c
         <div class="empty">
           <div class="empty-icon">💳</div>
           <p>Loading payment history...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Math Tutor -->
+    <div id="sp-aitutor" class="dash-page">
+      <div class="sec-header">
+        <div>
+          <h2>🤖 AI Math Tutor</h2>
+          <p>Ask me anything about Algebra, Geometry, Calculus, Trigonometry, and Statistics. I'm here to help you learn!</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="clearAIChat()">🗑️ Clear Chat</button>
+      </div>
+
+      <!-- Info Banner -->
+      <div style="background:rgba(124,111,239,.08);border:1px solid rgba(124,111,239,.25);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:1.3rem;flex-shrink:0">💡</span>
+        <div style="font-size:.83rem;color:var(--text2);line-height:1.6">
+          I can help with: <strong style="color:var(--accent)">Algebra, Geometry, Calculus, Trigonometry, Statistics</strong>
+          <br>Ask me to explain concepts, solve problems step-by-step, or check your work!
+        </div>
+      </div>
+
+      <!-- Chat Container -->
+      <div class="ai-chat-container" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);display:flex;flex-direction:column;height:calc(100vh - 300px);min-height:400px;max-height:600px;">
+        <!-- Messages Area -->
+        <div id="ai-chat-messages" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;">
+          <!-- Welcome Message -->
+          <div class="ai-message ai-message-bot" style="display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-h));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🤖</div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;max-width:80%;line-height:1.6;">
+              <p style="margin:0;color:var(--text);font-size:.9rem;">Hello! I'm your AI Math Tutor. I'm here to help you with:</p>
+              <ul style="margin:8px 0 0 0;padding-left:18px;color:var(--text2);font-size:.85rem;">
+                <li>Algebra equations and expressions</li>
+                <li>Geometry problems and proofs</li>
+                <li>Calculus derivatives and integrals</li>
+                <li>Trigonometry identities</li>
+                <li>Statistics and probability</li>
+              </ul>
+              <p style="margin:10px 0 0 0;color:var(--text2);font-size:.85rem;">What would you like to learn today? 🧮</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing Indicator (Hidden by default) -->
+        <div id="ai-typing-indicator" style="display:none;padding:0 20px 10px;">
+          <div style="display:flex;gap:8px;align-items:center;color:var(--text3);font-size:.8rem;">
+            <span>🤖 AI is thinking</span>
+            <span class="ai-typing-dots" style="display:flex;gap:3px;">
+              <span style="animation:aiTyping 1.4s infinite both;width:4px;height:4px;border-radius:50%;background:var(--text3);"></span>
+              <span style="animation:aiTyping 1.4s infinite both 0.2s;width:4px;height:4px;border-radius:50%;background:var(--text3);"></span>
+              <span style="animation:aiTyping 1.4s infinite both 0.4s;width:4px;height:4px;border-radius:50%;background:var(--text3);"></span>
+            </span>
+          </div>
+        </div>
+        <style>@keyframes aiTyping{0%,80%,100%{transform:scale(0);opacity:.5}40%{transform:scale(1);opacity:1}}</style>
+
+        <!-- Input Area -->
+        <div style="padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:12px;">
+          <textarea id="ai-chat-input" placeholder="Ask me a math question... (e.g., How do I solve quadratic equations?)" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;resize:none;height:56px;outline:none;transition:border-color .2s;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAIChatMessage();}"></textarea>
+          <button class="btn btn-primary" onclick="sendAIChatMessage()" style="height:56px;min-width:56px;display:flex;align-items:center;justify-content:center;padding:0;">
+            <span style="font-size:1.2rem;">➤</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Suggested Questions -->
+      <div style="margin-top:16px;">
+        <p style="font-size:.75rem;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;">Try asking:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="setAIQuestion('How do I solve 2x + 5 = 13?')" style="font-size:.78rem;">Solve 2x + 5 = 13</button>
+          <button class="btn btn-ghost btn-sm" onclick="setAIQuestion('What is the Pythagorean theorem?')" style="font-size:.78rem;">Pythagorean theorem</button>
+          <button class="btn btn-ghost btn-sm" onclick="setAIQuestion('How do I find the derivative of x²?')" style="font-size:.78rem;">Derivative of x²</button>
+          <button class="btn btn-ghost btn-sm" onclick="setAIQuestion('What is sin(30°)?')" style="font-size:.78rem;">sin(30°)</button>
+          <button class="btn btn-ghost btn-sm" onclick="setAIQuestion('How do I calculate mean and median?')" style="font-size:.78rem;">Mean vs Median</button>
+          <button class="btn btn-ghost btn-sm" onclick="setAIQuestion('Explain factoring polynomials')" style="font-size:.78rem;">Factoring polynomials</button>
         </div>
       </div>
     </div>
@@ -4004,7 +4082,8 @@ const S_TITLES = {
   home:'Home', notifications:'Inbox', classes:'My Classes', freeschedule:'Book a Class',
   progress:'My Progress', homework:'Homework', badges:'Badges',
   leaderboard:'Leaderboard', resources:'Resources', practice:'Practice lab',
-  announcements:'Announcements', profile:'Profile', payments:'Payment History'
+  announcements:'Announcements', profile:'Profile', payments:'Payment History',
+  aitutor:'AI Math Tutor'
 };
 
 async function initStudent(){
@@ -4064,6 +4143,7 @@ function sNav(section, el){
   if(section==='freeschedule') buildSFreeSchedule(window._student);
   if(section==='notifications') buildSNotifications();
   if(section==='payments') loadPaymentHistory();
+  if(section==='aitutor') scrollToBottomAIChat();
 }
 </script>
 
@@ -5680,6 +5760,340 @@ function updatePaymentRequestsBadge() {
     </div>
   </div>
 </div>
+
+<!-- ====================================================
+  AI MATH TUTOR — OpenRouter Integration
+==================================================== -->
+<script>
+// AI Chat State
+let _aiChatHistory = [];
+let _lastAIRequestTime = 0;
+const AI_RATE_LIMIT_MS = 3000; // 3 seconds between requests
+const MATH_KEYWORDS = [
+  'algebra', 'equation', 'solve', 'x', 'variable', 'linear', 'quadratic', 'polynomial',
+  'factor', 'expand', 'simplify', 'fraction', 'ratio', 'proportion', 'percent',
+  'geometry', 'triangle', 'circle', 'angle', 'area', 'volume', 'perimeter', 'pythagorean',
+  'calculus', 'derivative', 'integral', 'limit', 'differentiate', 'integrate', 'slope',
+  'trigonometry', 'sin', 'cos', 'tan', 'sine', 'cosine', 'tangent', 'radian', 'degree',
+  'statistics', 'mean', 'median', 'mode', 'average', 'probability', 'data', 'graph',
+  'math', 'mathematics', 'number', 'integer', 'decimal', 'prime', 'factorial',
+  'formula', 'theorem', 'proof', 'function', 'domain', 'range', 'log', 'exponential'
+];
+
+// System prompt to restrict AI to math only
+const AI_SYSTEM_PROMPT = `You are a helpful AI Math Tutor for "Math Made Easy" academy students.
+You ONLY answer questions related to mathematics including:
+- Algebra (equations, expressions, polynomials, factoring)
+- Geometry (shapes, angles, area, volume, proofs)
+- Calculus (derivatives, integrals, limits)
+- Trigonometry (sin, cos, tan, identities)
+- Statistics (mean, median, probability, data analysis)
+
+If a student asks about non-math topics (like history, science, general knowledge, coding, etc.), politely redirect them:
+"I'm your Math Tutor and can only help with mathematics topics. Ask me about Algebra, Geometry, Calculus, Trigonometry, or Statistics! 🧮"
+
+Always provide step-by-step explanations. Be encouraging and helpful. Use simple language suitable for students.`;
+
+function setAIQuestion(text) {
+  const input = document.getElementById('ai-chat-input');
+  if (input) {
+    input.value = text;
+    input.focus();
+  }
+}
+
+function isMathRelated(text) {
+  const lower = text.toLowerCase();
+  return MATH_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+function scrollToBottomAIChat() {
+  const messages = document.getElementById('ai-chat-messages');
+  if (messages) {
+    setTimeout(() => {
+      messages.scrollTop = messages.scrollHeight;
+    }, 100);
+  }
+}
+
+function clearAIChat() {
+  _aiChatHistory = [];
+  const messages = document.getElementById('ai-chat-messages');
+  if (messages) {
+    messages.innerHTML = `
+      <div class="ai-message ai-message-bot" style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-h));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🤖</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;max-width:80%;line-height:1.6;">
+          <p style="margin:0;color:var(--text);font-size:.9rem;">Chat cleared! I'm your AI Math Tutor. Ask me about:</p>
+          <ul style="margin:8px 0 0 0;padding-left:18px;color:var(--text2);font-size:.85rem;">
+            <li>Algebra equations and expressions</li>
+            <li>Geometry problems and proofs</li>
+            <li>Calculus derivatives and integrals</li>
+            <li>Trigonometry identities</li>
+            <li>Statistics and probability</li>
+          </ul>
+          <p style="margin:10px 0 0 0;color:var(--text2);font-size:.85rem;">What would you like to learn today? 🧮</p>
+        </div>
+      </div>`;
+  }
+  toast('Chat cleared!');
+}
+
+function addUserMessage(text) {
+  const messages = document.getElementById('ai-chat-messages');
+  if (!messages) return;
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'ai-message ai-message-user';
+  msgDiv.style.cssText = 'display:flex;gap:12px;align-items:flex-start;justify-content:flex-end;';
+  msgDiv.innerHTML = `
+    <div style="background:linear-gradient(135deg,var(--accent),#8b5cf6);border-radius:14px;padding:14px 16px;max-width:80%;line-height:1.6;">
+      <p style="margin:0;color:#fff;font-size:.9rem;word-break:break-word;">${escapeHtml(text)}</p>
+    </div>
+    <div style="width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">👤</div>
+  `;
+  messages.appendChild(msgDiv);
+  scrollToBottomAIChat();
+}
+
+function addBotMessage(html) {
+  const messages = document.getElementById('ai-chat-messages');
+  if (!messages) return;
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'ai-message ai-message-bot';
+  msgDiv.style.cssText = 'display:flex;gap:12px;align-items:flex-start;';
+  msgDiv.innerHTML = `
+    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-h));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🤖</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;max-width:80%;line-height:1.6;">
+      <div style="color:var(--text);font-size:.9rem;">${html}</div>
+    </div>
+  `;
+  messages.appendChild(msgDiv);
+  scrollToBottomAIChat();
+}
+
+function showTypingIndicator() {
+  const indicator = document.getElementById('ai-typing-indicator');
+  if (indicator) indicator.style.display = 'block';
+  scrollToBottomAIChat();
+}
+
+function hideTypingIndicator() {
+  const indicator = document.getElementById('ai-typing-indicator');
+  if (indicator) indicator.style.display = 'none';
+}
+
+async function sendAIChatMessage() {
+  const input = document.getElementById('ai-chat-input');
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text) return;
+
+  // Check if math-related
+  if (!isMathRelated(text)) {
+    addUserMessage(text);
+    setTimeout(() => {
+      addBotMessage('I\'m your Math Tutor and can only help with mathematics topics. Ask me about <strong>Algebra, Geometry, Calculus, Trigonometry, or Statistics</strong>! 🧮');
+    }, 500);
+    input.value = '';
+    return;
+  }
+
+  // Add user message
+  addUserMessage(text);
+  input.value = '';
+
+  // Show typing indicator
+  showTypingIndicator();
+
+  try {
+    // Build conversation history for API (without system message - some free models don't support it)
+    const userMessage = `[System: You are a helpful AI Math Tutor for "Math Made Easy" academy students. You ONLY answer questions related to mathematics including: Algebra, Geometry, Calculus, Trigonometry, Statistics. If asked about non-math topics, politely redirect them.]
+
+User question: ${text}`;
+    
+    const messages = [
+      ..._aiChatHistory.map(h => ({ role: h.role, content: h.content })),
+      { role: 'user', content: userMessage }
+    ];
+
+    // Call OpenRouter API (free model)
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer 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',
+        'Content-Type': 'application/json',
+        'HTTP-Referer': window.location.href,
+        'X-Title': 'Math Made Easy - AI Tutor'
+      },
+      mode: 'cors',
+      body: JSON.stringify({
+        model: 'google/gemma-4-26b-a4b-it:free',
+        messages: messages,
+        temperature: 0.7
+      })
+    });
+
+    hideTypingIndicator();
+
+    if (!response.ok) {
+      // If API fails, show fallback message with helpful resources
+      const errorData = await response.json().catch(() => ({}));
+      console.warn('AI API error:', errorData);
+      
+      // Check for rate limit (429)
+      if (response.status === 429) {
+        addBotMessage(`⏳ <strong>AI is busy right now</strong> (rate limit reached).<br><br>Here's some help while you wait:<br><br>${generateFallbackResponse(text)}`);
+        _aiChatHistory.push({ role: 'user', content: text });
+        _aiChatHistory.push({ role: 'assistant', content: generateFallbackResponse(text) });
+        return;
+      }
+      
+      // Provide a helpful fallback response based on keywords
+      const fallbackResponse = generateFallbackResponse(text);
+      addBotMessage(fallbackResponse);
+      
+      // Add to history
+      _aiChatHistory.push({ role: 'user', content: text });
+      _aiChatHistory.push({ role: 'assistant', content: fallbackResponse });
+      return;
+    }
+
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || 'Sorry, I could not process that. Try asking about a math topic!';
+
+    // Add bot message
+    const formattedReply = formatAIResponse(reply);
+    addBotMessage(formattedReply);
+
+    // Update history (keep last 10 exchanges)
+    _aiChatHistory.push({ role: 'user', content: text });
+    _aiChatHistory.push({ role: 'assistant', content: reply });
+    if (_aiChatHistory.length > 20) {
+      _aiChatHistory = _aiChatHistory.slice(-20);
+    }
+
+  } catch (err) {
+    hideTypingIndicator();
+    console.error('AI chat error:', err);
+    
+    // Fallback response
+    const fallbackResponse = generateFallbackResponse(text);
+    addBotMessage(fallbackResponse);
+  }
+}
+
+function formatAIResponse(text) {
+  // Convert markdown-like formatting to HTML
+  let formatted = escapeHtml(text);
+  
+  // Convert **bold** to <strong>
+  formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  
+  // Convert *italic* to <em>
+  formatted = formatted.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  
+  // Convert code blocks
+  formatted = formatted.replace(/```(.+?)```/gs, '<pre style="background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto;font-family:monospace;font-size:.85rem;margin:8px 0;"><code>$1</code></pre>');
+  
+  // Convert inline code
+  formatted = formatted.replace(/`(.+?)`/g, '<code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.9rem;">$1</code>');
+  
+  // Convert line breaks
+  formatted = formatted.replace(/\n/g, '<br>');
+  
+  // Convert bullet points
+  formatted = formatted.replace(/^- (.+)$/gm, '<li style="margin:4px 0;">$1</li>');
+  formatted = formatted.replace(/(<li[^>]*>.*<\/li>)+/gs, '<ul style="margin:8px 0;padding-left:20px;">$&</ul>');
+  
+  return formatted;
+}
+
+function generateFallbackResponse(text) {
+  const lower = text.toLowerCase();
+  
+  // Algebra help
+  if (lower.includes('solve') || lower.includes('equation') || lower.includes('x') || lower.includes('algebra')) {
+    return `I'd be happy to help with algebra! Here are some tips:<br><br>
+<strong>Basic Steps to Solve Equations:</strong><br>
+1. <strong>Simplify</strong> both sides (remove parentheses, combine like terms)<br>
+2. <strong>Move variables</strong> to one side, numbers to the other<br>
+3. <strong>Isolate</strong> the variable (get x by itself)<br>
+4. <strong>Check</strong> your answer by plugging it back in<br><br>
+Try asking about a specific equation, or visit the <strong>Practice Lab</strong> for more resources! 📐`;
+  }
+  
+  // Geometry help
+  if (lower.includes('geometry') || lower.includes('triangle') || lower.includes('circle') || lower.includes('area')) {
+    return `Geometry is all about shapes and their properties! Here are key formulas:<br><br>
+<strong>Area Formulas:</strong><br>
+• Rectangle: A = length × width<br>
+• Triangle: A = ½ × base × height<br>
+• Circle: A = πr²<br><br>
+<strong>Pythagorean Theorem:</strong><br>
+a² + b² = c² (for right triangles)<br><br>
+Want to practice? Check out <strong>GeoGebra</strong> in the Practice Lab! 📊`;
+  }
+  
+  // Calculus help
+  if (lower.includes('calculus') || lower.includes('derivative') || lower.includes('integral')) {
+    return `Calculus deals with rates of change and accumulation! Here's a quick guide:<br><br>
+<strong>Basic Derivatives:</strong><br>
+• d/dx(xⁿ) = nxⁿ⁻¹<br>
+• d/dx(constant) = 0<br>
+• d/dx(sin x) = cos x<br><br>
+<strong>Basic Integrals:</strong><br>
+• ∫xⁿ dx = xⁿ⁺¹/(n+1) + C<br>
+• ∫cos x dx = sin x + C<br><br>
+Need step-by-step help? Try <strong>Wolfram Alpha</strong> in the Practice Lab! 🔬`;
+  }
+  
+  // Trigonometry help
+  if (lower.includes('trig') || lower.includes('sin') || lower.includes('cos') || lower.includes('tan')) {
+    return `Trigonometry is about angles and triangles! Key values to remember:<br><br>
+<strong>Special Angles:</strong><br>
+• sin(30°) = ½, cos(30°) = √3/2<br>
+• sin(45°) = √2/2, cos(45°) = √2/2<br>
+• sin(60°) = √3/2, cos(60°) = ½<br>
+• sin(90°) = 1, cos(90°) = 0<br><br>
+<strong>SOH CAH TOA:</strong><br>
+• Sin = Opposite/Hypotenuse<br>
+• Cos = Adjacent/Hypotenuse<br>
+• Tan = Opposite/Adjacent<br><br>
+Practice more with <strong>Desmos</strong> in the Practice Lab! 📐`;
+  }
+  
+  // Statistics help
+  if (lower.includes('statistics') || lower.includes('mean') || lower.includes('median') || lower.includes('probability')) {
+    return `Statistics helps us understand data! Key concepts:<br><br>
+<strong>Measures of Center:</strong><br>
+• <strong>Mean</strong> (average): Add all values, divide by count<br>
+• <strong>Median</strong> (middle): Arrange values, find the middle one<br>
+• <strong>Mode</strong> (most frequent): Value that appears most often<br><br>
+<strong>Probability:</strong><br>
+P(event) = (favorable outcomes) / (total possible outcomes)<br><br>
+Explore more at <strong>Khan Academy</strong> in the Practice Lab! 🎓`;
+  }
+  
+  // Default response
+  return `I'm here to help with math! I can assist with:<br><br>
+<strong>• Algebra</strong> — equations, expressions, factoring<br>
+<strong>• Geometry</strong> — shapes, area, theorems<br>
+<strong>• Calculus</strong> — derivatives, integrals, limits<br>
+<strong>• Trigonometry</strong> — sin, cos, tan, identities<br>
+<strong>• Statistics</strong> — mean, median, probability<br><br>
+Ask me a specific question like <em>"How do I solve 2x + 5 = 13?"</em> or <em>"What is the quadratic formula?"</em><br><br>
+For more practice, check out the <strong>Practice Lab</strong>! 🧮`;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+</script>
 
 </body>
 </html>
