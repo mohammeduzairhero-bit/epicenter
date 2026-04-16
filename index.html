@@ -361,6 +361,237 @@ tr:hover td { background:rgba(124,111,239,.07); }
 </style>
 
 <style>
+/* Mobile Responsive Design */
+@media(max-width:768px) {
+  /* Login Page */
+  .login-card {
+    width:94vw;
+    padding:32px 24px;
+    margin:20px 10px;
+  }
+  .brand-name { font-size:1.6rem; }
+  .role-grid { grid-template-columns:1fr; gap:10px; }
+  .login-field input { font-size:16px; } /* Prevent zoom on iOS */
+  
+  /* Teacher Dashboard */
+  #page-teacher.active {
+    grid-template-columns:1fr;
+  }
+  
+  .t-sidebar {
+    position:fixed;
+    left:-100%;
+    top:0;
+    width:280px;
+    height:100vh;
+    z-index:1000;
+    transition:left .3s ease;
+    box-shadow:4px 0 32px rgba(0,0,0,.4);
+  }
+  
+  .t-sidebar.mobile-open {
+    left:0;
+  }
+  
+  .t-main {
+    padding:20px 16px;
+  }
+  
+  /* Mobile Menu Toggle */
+  .mobile-menu-toggle {
+    display:block;
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:1001;
+    width:48px;
+    height:48px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    align-items:center;
+    justify-content:center;
+    font-size:1.3rem;
+    cursor:pointer;
+    box-shadow:var(--shadow-sm);
+  }
+  
+  .mobile-menu-toggle:hover {
+    background:var(--surface2);
+    transform:scale(1.05);
+  }
+  
+  /* Stats Grid */
+  .stat-grid {
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  
+  .stat-card {
+    padding:16px;
+  }
+  
+  .stat-big { font-size:1.6rem; }
+  
+  /* Forms */
+  .form-grid {
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  
+  /* Tables */
+  .table-wrap {
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  
+  table {
+    min-width:600px;
+  }
+  
+  th, td {
+    padding:10px 12px;
+    font-size:.8rem;
+  }
+  
+  /* Modals */
+  .modal-box {
+    width:94vw;
+    padding:24px 20px;
+    margin:20px auto;
+  }
+  
+  .confirm-box {
+    width:90vw;
+    padding:24px 20px;
+  }
+  
+  /* Buttons */
+  .btn {
+    padding:10px 16px;
+    font-size:.8rem;
+  }
+  
+  .btn-lg {
+    padding:12px 20px;
+    font-size:.9rem;
+  }
+  
+  /* Search */
+  .search-bar input {
+    width:120px;
+  }
+  
+  /* Dashboard Top Bar */
+  .dash-topbar {
+    display:flex;
+    margin:0 0 20px;
+    padding:12px 16px;
+    position:sticky;
+    top:0;
+  }
+  
+  .dash-topbar .epi-page {
+    font-size:.9rem;
+  }
+  
+  .t-search-wrap input {
+    width:100%;
+    max-width:none;
+  }
+  
+  /* Cards */
+  .card {
+    margin-bottom:12px;
+  }
+  
+  /* Section Headers */
+  .sec-header {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+    margin-bottom:20px;
+  }
+  
+  .sec-header h2 {
+    font-size:1.4rem;
+  }
+  
+  /* Empty States */
+  .empty {
+    padding:32px 16px;
+  }
+  
+  .empty-icon {
+    font-size:2.2rem;
+  }
+  
+  /* Input Groups */
+  .input-group input,
+  .input-group select,
+  .input-group textarea {
+    font-size:16px; /* Prevent zoom on iOS */
+  }
+}
+
+@media(max-width:480px) {
+  /* Extra Small Screens */
+  .login-card {
+    padding:24px 20px;
+  }
+  
+  .brand-name { font-size:1.4rem; }
+  
+  .t-main {
+    padding:16px 12px;
+  }
+  
+  .stat-card {
+    padding:14px;
+  }
+  
+  .stat-big { font-size:1.4rem; }
+  
+  .modal-box {
+    padding:20px 16px;
+  }
+  
+  .confirm-box {
+    padding:20px 16px;
+  }
+  
+  .btn {
+    padding:8px 12px;
+    font-size:.76rem;
+  }
+  
+  .btn-lg {
+    padding:10px 16px;
+    font-size:.85rem;
+  }
+  
+  .sec-header h2 {
+    font-size:1.2rem;
+  }
+  
+  .dash-topbar {
+    padding:10px 12px;
+  }
+  
+  .dash-topbar .epi-page {
+    font-size:.85rem;
+  }
+}
+
+/* Hide mobile menu toggle on desktop */
+@media(min-width:769px) {
+  .mobile-menu-toggle {
+    display:none;
+  }
+}
+</style>
+
+<style>
 /* ── LOGIN PAGE ── */
 #page-login { display:none; align-items:center; justify-content:center; position:relative; overflow:hidden; background:var(--bg); min-height:100vh; }
 #page-login.active { display:flex; }
@@ -1238,6 +1469,9 @@ a:not(.btn):not(.practice-tile):not(.ci-link):not(.preclass-join) { transition:c
 
 <!-- TEACHER DASHBOARD -->
 <div id="page-teacher" class="page">
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">=</button>
+  
   <aside class="t-sidebar">
     <div class="t-sidebar-logo">
       <div class="s-brand">🧮 Mathmade Epicenter</div>
@@ -5909,70 +6143,20 @@ async function sendAIChatMessage() {
   showTypingIndicator();
 
   try {
-    // Build conversation history for API (without system message - some free models don't support it)
-    const userMessage = `[System: You are a helpful AI Math Tutor for "Math Made Easy" academy students. You ONLY answer questions related to mathematics including: Algebra, Geometry, Calculus, Trigonometry, Statistics. If asked about non-math topics, politely redirect them.]
-
-User question: ${text}`;
+    // Try API call with retry mechanism
+    const reply = await callAIAPIWithRetry(text);
     
-    const messages = [
-      ..._aiChatHistory.map(h => ({ role: h.role, content: h.content })),
-      { role: 'user', content: userMessage }
-    ];
+    if (reply) {
+      // Add bot message
+      const formattedReply = formatAIResponse(reply);
+      addBotMessage(formattedReply);
 
-    // Call OpenRouter API (free model)
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer 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',
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.href,
-        'X-Title': 'Math Made Easy - AI Tutor'
-      },
-      mode: 'cors',
-      body: JSON.stringify({
-        model: 'google/gemma-4-26b-a4b-it:free',
-        messages: messages,
-        temperature: 0.7
-      })
-    });
-
-    hideTypingIndicator();
-
-    if (!response.ok) {
-      // If API fails, show fallback message with helpful resources
-      const errorData = await response.json().catch(() => ({}));
-      console.warn('AI API error:', errorData);
-      
-      // Check for rate limit (429)
-      if (response.status === 429) {
-        addBotMessage(`⏳ <strong>AI is busy right now</strong> (rate limit reached).<br><br>Here's some help while you wait:<br><br>${generateFallbackResponse(text)}`);
-        _aiChatHistory.push({ role: 'user', content: text });
-        _aiChatHistory.push({ role: 'assistant', content: generateFallbackResponse(text) });
-        return;
-      }
-      
-      // Provide a helpful fallback response based on keywords
-      const fallbackResponse = generateFallbackResponse(text);
-      addBotMessage(fallbackResponse);
-      
-      // Add to history
+      // Update history (keep last 10 exchanges)
       _aiChatHistory.push({ role: 'user', content: text });
-      _aiChatHistory.push({ role: 'assistant', content: fallbackResponse });
-      return;
-    }
-
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || 'Sorry, I could not process that. Try asking about a math topic!';
-
-    // Add bot message
-    const formattedReply = formatAIResponse(reply);
-    addBotMessage(formattedReply);
-
-    // Update history (keep last 10 exchanges)
-    _aiChatHistory.push({ role: 'user', content: text });
-    _aiChatHistory.push({ role: 'assistant', content: reply });
-    if (_aiChatHistory.length > 20) {
-      _aiChatHistory = _aiChatHistory.slice(-20);
+      _aiChatHistory.push({ role: 'assistant', content: reply });
+      if (_aiChatHistory.length > 20) {
+        _aiChatHistory = _aiChatHistory.slice(-20);
+      }
     }
 
   } catch (err) {
@@ -5982,7 +6166,93 @@ User question: ${text}`;
     // Fallback response
     const fallbackResponse = generateFallbackResponse(text);
     addBotMessage(fallbackResponse);
+    
+    // Add fallback to history
+    _aiChatHistory.push({ role: 'user', content: text });
+    _aiChatHistory.push({ role: 'assistant', content: fallbackResponse });
   }
+}
+
+async function callAIAPIWithRetry(text, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      // Rate limiting: wait longer between attempts
+      if (attempt > 1) {
+        const delay = Math.min(1000 * Math.pow(2, attempt - 2), 5000); // 1s, 2s, 4s max
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+
+      // Build conversation history for API
+      const userMessage = `[System: You are a helpful AI Math Tutor for "Math Made Easy" academy students. You ONLY answer questions related to mathematics including: Algebra, Geometry, Calculus, Trigonometry, Statistics. If asked about non-math topics, politely redirect them.]
+
+User question: ${text}`;
+      
+      const messages = [
+        { role: 'system', content: 'You are a helpful AI Math Tutor for "Math Made Easy" academy students. You ONLY answer questions related to mathematics including: Algebra, Geometry, Calculus, Trigonometry, Statistics. If asked about non-math topics, politely redirect them.' },
+        ..._aiChatHistory.slice(-4).map(h => ({ role: h.role, content: h.content })), // Keep last 4 messages for context
+        { role: 'user', content: text }
+      ];
+
+      // Call OpenRouter API
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer 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',
+          'Content-Type': 'application/json',
+          'HTTP-Referer': window.location.href,
+          'X-Title': 'Math Made Easy - AI Tutor'
+        },
+        mode: 'cors',
+        body: JSON.stringify({
+          model: 'openrouter/elephant-alpha', // Use working free model
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: 800 // Reduce token usage
+        })
+      });
+
+      hideTypingIndicator();
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.warn(`AI API error (attempt ${attempt}/${maxRetries}):`, errorData);
+        
+        if (response.status === 429) {
+          if (attempt === maxRetries) {
+            // Final attempt failed, show fallback
+            addBotMessage(`⏳ <strong>AI is experiencing high traffic</strong>.<br><br>Here's some help while you wait:<br><br>${generateFallbackResponse(text)}`);
+            return null;
+          }
+          continue; // Retry
+        }
+        
+        // Other errors, don't retry
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const reply = data.choices?.[0]?.message?.content;
+      
+      if (!reply) {
+        throw new Error('No response from AI');
+      }
+      
+      return reply;
+
+    } catch (err) {
+      console.error(`Attempt ${attempt} failed:`, err);
+      
+      if (attempt === maxRetries) {
+        // All attempts failed
+        hideTypingIndicator();
+        const fallbackResponse = generateFallbackResponse(text);
+        addBotMessage(`🤖 <strong>Having trouble connecting to AI</strong>.<br><br>Here's some help:<br><br>${fallbackResponse}`);
+        return null;
+      }
+    }
+  }
+  
+  return null;
 }
 
 function formatAIResponse(text) {
@@ -6093,6 +6363,26 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+// Mobile Menu Toggle
+function toggleMobileMenu() {
+  const sidebar = document.querySelector('.t-sidebar');
+  if (sidebar) {
+    sidebar.classList.toggle('mobile-open');
+  }
+}
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(event) {
+  const sidebar = document.querySelector('.t-sidebar');
+  const toggle = document.querySelector('.mobile-menu-toggle');
+  
+  if (sidebar && toggle) {
+    if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+      sidebar.classList.remove('mobile-open');
+    }
+  }
+});
 </script>
 
 </body>
