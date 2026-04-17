@@ -5852,14 +5852,18 @@ function updatePaymentRequestsBadge() {
   </div>
 </div>
 
-<!-- ====================================================
-  AI MATH TUTOR — OpenRouter Integration
-==================================================== -->
+<!-- AI MATH TUTOR - OpenRouter Integration -->
 <script>
 // AI Chat State
 let _aiChatHistory = [];
 let _lastAIRequestTime = 0;
 const AI_RATE_LIMIT_MS = 3000; // 3 seconds between requests
+
+// Student Session Management
+let _currentStudentId = null;
+let _studentSessions = new Map(); // Store chat history per student
+let _sessionTimeout = null;
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes of inactivity
 const MATH_KEYWORDS = [
   'algebra', 'equation', 'solve', 'x', 'variable', 'linear', 'quadratic', 'polynomial',
   'factor', 'expand', 'simplify', 'fraction', 'ratio', 'proportion', 'percent',
@@ -5908,6 +5912,12 @@ function scrollToBottomAIChat() {
 }
 
 function clearAIChat() {
+  // Save current session if exists
+  if (_currentStudentId) {
+    _studentSessions.set(_currentStudentId, [..._aiChatHistory]);
+  }
+  
+  // Clear current chat
   _aiChatHistory = [];
   const messages = document.getElementById('ai-chat-messages');
   if (messages) {
@@ -5915,7 +5925,7 @@ function clearAIChat() {
       <div class="ai-message ai-message-bot" style="display:flex;gap:12px;align-items:flex-start;">
         <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-h));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🤖</div>
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;max-width:80%;line-height:1.6;">
-          <p style="margin:0;color:var(--text);font-size:.9rem;">Chat cleared! I'm your AI Math Tutor. Ask me about:</p>
+          <p style="margin:0;color:var(--text);font-size:.9rem;">New chat session started! I'm your AI Math Tutor. Ask me about:</p>
           <ul style="margin:8px 0 0 0;padding-left:18px;color:var(--text2);font-size:.85rem;">
             <li>Algebra equations and expressions</li>
             <li>Geometry problems and proofs</li>
@@ -5927,7 +5937,105 @@ function clearAIChat() {
         </div>
       </div>`;
   }
-  toast('Chat cleared!');
+  
+  // Initialize new session
+  initializeStudentSession();
+  toast('New chat session started!');
+}
+
+// Student Session Management Functions
+function generateStudentId() {
+  // Generate a unique student ID based on timestamp and random
+  return 'student_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+}
+
+function initializeStudentSession() {
+  // Clear any existing session timeout
+  if (_sessionTimeout) {
+    clearTimeout(_sessionTimeout);
+  }
+  
+  // Generate new student ID
+  _currentStudentId = generateStudentId();
+  
+  // Initialize empty chat history for this student
+  _aiChatHistory = [];
+  _studentSessions.set(_currentStudentId, []);
+  
+  // Set session timeout to clear chat after inactivity
+  resetSessionTimeout();
+  
+  console.log('New student session initialized:', _currentStudentId);
+  return _currentStudentId;
+}
+
+function resetSessionTimeout() {
+  // Clear existing timeout
+  if (_sessionTimeout) {
+    clearTimeout(_sessionTimeout);
+  }
+  
+  // Set new timeout
+  _sessionTimeout = setTimeout(() => {
+    console.log('Student session timeout, clearing chat...');
+    clearStudentSession();
+  }, SESSION_TIMEOUT_MS);
+}
+
+function clearStudentSession() {
+  if (_currentStudentId) {
+    // Save current session before clearing
+    _studentSessions.set(_currentStudentId, [..._aiChatHistory]);
+    console.log('Student session saved:', _currentStudentId);
+  }
+  
+  // Clear current session
+  _currentStudentId = null;
+  _aiChatHistory = [];
+  
+  // Clear timeout
+  if (_sessionTimeout) {
+    clearTimeout(_sessionTimeout);
+    _sessionTimeout = null;
+  }
+  
+  // Clear chat display
+  clearAIChat();
+  
+  // Show notification
+  showSessionNotification('Session ended. New chat ready for next student!');
+}
+
+function showSessionNotification(message) {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 10000;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+  `;
+  notification.textContent = message;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'fadeOut 0.3s ease-out';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 3000);
 }
 
 function addUserMessage(text) {
@@ -5975,12 +6083,52 @@ function hideTypingIndicator() {
   if (indicator) indicator.style.display = 'none';
 }
 
+function showFailoverNotification(message) {
+  // Create simple notification element
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 10000;
+    font-size: 0.9rem;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease-out;
+  `;
+  notification.textContent = 'wait please ai is thinking';
+  
+  // Add to page
+  document.body.appendChild(notification);
+  
+  // Auto-remove after 2 seconds
+  setTimeout(() => {
+    notification.style.animation = 'fadeOut 0.3s ease-out';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 2000);
+}
+
 async function sendAIChatMessage() {
   const input = document.getElementById('ai-chat-input');
   if (!input) return;
 
   const text = input.value.trim();
   if (!text) return;
+
+  // Initialize session if not exists
+  if (!_currentStudentId) {
+    initializeStudentSession();
+  }
+
+  // Reset session timeout on activity
+  resetSessionTimeout();
 
   // Check if math-related
   if (!isMathRelated(text)) {
@@ -6030,85 +6178,134 @@ async function sendAIChatMessage() {
   }
 }
 
+// Multi-API key system with failover
+const API_KEYS = [
+  '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', // First API key
+  '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', // Second API key
+  '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', // Third API key
+  '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', // Fourth API key
+  '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'  // Fifth API key
+];
+
+let currentApiKeyIndex = 0;
+
+function getNextApiKey() {
+  const key = API_KEYS[currentApiKeyIndex];
+  currentApiKeyIndex = (currentApiKeyIndex + 1) % API_KEYS.length;
+  return key;
+}
+
 async function callAIAPIWithRetry(text, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      // Rate limiting: wait longer between attempts
-      if (attempt > 1) {
-        const delay = Math.min(1000 * Math.pow(2, attempt - 2), 5000); // 1s, 2s, 4s max
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
+  // Try each API key with retries
+  for (let keyAttempt = 0; keyAttempt < API_KEYS.length; keyAttempt++) {
+    const apiKey = getNextApiKey();
+    
+ // Skip if API key is not set (check for placeholder values)
+    if (apiKey === 'YOUR_API_KEY_1_HERE' || apiKey === 'YOUR_API_KEY_2_HERE' || 
+        apiKey === 'YOUR_API_KEY_3_HERE' || apiKey === 'YOUR_API_KEY_4_HERE' || 
+        apiKey === 'YOUR_API_KEY_5_HERE') {
+      console.warn(`API key ${keyAttempt + 1} is not configured, skipping...`);
+      continue;
+    }
 
-      // Build conversation history for API
-      const userMessage = `[System: You are a helpful AI Math Tutor for "Math Made Easy" academy students. You ONLY answer questions related to mathematics including: Algebra, Geometry, Calculus, Trigonometry, Statistics. If asked about non-math topics, politely redirect them.]
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // Rate limiting: wait longer between attempts
+        if (attempt > 1) {
+          const delay = Math.min(1000 * Math.pow(2, attempt - 2), 5000); // 1s, 2s, 4s max
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
 
-User question: ${text}`;
-      
-      const messages = [
-        { role: 'system', content: 'You are a helpful AI Math Tutor for "Math Made Easy" academy students. You ONLY answer questions related to mathematics including: Algebra, Geometry, Calculus, Trigonometry, Statistics. If asked about non-math topics, politely redirect them.' },
-        ..._aiChatHistory.slice(-4).map(h => ({ role: h.role, content: h.content })), // Keep last 4 messages for context
-        { role: 'user', content: text }
-      ];
+        // Build conversation history for API
+        const messages = [
+          { role: 'system', content: 'You are a helpful AI Math Tutor for "Math Made Easy" academy students. You ONLY answer questions related to mathematics including: Algebra, Geometry, Calculus, Trigonometry, Statistics. If asked about non-math topics, politely redirect them. Provide clear, step-by-step mathematical solutions without any special characters or formatting artifacts.' },
+          ..._aiChatHistory.slice(-4).map(h => ({ role: h.role, content: h.content })), // Keep last 4 messages for context
+          { role: 'user', content: text }
+        ];
 
-      // Call OpenRouter API
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer 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',
-          'Content-Type': 'application/json',
-          'HTTP-Referer': window.location.href,
-          'X-Title': 'Math Made Easy - AI Tutor'
-        },
-        mode: 'cors',
-        body: JSON.stringify({
-          model: 'openrouter/elephant-alpha', // Use working free model
-          messages: messages,
-          temperature: 0.7,
-          max_tokens: 800 // Reduce token usage
-        })
-      });
+        // Call OpenRouter API with current key
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.href,
+            'X-Title': 'Math Made Easy - AI Tutor'
+          },
+          mode: 'cors',
+          body: JSON.stringify({
+            model: 'openrouter/elephant-alpha', // Elephant model
+            messages: messages,
+            temperature: 0.7,
+            max_tokens: 800
+          })
+        });
 
-      hideTypingIndicator();
+        hideTypingIndicator();
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.warn(`AI API error (attempt ${attempt}/${maxRetries}):`, errorData);
-        
-        if (response.status === 429) {
-          if (attempt === maxRetries) {
-            // Final attempt failed, show fallback
-            addBotMessage(`⏳ <strong>AI is experiencing high traffic</strong>.<br><br>Here's some help while you wait:<br><br>${generateFallbackResponse(text)}`);
-            return null;
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.warn(`API Key ${keyAttempt + 1} error (attempt ${attempt}/${maxRetries}):`, errorData);
+          
+          if (response.status === 429) {
+            if (attempt === maxRetries) {
+              console.log(`API Key ${keyAttempt + 1} rate limited, trying next key...`);
+              showFailoverNotification('Rate limit reached, switching to next API key...');
+              break; // Try next API key
+            }
+            continue; // Retry same key
           }
-          continue; // Retry
+          
+          if (response.status === 401) {
+            console.log(`API Key ${keyAttempt + 1} invalid, trying next key...`);
+            showFailoverNotification('API key invalid, switching to next key...');
+            break; // Try next API key
+          }
+          
+          // Other errors, try next key
+          console.log(`API Key ${keyAttempt + 1} failed with status ${response.status}, trying next key...`);
+          showFailoverNotification('API failed, switching to next key...');
+          break;
+        }
+
+        const data = await response.json();
+        let reply = data.choices?.[0]?.message?.content;
+        
+        if (!reply) {
+          throw new Error('No response from AI');
         }
         
-        // Other errors, don't retry
-        throw new Error(`API error: ${response.status}`);
-      }
+        // Clean up AI response - remove unwanted characters and artifacts
+        reply = reply.replace(/[\[\]]/g, ''); // Remove stray brackets
+        reply = reply.replace(/[{}]/g, ''); // Remove stray braces
+        reply = reply.replace(/\\boxed\{([^}]+)\}/g, '$1'); // Extract boxed answers
+        reply = reply.replace(/\\text\{([^}]+)\}/g, '$1'); // Remove text artifacts
+        reply = reply.replace(/\\mathrm\{([^}]+)\}/g, '$1'); // Remove mathrm artifacts
+        reply = reply.replace(/\\displaystyle\{([^}]+)\}/g, '$1'); // Remove displaystyle artifacts
+        reply = reply.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)'); // Convert fractions to readable format
+        reply = reply.replace(/\\\\/g, '<br>'); // Convert double backslashes to line breaks
+        reply = reply.replace(/\\([a-zA-Z]+)/g, ''); // Remove remaining LaTeX commands
+        reply = reply.replace(/wtf type of answer is this/g, ''); // Remove inappropriate text
+        reply = reply.trim(); // Clean up whitespace
+        
+        console.log(`Success with API Key ${keyAttempt + 1}`);
+        return reply;
 
-      const data = await response.json();
-      const reply = data.choices?.[0]?.message?.content;
-      
-      if (!reply) {
-        throw new Error('No response from AI');
-      }
-      
-      return reply;
-
-    } catch (err) {
-      console.error(`Attempt ${attempt} failed:`, err);
-      
-      if (attempt === maxRetries) {
-        // All attempts failed
-        hideTypingIndicator();
-        const fallbackResponse = generateFallbackResponse(text);
-        addBotMessage(`🤖 <strong>Having trouble connecting to AI</strong>.<br><br>Here's some help:<br><br>${fallbackResponse}`);
-        return null;
+      } catch (err) {
+        console.error(`API Key ${keyAttempt + 1} attempt ${attempt} failed:`, err);
+        
+        if (attempt === maxRetries) {
+          console.log(`API Key ${keyAttempt + 1} all retries failed, trying next key...`);
+          break; // Try next API key
+        }
       }
     }
   }
   
+  // All API keys failed
+  hideTypingIndicator();
+  const fallbackResponse = generateFallbackResponse(text);
+  addBotMessage(`\ud83e\udd16 <strong>All API keys are currently unavailable</strong>.<br><br>Here's some help:<br><br>${fallbackResponse}`);
   return null;
 }
 
@@ -6121,6 +6318,10 @@ function formatAIResponse(text) {
   
   // Convert *italic* to <em>
   formatted = formatted.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  
+  // Convert LaTeX math expressions to better formatting
+  formatted = formatted.replace(/\\\((.+?)\\\)/g, '<span style="font-family: \'Times New Roman\', serif; font-style: italic;">$1</span>');
+  formatted = formatted.replace(/\$(.+?)\$/g, '<span style="font-family: \'Times New Roman\', serif; font-style: italic;">$1</span>');
   
   // Convert code blocks
   formatted = formatted.replace(/```(.+?)```/gs, '<pre style="background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto;font-family:monospace;font-size:.85rem;margin:8px 0;"><code>$1</code></pre>');
@@ -6221,6 +6422,14 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+// Initialize student session on page load
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize new student session when page loads
+  setTimeout(() => {
+    initializeStudentSession();
+    console.log('Student session management initialized');
+  }, 1000);
+});
 
 </script>
 
@@ -6251,6 +6460,22 @@ body.drawer-lock {
 /* toggleMobileMenu / sidebar-backdrop remnants - hide them */
 .sidebar-backdrop { display: none !important; }
 .t-sidebar.mobile-open { left: auto; }
+
+/* API failover notification animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 
 </body>
