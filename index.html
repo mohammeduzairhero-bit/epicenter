@@ -387,207 +387,29 @@ tr:hover td { background:rgba(124,111,239,.07); }
     z-index:1000;
     transition:left .3s ease;
     box-shadow:4px 0 32px rgba(0,0,0,.4);
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior: contain;
+    will-change: transform;
   }
   
   .t-sidebar.mobile-open {
     left:0;
   }
   
-  .t-main {
-    padding:20px 16px;
-  }
-  
-  /* Mobile Menu Toggle */
-  .mobile-menu-toggle {
-    display:block;
+  /* Prevent body scroll when sidebar is open */
+  body.sidebar-open {
+    overflow:hidden;
     position:fixed;
-    top:20px;
-    left:20px;
-    z-index:1001;
-    width:48px;
-    height:48px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:12px;
-    align-items:center;
-    justify-content:center;
-    font-size:1.3rem;
-    cursor:pointer;
-    box-shadow:var(--shadow-sm);
-  }
-  
-  .mobile-menu-toggle:hover {
-    background:var(--surface2);
-    transform:scale(1.05);
-  }
-  
-  /* Stats Grid */
-  .stat-grid {
-    grid-template-columns:1fr;
-    gap:12px;
-  }
-  
-  .stat-card {
-    padding:16px;
-  }
-  
-  .stat-big { font-size:1.6rem; }
-  
-  /* Forms */
-  .form-grid {
-    grid-template-columns:1fr;
-    gap:12px;
-  }
-  
-  /* Tables */
-  .table-wrap {
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-  }
-  
-  table {
-    min-width:600px;
-  }
-  
-  th, td {
-    padding:10px 12px;
-    font-size:.8rem;
-  }
-  
-  /* Modals */
-  .modal-box {
-    width:94vw;
-    padding:24px 20px;
-    margin:20px auto;
-  }
-  
-  .confirm-box {
-    width:90vw;
-    padding:24px 20px;
-  }
-  
-  /* Buttons */
-  .btn {
-    padding:10px 16px;
-    font-size:.8rem;
-  }
-  
-  .btn-lg {
-    padding:12px 20px;
-    font-size:.9rem;
-  }
-  
-  /* Search */
-  .search-bar input {
-    width:120px;
-  }
-  
-  /* Dashboard Top Bar */
-  .dash-topbar {
-    display:flex;
-    margin:0 0 20px;
-    padding:12px 16px;
-    position:sticky;
-    top:0;
-  }
-  
-  .dash-topbar .epi-page {
-    font-size:.9rem;
-  }
-  
-  .t-search-wrap input {
     width:100%;
-    max-width:none;
   }
   
-  /* Cards */
-  .card {
-    margin-bottom:12px;
-  }
-  
-  /* Section Headers */
-  .sec-header {
-    flex-direction:column;
-    align-items:flex-start;
-    gap:8px;
-    margin-bottom:20px;
-  }
-  
-  .sec-header h2 {
-    font-size:1.4rem;
-  }
-  
-  /* Empty States */
-  .empty {
-    padding:32px 16px;
-  }
-  
-  .empty-icon {
-    font-size:2.2rem;
-  }
-  
-  /* Input Groups */
-  .input-group input,
-  .input-group select,
-  .input-group textarea {
-    font-size:16px; /* Prevent zoom on iOS */
-  }
-}
-
-@media(max-width:480px) {
-  /* Extra Small Screens */
-  .login-card {
-    padding:24px 20px;
-  }
-  
-  .brand-name { font-size:1.4rem; }
-  
-  .t-main {
-    padding:16px 12px;
-  }
-  
-  .stat-card {
-    padding:14px;
-  }
-  
-  .stat-big { font-size:1.4rem; }
-  
-  .modal-box {
-    padding:20px 16px;
-  }
-  
-  .confirm-box {
-    padding:20px 16px;
-  }
-  
-  .btn {
-    padding:8px 12px;
-    font-size:.76rem;
-  }
-  
-  .btn-lg {
-    padding:10px 16px;
-    font-size:.85rem;
-  }
-  
-  .sec-header h2 {
-    font-size:1.2rem;
-  }
-  
-  .dash-topbar {
-    padding:10px 12px;
-  }
-  
-  .dash-topbar .epi-page {
-    font-size:.85rem;
-  }
-}
-
-/* Hide mobile menu toggle on desktop */
-@media(min-width:769px) {
-  .mobile-menu-toggle {
-    display:none;
-  }
+  /* Backdrop overlay */
+/* The t-sidebar is hidden on mobile via the existing rule:
+   #page-teacher.active, #page-student.active display:flex + .t-sidebar display:none
+   The mob-drawer (openTDrawer/closeTDrawer) handles mobile navigation.
+   We only need to hide the now-unused toggle button. */
+.mobile-menu-toggle { display:none !important; }
 }
 </style>
 
@@ -1162,9 +984,14 @@ tr:hover td { background:rgba(124,111,239,.07); }
 .mob-drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:450; backdrop-filter:blur(3px); }
 .mob-drawer-overlay.open { display:block; }
 .mob-drawer { position:fixed; left:-280px; top:0; bottom:0; width:280px; background:var(--surface);
-  border-right:1px solid var(--border); z-index:460; transition:.28s cubic-bezier(.4,0,.2,1);
-  overflow-y:auto; display:flex; flex-direction:column; }
-.mob-drawer.open { left:0; }
+  border-right:1px solid var(--border); z-index:460; transition:none;
+  overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior: contain;
+  display:flex; flex-direction:column; will-change: transform; max-height:100vh; 
+  contain: layout;
+}
+.mob-drawer-inner { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 0; }
+.mob-drawer.open ~ * { overflow:hidden; position:fixed; width:100%; }
+.mob-drawer.open { left:0; transition:.28s cubic-bezier(.4,0,.2,1); }
 
 /* ── Payment Status Badges ── */
 .payment-status-badge {
@@ -1470,7 +1297,7 @@ a:not(.btn):not(.practice-tile):not(.ci-link):not(.preclass-join) { transition:c
 <!-- TEACHER DASHBOARD -->
 <div id="page-teacher" class="page">
   <!-- Mobile Menu Toggle -->
-  <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">=</button>
+  
   
   <aside class="t-sidebar">
     <div class="t-sidebar-logo">
@@ -4695,10 +4522,40 @@ async function declineResetById(id){ spin('Declining...'); try{ await delDoc_('p
   MOBILE DRAWER & MODAL CLOSE LOGIC
 ============================================================ -->
 <script>
-function openTDrawer()  { document.getElementById('t-drawer').classList.add('open');    document.getElementById('t-drawer-overlay').classList.add('open');    document.body.style.overflow='hidden'; }
-function closeTDrawer() { document.getElementById('t-drawer').classList.remove('open'); document.getElementById('t-drawer-overlay').classList.remove('open'); document.body.style.overflow=''; }
-function openSDrawer()  { document.getElementById('s-drawer').classList.add('open');    document.getElementById('s-drawer-overlay').classList.add('open');    document.body.style.overflow='hidden'; }
-function closeSDrawer() { document.getElementById('s-drawer').classList.remove('open'); document.getElementById('s-drawer-overlay').classList.remove('open'); document.body.style.overflow=''; }
+/* ── Drawer helpers — no scroll-jump on iOS ── */
+function openTDrawer() {
+  const drawer  = document.getElementById('t-drawer');
+  const overlay = document.getElementById('t-drawer-overlay');
+  if (!drawer || !overlay) return;
+  document.body.classList.add('drawer-lock');
+  overlay.classList.add('open');
+  drawer.classList.add('open');
+}
+function closeTDrawer() {
+  const drawer  = document.getElementById('t-drawer');
+  const overlay = document.getElementById('t-drawer-overlay');
+  if (!drawer || !overlay) return;
+  drawer.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.classList.remove('drawer-lock');
+}
+
+function openSDrawer() {
+  const drawer  = document.getElementById('s-drawer');
+  const overlay = document.getElementById('s-drawer-overlay');
+  if (!drawer || !overlay) return;
+  document.body.classList.add('drawer-lock');
+  overlay.classList.add('open');
+  drawer.classList.add('open');
+}
+function closeSDrawer() {
+  const drawer  = document.getElementById('s-drawer');
+  const overlay = document.getElementById('s-drawer-overlay');
+  if (!drawer || !overlay) return;
+  drawer.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.classList.remove('drawer-lock');
+}
 
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeTDrawer(); closeSDrawer(); } });
 
@@ -6197,7 +6054,7 @@ User question: ${text}`;
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer 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',
+          'Authorization': 'Bearer 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',
           'Content-Type': 'application/json',
           'HTTP-Referer': window.location.href,
           'X-Title': 'Math Made Easy - AI Tutor'
@@ -6364,26 +6221,37 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Mobile Menu Toggle
-function toggleMobileMenu() {
-  const sidebar = document.querySelector('.t-sidebar');
-  if (sidebar) {
-    sidebar.classList.toggle('mobile-open');
-  }
+
+</script>
+
+<style>
+/* Scroll lock: no jump, works on iOS */
+body.drawer-lock {
+  overflow: hidden;
+  /* keeps the page visually in place */
+  position: fixed;
+  top: var(--drawer-scroll-y, 0);
+  left: 0;
+  right: 0;
 }
 
-// Close mobile menu when clicking outside
-document.addEventListener('click', function(event) {
-  const sidebar = document.querySelector('.t-sidebar');
-  const toggle = document.querySelector('.mobile-menu-toggle');
-  
-  if (sidebar && toggle) {
-    if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
-      sidebar.classList.remove('mobile-open');
-    }
-  }
-});
-</script>
+/* mob-drawer: slide in from left */
+.mob-drawer {
+  /* reset any inline left:0 left by old code */
+  left: -280px;
+  transition: left .28s cubic-bezier(.4,0,.2,1);
+}
+.mob-drawer.open {
+  left: 0;
+}
+
+/* Make sure the unused toggle is always hidden */
+.mobile-menu-toggle { display: none !important; }
+
+/* toggleMobileMenu / sidebar-backdrop remnants - hide them */
+.sidebar-backdrop { display: none !important; }
+.t-sidebar.mobile-open { left: auto; }
+</style>
 
 </body>
 </html>
