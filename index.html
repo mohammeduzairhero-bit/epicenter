@@ -1,9 +1,985 @@
 <!DOCTYPE html>
 <html lang="en">
+<style id="ui-upgrade">
+
+/* ── 1. FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;600&family=Saira+Stencil:wght@400;500;600;700;800;900&display=swap');
+
+/* ── 2. DESIGN TOKENS ── */
+:root {
+  /* Base */
+  --bg:        #020409;
+  --bg2:       #050810;
+  --surface:   #080d1a;
+  --surface2:  #0c1220;
+  --surface3:  #111828;
+
+  /* Borders */
+  --border:    rgba(99,120,255,.13);
+  --border2:   rgba(99,120,255,.28);
+
+  /* Accent — electric indigo / cyan */
+  --accent:    #5b6ef5;
+  --accent-h:  #7b8cff;
+  --cyan:      #00e5ff;
+  --green:     #00ffb3;
+  --pink:      #ff4d9e;
+  --yellow:    #ffe066;
+  --orange:    #ff8533;
+  --red:       #ff4466;
+
+  /* Text */
+  --text:      #e8ecff;
+  --text2:     #8892c8;
+  --text3:     #445080;
+
+  /* Glow */
+  --glow:      rgba(91,110,245,.35);
+  --glow-c:    rgba(0,229,255,.25);
+
+  /* Radius */
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 26px;
+
+  /* Shadows */
+  --shadow-sm:   0 2px 12px rgba(0,0,0,.5);
+  --shadow-md:   0 8px 40px rgba(0,0,0,.7);
+  --shadow-lg:   0 24px 80px rgba(0,0,0,.85);
+  --shadow-glow: 0 0 40px rgba(91,110,245,.18);
+
+  /* Ease */
+  --ease-out:    cubic-bezier(.22,1,.36,1);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── 3. BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: 'Syne', sans-serif; font-weight: 800; }
+code, pre, .mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── 4. AMBIENT BACKGROUND ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 120% 70% at 50% -10%, rgba(91,110,245,.18), transparent 50%),
+    radial-gradient(ellipse 60% 60% at 95% 60%,  rgba(0,229,255,.07),   transparent 50%),
+    radial-gradient(ellipse 50% 40% at 5%  90%,  rgba(255,77,158,.06),  transparent 45%);
+  animation: ambientDrift 22s ease-in-out infinite alternate;
+}
+@keyframes ambientDrift {
+  0%   { transform: scale(1)    rotate(0deg); }
+  100% { transform: scale(1.04) rotate(.4deg); }
+}
+
+/* Scanline overlay for depth */
+body::after {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(91,110,245,.012) 2px,
+    rgba(91,110,245,.012) 4px
+  );
+}
+
+/* ── 5. SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent), var(--cyan));
+  border-radius: 99px;
+}
+
+/* ── 6. SPINNER ── */
+#spinner {
+  background: rgba(2,4,9,.95);
+  backdrop-filter: blur(16px) saturate(1.4);
+}
+.spin-ring {
+  width: 46px; height: 46px;
+  border: 2px solid rgba(91,110,245,.2);
+  border-top-color: var(--accent);
+  box-shadow: 0 0 28px rgba(91,110,245,.4), inset 0 0 12px rgba(0,229,255,.08);
+}
+
+/* ── 7. TOAST ── */
+#toast {
+  background: linear-gradient(135deg, var(--green), #00ccaa);
+  color: #001a12;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: .03em;
+  box-shadow: 0 8px 40px rgba(0,255,179,.35), 0 0 0 1px rgba(0,255,179,.2) inset;
+  border-radius: 99px;
+}
+#toast.toast-err {
+  background: linear-gradient(135deg, #ff4466, #cc2244);
+  color: #fff;
+  box-shadow: 0 8px 40px rgba(255,68,102,.35);
+}
+
+/* ── 8. BUTTONS ── */
+.btn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  letter-spacing: .02em;
+  border-radius: 10px;
+  transition: all .22s var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.07), transparent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.btn:hover::after { opacity: 1; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(91,110,245,.4), 0 0 0 1px rgba(255,255,255,.08) inset;
+  border: none;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(91,110,245,.55), 0 0 20px rgba(91,110,245,.25);
+}
+.btn-ghost {
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  backdrop-filter: blur(8px);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent-h);
+  background: rgba(91,110,245,.1);
+  transform: translateY(-1px);
+}
+.btn-danger {
+  background: rgba(255,68,102,.1);
+  border: 1px solid rgba(255,68,102,.3);
+  color: var(--red);
+}
+.btn-danger:hover { background: rgba(255,68,102,.2); transform: translateY(-1px); }
+.btn-green {
+  background: rgba(0,255,179,.1);
+  border: 1px solid rgba(0,255,179,.3);
+  color: var(--green);
+}
+.btn-green:hover { background: rgba(0,255,179,.2); transform: translateY(-1px); }
+.btn-yellow {
+  background: rgba(255,224,102,.1);
+  border: 1px solid rgba(255,224,102,.3);
+  color: var(--yellow);
+}
+.btn-cyan {
+  background: rgba(0,229,255,.1);
+  border: 1px solid rgba(0,229,255,.3);
+  color: var(--cyan);
+}
+
+/* ── 9. CARDS ── */
+.card {
+  background: linear-gradient(145deg, rgba(12,18,32,.9), rgba(8,13,26,.95));
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform .28s var(--ease-out), box-shadow .28s ease, border-color .2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(91,110,245,.4), transparent);
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md), 0 0 50px rgba(91,110,245,.12);
+  border-color: var(--border2);
+}
+.card-sm {
+  background: rgba(12,18,32,.7);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  backdrop-filter: blur(10px);
+}
+.card-inner { background: rgba(17,24,40,.6); border: 1px solid var(--border); border-radius: var(--r); }
+
+/* ── 10. STAT CARDS ── */
+.stat-card {
+  background: linear-gradient(145deg, rgba(12,18,32,.95), rgba(8,13,26,.9));
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform .3s var(--ease-out), box-shadow .3s ease, border-color .25s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md), 0 0 48px rgba(91,110,245,.14);
+  border-color: var(--border2);
+}
+.stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(91,110,245,.5), transparent);
+}
+.stat-card::after {
+  content: '';
+  position: absolute; top: -30px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  opacity: .08;
+}
+.stat-card.s-purple::after { background: var(--accent); box-shadow: 0 0 40px var(--accent); }
+.stat-card.s-green::after  { background: var(--green);  box-shadow: 0 0 40px var(--green); }
+.stat-card.s-pink::after   { background: var(--pink);   box-shadow: 0 0 40px var(--pink); }
+.stat-card.s-yellow::after { background: var(--yellow); box-shadow: 0 0 40px var(--yellow); }
+.stat-card.s-cyan::after   { background: var(--cyan);   box-shadow: 0 0 40px var(--cyan); }
+.stat-card.s-orange::after { background: var(--orange); box-shadow: 0 0 40px var(--orange); }
+
+.stat-big { font-size: 2rem; font-weight: 800; line-height: 1; font-family: 'Syne', sans-serif; }
+.stat-lbl { font-size: .73rem; color: var(--text2); margin-top: 5px; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ── 11. TABLES ── */
+.table-wrap {
+  background: rgba(8,13,26,.95);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.table-wrap::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(91,110,245,.4), transparent);
+}
+.table-wrap:hover { box-shadow: var(--shadow-md); border-color: var(--border2); }
+.table-head-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+  background: rgba(12,18,32,.5);
+}
+.table-head-bar h3 { font-size: 1rem; font-family: 'Syne', sans-serif; }
+
+th {
+  padding: 11px 18px;
+  font-size: .68rem; font-weight: 700; color: var(--text3);
+  letter-spacing: .1em; text-transform: uppercase; text-align: left;
+  background: rgba(12,18,32,.8);
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 13px 18px; font-size: .85rem;
+  border-top: 1px solid rgba(99,120,255,.07);
+  vertical-align: middle;
+}
+tr:hover td { background: rgba(91,110,245,.05); }
+
+/* ── 12. AVATAR ── */
+.avatar {
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: .78rem;
+  transition: box-shadow .22s ease, transform .22s var(--ease-out);
+  position: relative;
+}
+.avatar::after {
+  content: '';
+  position: absolute; inset: -2px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent), var(--cyan), var(--accent));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.avatar:hover { transform: scale(1.08); }
+.avatar:hover::after { opacity: .6; }
+
+/* Progress bar */
+.prog-bar { height: 5px; background: rgba(255,255,255,.07); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--cyan)); }
+
+/* Tags */
+.tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 6px; font-size: .68rem; font-weight: 700; letter-spacing: .04em; }
+.tag-active   { background: rgba(0,255,179,.12);  color: var(--green); border: 1px solid rgba(0,255,179,.2); }
+.tag-pending  { background: rgba(255,224,102,.12); color: var(--yellow); border: 1px solid rgba(255,224,102,.2); }
+.tag-inactive { background: rgba(255,68,102,.12);  color: var(--red);   border: 1px solid rgba(255,68,102,.2); }
+.tag-blue     { background: rgba(91,110,245,.14);  color: var(--accent-h); }
+.tag-cyan     { background: rgba(0,229,255,.12);   color: var(--cyan); }
+
+/* ── 13. INPUT / FORM ── */
+.input-group label {
+  font-size: .7rem; font-weight: 700; color: var(--text3);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.input-group input,
+.input-group select,
+.input-group textarea {
+  padding: 11px 15px;
+  background: rgba(12,18,32,.8);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: .88rem;
+  font-family: 'Space Grotesk', sans-serif;
+  outline: none;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+  width: 100%;
+}
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  border-color: var(--accent);
+  background: rgba(17,24,40,.9);
+  box-shadow: 0 0 0 3px rgba(91,110,245,.15);
+}
+.input-group select option { background: #0c1220; }
+
+/* ── 14. MODALS ── */
+.modal-overlay {
+  background: rgba(2,4,9,.85);
+  backdrop-filter: blur(14px) saturate(1.3);
+}
+.modal-box {
+  background: linear-gradient(165deg, rgba(12,18,32,.99), rgba(8,13,26,.98));
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg), 0 0 80px rgba(91,110,245,.1), 0 0 0 1px rgba(255,255,255,.04) inset;
+  position: relative;
+  overflow: hidden;
+}
+.modal-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--cyan), transparent);
+}
+.modal-box h3 { font-size: 1.2rem; font-family: 'Syne', sans-serif; }
+.modal-footer { border-top: 1px solid var(--border); }
+
+.confirm-box {
+  background: linear-gradient(165deg, rgba(12,18,32,.99), rgba(8,13,26,.98));
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.03) inset;
+  position: relative;
+}
+.confirm-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+}
+
+/* ── 15. SEARCH ── */
+.search-bar {
+  background: rgba(12,18,32,.8);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  transition: border-color .18s, box-shadow .18s;
+}
+.search-bar:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(91,110,245,.15);
+}
+.search-bar input { background: none; border: none; color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+
+/* ── 16. LOGIN PAGE ── */
+.login-card {
+  background: rgba(8,13,26,.85);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  box-shadow: 0 0 0 1px rgba(91,110,245,.1), var(--shadow-lg), 0 0 100px rgba(91,110,245,.1);
+  position: relative;
+  overflow: hidden;
+}
+.login-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--cyan), var(--accent), transparent);
+}
+.brand-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7b8cff, var(--accent), var(--cyan));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -.02em;
+}
+.brand-tag { font-size: .72rem; color: var(--text3); letter-spacing: .16em; text-transform: uppercase; }
+
+.role-card {
+  border: 1px solid var(--border);
+  background: rgba(12,18,32,.6);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all .22s var(--ease-out);
+  backdrop-filter: blur(8px);
+}
+.role-card:hover  { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.4), 0 0 20px rgba(91,110,245,.15); }
+.role-card.picked { border-color: var(--accent); background: rgba(91,110,245,.12); box-shadow: 0 0 0 1px rgba(91,110,245,.2), 0 8px 32px rgba(91,110,245,.2); }
+
+.login-field input {
+  background: rgba(12,18,32,.7);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  transition: border-color .18s, box-shadow .18s;
+}
+.login-field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(91,110,245,.18);
+  background: rgba(17,24,40,.9);
+}
+.login-submit {
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  border: none; border-radius: 12px; color: #fff;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem;
+  cursor: pointer; letter-spacing: .04em;
+  transition: all .2s var(--ease-out);
+  box-shadow: 0 4px 24px rgba(91,110,245,.4);
+  position: relative; overflow: hidden;
+}
+.login-submit::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+}
+.login-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(91,110,245,.55); }
+.login-footer a { color: var(--accent-h); }
+
+/* ── 17. SIDEBAR ── */
+.t-sidebar, .s-sidebar {
+  background: rgba(5,8,16,.92);
+  backdrop-filter: blur(24px) saturate(1.3);
+  border-right: 1px solid var(--border);
+  box-shadow: 4px 0 40px rgba(0,0,0,.5);
+}
+.t-sidebar-logo .s-brand, .s-sidebar-logo .s-brand {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7b8cff, var(--cyan));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.t-nav-label { font-size: .63rem; color: var(--text3); letter-spacing: .14em; }
+
+.nav-btn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .84rem;
+  border-radius: 10px;
+  color: var(--text2);
+  transition: all .18s ease;
+}
+.nav-btn:hover  { background: rgba(91,110,245,.1); color: var(--text); transform: translateX(2px); }
+.nav-btn.active {
+  background: linear-gradient(90deg, rgba(91,110,245,.18), rgba(91,110,245,.06));
+  color: var(--accent-h);
+  font-weight: 600;
+}
+.nav-btn.active::before {
+  content: '';
+  position: absolute; left: 4px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px;
+  background: linear-gradient(180deg, var(--accent), var(--cyan));
+  border-radius: 99px;
+  box-shadow: 0 0 12px rgba(91,110,245,.6), 0 0 24px rgba(0,229,255,.2);
+}
+.nav-btn .nav-badge { background: var(--red); font-size: .6rem; }
+
+.t-profile-mini, .s-profile-card {
+  background: rgba(12,18,32,.7);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  transition: all .2s ease;
+}
+.t-profile-mini:hover { border-color: var(--border2); }
+
+/* S-nav-btn */
+.s-nav-btn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .84rem;
+  border-radius: 10px;
+  color: var(--text2);
+  transition: all .18s ease;
+}
+.s-nav-btn:hover  { background: rgba(91,110,245,.1); color: var(--text); transform: translateX(2px); }
+.s-nav-btn.active {
+  background: linear-gradient(90deg, rgba(91,110,245,.18), rgba(91,110,245,.05));
+  color: var(--accent-h); font-weight: 600;
+}
+.s-nav-btn.active::before {
+  background: linear-gradient(180deg, var(--accent), var(--pink));
+  box-shadow: 0 0 12px rgba(91,110,245,.6);
+}
+
+/* ── 18. TOP BAR ── */
+.dash-topbar {
+  background: rgba(5,8,16,.82);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 4px 24px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.03) inset;
+}
+.dash-topbar .epi-brand { color: var(--text3); letter-spacing: .16em; font-size: .7rem; }
+.dash-topbar .epi-page  { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; }
+.t-search-wrap input {
+  background: rgba(12,18,32,.7);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .82rem;
+  transition: border-color .18s, box-shadow .18s;
+}
+.t-search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,110,245,.15); }
+
+/* Notif dropdown */
+.notif-dropdown {
+  background: rgba(8,13,26,.96);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+}
+.notif-dd-item:hover { background: rgba(91,110,245,.07); }
+.notif-dd-head { color: var(--text3); }
+
+/* ── 19. WELCOME BANNER ── */
+.welcome-banner {
+  background: linear-gradient(135deg, rgba(91,110,245,.2), rgba(255,77,158,.1), rgba(0,229,255,.08));
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md), 0 0 60px rgba(91,110,245,.1);
+  position: relative;
+  overflow: hidden;
+}
+.welcome-banner::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--cyan), transparent);
+}
+.welcome-banner::after {
+  content: '';
+  position: absolute; right: -60px; top: -60px; width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91,110,245,.12), transparent 70%);
+}
+
+.level-ring {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  background: rgba(91,110,245,.15);
+  position: relative;
+}
+.level-ring::before {
+  content: '';
+  position: absolute; inset: -2px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent), var(--cyan), var(--accent));
+  z-index: -1;
+}
+.level-ring .lr-num { color: var(--accent-h); font-family: 'Syne', sans-serif; }
+
+/* ── 20. SKILL BARS ── */
+.skill-item .sk-bar { height: 6px; background: rgba(255,255,255,.07); border-radius: 99px; }
+.sk-algebra { background: linear-gradient(90deg, var(--accent), #8b5cf6); }
+.sk-geo     { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+.sk-calc    { background: linear-gradient(90deg, var(--pink), var(--orange)); }
+.sk-trig    { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+.sk-stats   { background: linear-gradient(90deg, var(--cyan), var(--accent)); }
+
+/* ── 21. WIDGET CARDS ── */
+.widget-card {
+  background: linear-gradient(160deg, rgba(12,18,32,.95), rgba(8,13,26,.9));
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.widget-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,229,255,.3), transparent);
+}
+.widget-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border2); }
+.widget-card h4 { font-size: .68rem; letter-spacing: .12em; color: var(--text3); text-transform: uppercase; font-weight: 700; }
+
+/* ── 22. ACTIVITY FEED ── */
+.act-row { border-bottom: 1px solid rgba(99,120,255,.07); }
+.act-body b { color: var(--text); }
+
+/* ── 23. POINTS LOG ── */
+.pts-row {
+  background: rgba(12,18,32,.6);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  transition: border-color .15s;
+}
+.pts-row:hover { border-color: var(--border2); }
+.pts-val.pos { color: var(--green); }
+.pts-val.neg { color: var(--red); }
+
+/* ── 24. BADGE CARDS ── */
+.badge-card {
+  background: rgba(12,18,32,.6);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all .2s var(--ease-out);
+}
+.badge-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+.badge-card.earned {
+  border-color: rgba(255,224,102,.3);
+  background: rgba(255,224,102,.06);
+  box-shadow: 0 0 20px rgba(255,224,102,.08);
+}
+.badge-card.locked { opacity: .35; filter: grayscale(1) brightness(.7); }
+
+/* ── 25. LEADERBOARD ── */
+.lb-row {
+  background: rgba(12,18,32,.5);
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: all .18s ease;
+}
+.lb-row:hover { background: rgba(17,24,40,.7); border-color: var(--border); }
+.lb-row.me   { background: rgba(91,110,245,.1); border: 1px solid rgba(91,110,245,.25); }
+.lb-rank.gold   { color: var(--yellow); text-shadow: 0 0 12px rgba(255,224,102,.5); }
+.lb-rank.silver { color: #c0c0c0; }
+.lb-rank.bronze { color: #cd7f32; }
+.lb-pts { color: var(--accent-h); font-family: 'Syne', sans-serif; }
+
+/* ── 26. RESOURCE CARDS ── */
+.res-card {
+  background: rgba(12,18,32,.6);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all .22s var(--ease-out);
+}
+.res-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md), 0 0 30px rgba(91,110,245,.15);
+}
+
+/* ── 27. ANNOUNCEMENT CARDS ── */
+.ann-card {
+  background: rgba(12,18,32,.6);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all .2s var(--ease-out);
+  position: relative; overflow: hidden;
+}
+.ann-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--cyan));
+  opacity: 0; transition: opacity .2s;
+}
+.ann-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.ann-card:hover::before { opacity: 1; }
+
+/* ── 28. CLASS ITEMS ── */
+.class-item {
+  background: rgba(12,18,32,.6);
+  border-radius: 13px;
+  border-left: 3px solid var(--accent);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  transition: all .2s ease;
+}
+.class-item:hover { border-color: var(--border2); transform: translateX(2px); }
+.class-item.geo   { border-left-color: var(--green); }
+.class-item.calc  { border-left-color: var(--pink); }
+.class-item.trig  { border-left-color: var(--yellow); }
+.class-item.stats { border-left-color: var(--cyan); }
+
+/* ── 29. HW CARDS ── */
+.hw-card {
+  background: rgba(12,18,32,.6);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all .22s var(--ease-out);
+}
+.hw-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--border2); }
+
+/* ── 30. FREE SCHEDULE ── */
+.fs-legend {
+  background: rgba(12,18,32,.6);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+.fs-day-filter {
+  border: 1px solid var(--border);
+  background: rgba(12,18,32,.6);
+  color: var(--text2);
+  border-radius: 99px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all .15s;
+}
+.fs-day-filter:hover  { border-color: var(--accent-h); color: var(--accent-h); }
+.fs-day-filter.active {
+  border-color: var(--accent);
+  background: rgba(91,110,245,.15);
+  color: var(--accent-h);
+  box-shadow: 0 0 16px rgba(91,110,245,.2);
+}
+.fs-slot-chip {
+  background: rgba(12,18,32,.7);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  transition: all .18s ease;
+}
+.fs-slot-chip.requestable { border-color: rgba(0,255,179,.3); cursor: pointer; }
+.fs-slot-chip.requestable:hover { border-color: var(--green); background: rgba(0,255,179,.08); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,255,179,.15); }
+.fs-slot-chip.requested   { border-color: rgba(255,224,102,.3); background: rgba(255,224,102,.07); }
+.fs-slot-chip.booked      { border-color: rgba(255,68,102,.2);  background: rgba(255,68,102,.05); opacity: .7; }
+.fs-tab { font-family: 'Space Grotesk', sans-serif; font-weight: 600; border-radius: 8px; transition: all .15s; }
+.fs-tab.active { background: var(--accent); box-shadow: 0 4px 16px rgba(91,110,245,.35); }
+.fs-tab-row { background: rgba(12,18,32,.7); border-radius: 12px; }
+
+/* ── 31. PAYMENT CARDS ── */
+.payment-req-card, .payment-history-card {
+  background: rgba(12,18,32,.6);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all .2s var(--ease-out);
+}
+.payment-req-card:hover, .payment-history-card:hover {
+  border-color: var(--border2); transform: translateY(-1px);
+}
+.payment-req-card.pending    { border-left: 3px solid var(--yellow); }
+.payment-req-card.approved   { border-left: 3px solid var(--green); }
+.payment-req-card.rejected   { border-left: 3px solid var(--red); }
+.payment-history-card.pending  { border-left: 3px solid var(--yellow); }
+.payment-history-card.approved { border-left: 3px solid var(--green); }
+.payment-history-card.rejected { border-left: 3px solid var(--red); }
+
+.payment-status-badge.pending  { background: rgba(255,224,102,.12); color: var(--yellow); border: 1px solid rgba(255,224,102,.25); }
+.payment-status-badge.approved { background: rgba(0,255,179,.12);   color: var(--green);  border: 1px solid rgba(0,255,179,.25); }
+.payment-status-badge.rejected { background: rgba(255,68,102,.12);  color: var(--red);    border: 1px solid rgba(255,68,102,.25); }
+
+/* ── 32. GLIMPSE CARD ── */
+.glimpse-card {
+  background: linear-gradient(135deg, rgba(0,229,255,.08), rgba(91,110,245,.12));
+  border: 1px solid rgba(0,229,255,.15);
+  border-radius: var(--r-lg);
+  position: relative; overflow: hidden;
+}
+.glimpse-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+}
+
+/* ── 33. MOBILE ── */
+.mob-nav {
+  background: rgba(5,8,16,.95);
+  backdrop-filter: blur(20px) saturate(1.3);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -8px 40px rgba(0,0,0,.5);
+}
+.mob-nav-btn { font-family: 'Space Grotesk', sans-serif; border-radius: 10px; }
+.mob-nav-btn.active { color: var(--accent-h); background: rgba(91,110,245,.12); }
+.mob-topbar { background: rgba(5,8,16,.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,.35); }
+.mob-drawer { background: rgba(8,13,26,.98); border-right: 1px solid var(--border); }
+.mob-drawer-overlay { background: rgba(0,0,0,.7); backdrop-filter: blur(4px); }
+
+/* ── 34. PRECLASS ALERT ── */
+#preclass-alert {
+  background: linear-gradient(135deg, rgba(8,24,20,.97), rgba(5,8,16,.97));
+  border-bottom: 2px solid var(--green);
+  box-shadow: 0 4px 40px rgba(0,255,179,.2);
+  backdrop-filter: blur(16px);
+}
+.preclass-pulse { background: var(--green); box-shadow: 0 0 0 0 rgba(0,255,179,.6); }
+.preclass-countdown {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--green);
+  background: rgba(0,255,179,.1);
+  border: 1px solid rgba(0,255,179,.3);
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0,255,179,.15);
+}
+.preclass-join {
+  background: var(--green);
+  color: #001a0f;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+}
+.preclass-join:hover { filter: brightness(1.1); }
+
+/* ── 35. INFO / MSG BOXES ── */
+.msg-ok   { background: rgba(0,255,179,.08); border: 1px solid rgba(0,255,179,.25); color: var(--green); border-radius: 10px; }
+.msg-err  { background: rgba(255,68,102,.08); border: 1px solid rgba(255,68,102,.25); color: var(--red);   border-radius: 10px; }
+.msg-info { background: rgba(0,229,255,.07);  border: 1px solid rgba(0,229,255,.22); color: var(--cyan);  border-radius: 10px; }
+.msg-warn { background: rgba(255,224,102,.07); border: 1px solid rgba(255,224,102,.2); color: var(--yellow); border-radius: 10px; }
+
+/* ── 36. WEEK GRID ── */
+.week-day { background: rgba(12,18,32,.6); border: 1px solid var(--border); border-radius: 13px; }
+.week-day-head { background: rgba(17,24,40,.7); border-bottom: 1px solid var(--border); font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+.week-day-head.today-col { background: rgba(91,110,245,.15); color: var(--accent-h); }
+.sched-slot { border-radius: 8px; }
+.slot-alg   { background: rgba(91,110,245,.2);  border-left: 2px solid var(--accent); }
+.slot-geo   { background: rgba(0,255,179,.15);   border-left: 2px solid var(--green); }
+.slot-calc  { background: rgba(255,77,158,.15);  border-left: 2px solid var(--pink); }
+.slot-trig  { background: rgba(255,224,102,.15); border-left: 2px solid var(--yellow); }
+.slot-stats { background: rgba(0,229,255,.15);   border-left: 2px solid var(--cyan); }
+
+/* ── 37. SPR / LEAVE ── */
+.spr-form-card { background: rgba(12,18,32,.6); border: 1px solid var(--border); border-radius: var(--r-lg); }
+.spr-item { background: rgba(12,18,32,.6); border: 1px solid var(--border); border-radius: 14px; }
+.leave-row { background: rgba(12,18,32,.6); border: 1px solid var(--border); border-radius: 12px; }
+.leave-row.pending  { border-left: 3px solid var(--yellow); }
+.leave-row.approved { border-left: 3px solid var(--green); }
+.leave-row.denied   { border-left: 3px solid var(--red); }
+
+/* ── 38. PRACTICE TILES ── */
+.practice-tile {
+  background: rgba(12,18,32,.6);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  transition: all .22s var(--ease-out);
+  position: relative; overflow: hidden;
+}
+.practice-tile::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  opacity: 0; transition: opacity .2s;
+}
+.practice-tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md), 0 0 32px rgba(91,110,245,.18);
+}
+.practice-tile:hover::before { opacity: 1; }
+
+/* ── 39. HELP TILES ── */
+.help-tile { background: rgba(12,18,32,.6); border: 1px solid var(--border); border-radius: 14px; }
+.note-pill { background: rgba(91,110,245,.15); color: var(--accent-h); border-radius: 99px; font-size: .67rem; font-weight: 700; }
+
+/* ── 40. REPORT CARDS ── */
+.report-card { background: rgba(12,18,32,.7); border: 1px solid var(--border); border-radius: var(--r-lg); position: relative; overflow: hidden; }
+.report-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(91,110,245,.35), transparent);
+}
+
+/* ── 41. EARN BAR CHART ── */
+.earn-bar { border-radius: 6px 6px 0 0; }
+.chart-card { background: rgba(12,18,32,.7); border: 1px solid var(--border); border-radius: var(--r-lg); }
+
+/* ── 42. FS CALENDAR ── */
+.fs-cal-wrapper { background: rgba(8,13,26,.9); border: 1px solid var(--border); border-radius: var(--r-lg); }
+.fs-cal-day-col { color: var(--text2); border-left: 1px solid var(--border); }
+.fs-cal-day-col.today { color: var(--accent-h); background: rgba(91,110,245,.07); }
+.fs-cal-col { border-left: 1px solid var(--border); }
+.fs-cal-cell { border-bottom: 1px solid rgba(99,120,255,.05); }
+.fs-time-label { color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+.fs-event { border-radius: 7px; }
+.fs-event-class { background: rgba(255,68,102,.75); border-left: 3px solid #ff4466; }
+.fs-event-free  { background: rgba(0,255,179,.12); color: var(--green); border: 1px solid rgba(0,255,179,.35); }
+.fs-event-sched { background: rgba(123,140,255,.12); color: var(--accent-h); border: 1px dashed rgba(123,140,255,.35); }
+.fs-event-req   { background: rgba(255,224,102,.12); color: var(--yellow); border: 1px solid rgba(255,224,102,.35); }
+
+/* ── 43. NEXT CLASS PILL ── */
+.next-class-pill {
+  background: rgba(12,18,32,.7);
+  border-radius: 12px;
+  border-left: 3px solid var(--green);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+}
+.next-class-pill .nc-title { font-family: 'Syne', sans-serif; }
+
+/* ── 44. SECTION HEADERS ── */
+.sec-header h2 { font-family: 'Syne', sans-serif; letter-spacing: -.02em; }
+
+/* ── 45. EMPTY STATES ── */
+.empty { color: var(--text3); }
+.empty-icon { opacity: .5; }
+
+/* ── 46. AWARD XP MODAL ── */
+#award-xp-modal .modal-box::before {
+  background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+}
+
+/* ── 47. GLOW EFFECTS ON KEY NUMBERS ── */
+.stat-big { text-shadow: 0 0 20px rgba(91,110,245,.2); }
+.stat-card.s-green  .stat-big { color: var(--green);  text-shadow: 0 0 20px rgba(0,255,179,.25); }
+.stat-card.s-purple .stat-big { color: var(--accent-h); text-shadow: 0 0 20px rgba(91,110,245,.3); }
+.stat-card.s-pink   .stat-big { color: var(--pink);   text-shadow: 0 0 20px rgba(255,77,158,.25); }
+.stat-card.s-yellow .stat-big { color: var(--yellow); text-shadow: 0 0 20px rgba(255,224,102,.25); }
+.stat-card.s-cyan   .stat-big { color: var(--cyan);   text-shadow: 0 0 20px rgba(0,229,255,.25); }
+.stat-card.s-orange .stat-big { color: var(--orange); text-shadow: 0 0 20px rgba(255,133,51,.25); }
+
+/* ── 48. REG TABS ── */
+.reg-tab { font-family: 'Space Grotesk', sans-serif; font-weight: 600; border-radius: 8px; transition: all .15s; }
+.reg-tab.active { background: var(--accent); box-shadow: 0 4px 16px rgba(91,110,245,.35); }
+.reg-tab-row { background: rgba(12,18,32,.7); border-radius: 10px; }
+
+/* ── 49. PROFILE INFO GRID ── */
+.info-box { background: rgba(12,18,32,.6); border: 1px solid var(--border); border-radius: 11px; }
+.info-box .ib-lbl { color: var(--text3); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; }
+
+/* ── 50. MEET LINK DISPLAY ── */
+.meet-link-display {
+  background: rgba(0,255,179,.06);
+  border: 1px solid rgba(0,255,179,.2);
+  border-radius: 11px;
+}
+.meet-link-display .mld-label { color: var(--green); }
+.meet-link-display .mld-url { font-family: 'JetBrains Mono', monospace; font-size: .78rem; }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  body::before, body::after { animation: none; }
+  .spin-ring { animation: spin .7s linear infinite !important; }
+}
+
+</style>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mathmade Epicenter — Academy Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Stencil:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
 <script type="module">
@@ -43,9 +1019,14 @@ window._FB = {
 onAuthStateChanged(auth, async (user) => {
   if (!user) { routeTo('login'); return; }
   try {
+    console.log('Authenticated user:', user.uid, user.email);
     const snap = await getDoc(doc(db, 'users', user.uid));
-    if (!snap.exists()) { await signOut(auth); routeTo('login'); return; }
+    if (!snap.exists()) { 
+      console.log('User document does not exist for:', user.uid);
+      await signOut(auth); routeTo('login'); return; 
+    }
     const data = { ...snap.data(), uid: user.uid };
+    console.log('User data loaded:', data.role, data.name);
     if (data.role === 'teacher') {
       window._teacher = data;
       window._student = null;
@@ -56,9 +1037,30 @@ onAuthStateChanged(auth, async (user) => {
       await initStudent();
     }
   } catch(e) {
-    console.error('Auth error:', e);
+    console.error('Auth error details:', {
+      code: e.code,
+      message: e.message,
+      stack: e.stack
+    });
+    
+    // Check if this is a permissions error
+    if (e.message.includes('Missing or insufficient permissions')) {
+      console.warn('Firebase security rules issue. User is authenticated but cannot read user document.');
+      // Try to continue with basic user info from auth object
+      const basicUserData = {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName || user.email,
+        role: 'student' // Default to student for permission errors
+      };
+      window._student = basicUserData;
+      window._teacher = null;
+      await initStudent();
+      return;
+    }
+    
     routeTo('login');
-    hideSpinner();
+    unspin();
   }
 });
 </script>
@@ -126,8 +1128,59 @@ body::before {
   100% { opacity:.85; transform:scale(1.03); }
 }
 #page-login, #page-teacher, #page-student { position:relative; z-index:1; }
-h1,h2,h3,h4 { font-family:'Outfit',sans-serif; font-weight:700; }
+h1,h3,h4 { font-family:'Outfit',sans-serif; font-weight:700; }
+h2 { font-family: "Saira Stencil", sans-serif; font-optical-sizing: auto; font-weight: 700; font-style: normal; font-variation-settings: "wdth" 100; }
 code,pre { font-family:'JetBrains Mono',monospace; }
+
+/* Saira Stencil Font Classes */
+.saira-stencil {
+  font-family: "Saira Stencil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.saira-stencil-light {
+  font-family: "Saira Stencil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.saira-stencil-medium {
+  font-family: "Saira Stencil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.saira-stencil-bold {
+  font-family: "Saira Stencil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.saira-stencil-heavy {
+  font-family: "Saira Stencil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.saira-stencil-black {
+  font-family: "Saira Stencil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
 ::-webkit-scrollbar { width:5px; height:5px; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--border2),rgba(124,111,239,.3)); border-radius:99px; }
@@ -2714,39 +3767,53 @@ async function checkAndSendReminders(){
 <script>
 async function fetchStudents(){
   const {db,collection,getDocs,query,where}=window._FB;
-  const snap=await getDocs(query(collection(db,'users'),where('role','==','student')));
-  window._students=snap.docs.map(d=>({...d.data(),uid:d.id}));
+  try{
+    const snap=await getDocs(query(collection(db,'users'),where('role','==','student')));
+    window._students=snap.docs.map(d=>({...d.data(),uid:d.id}));
+  }catch(e){ console.warn('students:',e); window._students=[]; }
 }
 async function fetchSchedules(){
   const {db,collection,getDocs}=window._FB;
-  const snap=await getDocs(collection(db,'schedules'));
-  window._schedules=snap.docs.map(d=>({...d.data(),id:d.id}));
+  try{
+    const snap=await getDocs(collection(db,'schedules'));
+    window._schedules=snap.docs.map(d=>({...d.data(),id:d.id}));
+  }catch(e){ console.warn('schedules:',e); window._schedules=[]; }
 }
 async function fetchHomeworks(){
   const {db,collection,getDocs}=window._FB;
-  const snap=await getDocs(collection(db,'homeworks'));
-  window._homeworks=snap.docs.map(d=>({...d.data(),id:d.id}));
+  try{
+    const snap=await getDocs(collection(db,'homeworks'));
+    window._homeworks=snap.docs.map(d=>({...d.data(),id:d.id}));
+  }catch(e){ console.warn('homeworks:',e); window._homeworks=[]; }
 }
 async function fetchAnnouncements(){
   const {db,collection,getDocs}=window._FB;
-  const snap=await getDocs(collection(db,'announcements'));
-  window._announcements=snap.docs.map(d=>({...d.data(),id:d.id}))
-    .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
+  try{
+    const snap=await getDocs(collection(db,'announcements'));
+    window._announcements=snap.docs.map(d=>({...d.data(),id:d.id}))
+      .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
+  }catch(e){ console.warn('announcements:',e); window._announcements=[]; }
 }
 async function fetchResources(){
   const {db,collection,getDocs}=window._FB;
-  const snap=await getDocs(collection(db,'resources'));
-  window._resources=snap.docs.map(d=>({...d.data(),id:d.id}));
+  try{
+    const snap=await getDocs(collection(db,'resources'));
+    window._resources=snap.docs.map(d=>({...d.data(),id:d.id}));
+  }catch(e){ console.warn('resources:',e); window._resources=[]; }
 }
 async function fetchFreeSlots(){
   const {db,collection,getDocs}=window._FB;
-  const snap=await getDocs(collection(db,'free_slots'));
-  window._freeSlots=snap.docs.map(d=>({...d.data(),id:d.id}));
+  try{
+    const snap=await getDocs(collection(db,'free_slots'));
+    window._freeSlots=snap.docs.map(d=>({...d.data(),id:d.id}));
+  }catch(e){ console.warn('free_slots:',e); window._freeSlots=[]; }
 }
 async function fetchClassRequests(){
   const {db,collection,getDocs}=window._FB;
-  const snap=await getDocs(collection(db,'class_requests'));
-  window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
+  try{
+    const snap=await getDocs(collection(db,'class_requests'));
+    window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
+  }catch(e){ console.warn('class_requests:',e); window._classRequests=[]; }
 }
 async function fetchProgressNotes(){
   const {db,collection,getDocs}=window._FB;
@@ -2786,62 +3853,91 @@ async function updateDoc_(col, id, data){
 }
 function setupRealTimeListeners(){
   const {db,collection,onSnapshot,query,where}=window._FB;
-  onSnapshot(query(collection(db,'users'),where('role','==','student')), snap=>{
-    window._students=snap.docs.map(d=>({...d.data(),uid:d.id}));
-    if(window._teacher) buildTeacherAll();
-    if(window._student){
-      const me=window._students.find(u=>u.uid===window._student.uid);
-      if(me){ window._student=me; initStudentUI(me); }
-    }
-  });
-  onSnapshot(collection(db,'schedules'), snap=>{
-    window._schedules=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); buildTNextClassWidget(); buildTActivityFeed(); }
-    else if(window._student){ buildSClasses(window._student); buildWeeklyGlimpse(window._student); }
-    checkUpcomingClasses();
-  });
-  onSnapshot(collection(db,'homeworks'), snap=>{
-    window._homeworks=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildTHW(); buildTActivityFeed(); }
-    else if(window._student){ buildSHW(window._student); buildWeeklyGlimpse(window._student); buildSNotifications(); }
-  });
-  onSnapshot(collection(db,'announcements'), snap=>{
-    window._announcements=snap.docs.map(d=>({...d.data(),id:d.id}))
-      .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
-    if(window._teacher){ buildTAnn(); buildTActivityFeed(); }
-    else if(window._student){ buildSAnn(); buildSNotifications(); }
-  });
-  onSnapshot(collection(db,'resources'), snap=>{
-    window._resources=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher) buildTRes();
-    else if(window._student) buildSRes();
-  });
-  onSnapshot(collection(db,'free_slots'), snap=>{
-    window._freeSlots=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher) buildTFreeSchedule();
-    else if(window._student) buildSFreeSchedule(window._student);
-  });
-  onSnapshot(collection(db,'class_requests'), snap=>{
-    window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildTFsRequests(); updateFsReqBadge(); buildTActivityFeed(); updateEpicenterNotifDot('t'); }
-    else if(window._student){ buildSMyRequests(window._student); updateStudentReqBadge(window._student); }
-  });
-  onSnapshot(collection(db,'progress_notes'), snap=>{
-    const all=snap.docs.map(d=>({...d.data(),id:d.id}));
-    window._progressNotes=window._teacher?all:all.filter(n=>n.studentUid===window._student?.uid);
-    if(window._teacher){ buildSPRList(); fillSprStudentSelect(); buildTActivityFeed(); }
-    else if(window._student){ buildTeacherNotesOnHome(window._student); buildWeeklyGlimpse(window._student); buildSNotifications(); }
-  });
-  onSnapshot(collection(db,'leave_requests'), snap=>{
-    const uid=window._FB.auth.currentUser?.uid;
-    window._leaveRequests=snap.docs.map(d=>({...d.data(),id:d.id})).filter(x=>!uid||x.teacherUid===uid);
-    if(window._teacher){ buildLeaveList(); updateLeaveBadge(); buildTActivityFeed(); updateEpicenterNotifDot('t'); }
-  });
-  onSnapshot(collection(db,'payments'), snap=>{
-    window._payments=snap.docs.map(d=>({...d.data(),id:d.id}));
-    if(window._teacher){ buildPaymentReviewsList(); updatePaymentRequestsBadge(); }
-    if(window._student) loadPaymentHistory();
-  });
+  try {
+    onSnapshot(query(collection(db,'users'),where('role','==','student')), snap=>{
+      window._students=snap.docs.map(d=>({...d.data(),uid:d.id}));
+      if(window._teacher) buildTeacherAll();
+      if(window._student){
+        const me=window._students.find(u=>u.uid===window._student.uid);
+        if(me){ window._student=me; initStudentUI(me); }
+      }
+    }, err => console.warn('Real-time users listener error:', err));
+  } catch(e) { console.warn('Users listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'schedules'), snap=>{
+      window._schedules=snap.docs.map(d=>({...d.data(),id:d.id}));
+      if(window._teacher){ buildWeekCal(); buildSchedTable(); buildOvStats(); buildEarnings(); buildTNextClassWidget(); buildTActivityFeed(); }
+      else if(window._student){ buildSClasses(window._student); buildWeeklyGlimpse(window._student); }
+      checkUpcomingClasses();
+    }, err => console.warn('Real-time schedules listener error:', err));
+  } catch(e) { console.warn('Schedules listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'homeworks'), snap=>{
+      window._homeworks=snap.docs.map(d=>({...d.data(),id:d.id}));
+      if(window._teacher){ buildTHW(); buildTActivityFeed(); }
+      else if(window._student){ buildSHW(window._student); buildWeeklyGlimpse(window._student); buildSNotifications(); }
+    }, err => console.warn('Real-time homeworks listener error:', err));
+  } catch(e) { console.warn('Homeworks listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'announcements'), snap=>{
+      window._announcements=snap.docs.map(d=>({...d.data(),id:d.id}))
+        .sort((a,b)=>{ if(a.pinned&&!b.pinned) return -1; if(!a.pinned&&b.pinned) return 1; return (b.createdAt||'').localeCompare(a.createdAt||''); });
+      if(window._teacher){ buildTAnn(); buildTActivityFeed(); }
+      else if(window._student){ buildSAnn(); buildSNotifications(); }
+    }, err => console.warn('Real-time announcements listener error:', err));
+  } catch(e) { console.warn('Announcements listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'resources'), snap=>{
+      window._resources=snap.docs.map(d=>({...d.data(),id:d.id}));
+      if(window._teacher) buildTRes();
+      else if(window._student) buildSRes();
+    }, err => console.warn('Real-time resources listener error:', err));
+  } catch(e) { console.warn('Resources listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'free_slots'), snap=>{
+      window._freeSlots=snap.docs.map(d=>({...d.data(),id:d.id}));
+      if(window._teacher) buildTFreeSchedule();
+      else if(window._student) buildSFreeSchedule(window._student);
+    }, err => console.warn('Real-time free_slots listener error:', err));
+  } catch(e) { console.warn('Free slots listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'class_requests'), snap=>{
+      window._classRequests=snap.docs.map(d=>({...d.data(),id:d.id}));
+      if(window._teacher){ buildTFsRequests(); updateFsReqBadge(); buildTActivityFeed(); updateEpicenterNotifDot('t'); }
+      else if(window._student){ buildSMyRequests(window._student); updateStudentReqBadge(window._student); }
+    }, err => console.warn('Real-time class_requests listener error:', err));
+  } catch(e) { console.warn('Class requests listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'progress_notes'), snap=>{
+      const all=snap.docs.map(d=>({...d.data(),id:d.id}));
+      window._progressNotes=window._teacher?all:all.filter(n=>n.studentUid===window._student?.uid);
+      if(window._teacher){ buildSPRList(); fillSprStudentSelect(); buildTActivityFeed(); }
+      else if(window._student){ buildTeacherNotesOnHome(window._student); buildWeeklyGlimpse(window._student); buildSNotifications(); }
+    }, err => console.warn('Real-time progress_notes listener error:', err));
+  } catch(e) { console.warn('Progress notes listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'leave_requests'), snap=>{
+      const uid=window._FB.auth.currentUser?.uid;
+      window._leaveRequests=snap.docs.map(d=>({...d.data(),id:d.id})).filter(x=>!uid||x.teacherUid===uid);
+      if(window._teacher){ buildLeaveList(); updateLeaveBadge(); buildTActivityFeed(); updateEpicenterNotifDot('t'); }
+    }, err => console.warn('Real-time leave_requests listener error:', err));
+  } catch(e) { console.warn('Leave requests listener setup error:', e); }
+  
+  try {
+    onSnapshot(collection(db,'payments'), snap=>{
+      window._payments=snap.docs.map(d=>({...d.data(),id:d.id}));
+      if(window._teacher){ buildPaymentReviewsList(); updatePaymentRequestsBadge(); }
+      if(window._student) loadPaymentHistory();
+    }, err => console.warn('Real-time payments listener error:', err));
+  } catch(e) { console.warn('Payments listener setup error:', e); }
 }
 </script>
 
@@ -2918,7 +4014,7 @@ async function submitReg(){
       const cred=await createUserWithEmailAndPassword(auth,email,password);
       await setDoc(doc(db,'users',cred.user.uid),{
         role:'student', name, email, username, avatar:av, color, course:subj, age:parseInt(age), grade, parent, phone,
-        progress:0, done:0, remaining:20, points:1000, pointsBalance:1000, fee:800, status:'active',
+        progress:0, done:0, remaining:20, xpPoints:0, pointsBalance:1000, points:0, fee:800, status:'active',
         joined:new Date().toLocaleString('en',{month:'short',year:'numeric'}),
         next:'TBD', skills:{Algebra:0,Geometry:0,Calculus:0,Trigonometry:0,Statistics:0}, 
         pointsLog:[{
@@ -2969,10 +4065,33 @@ async function initTeacher(){
     ['t-av','t-av-d'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.textContent=av; el.style.background=`${t.color||'#7c6fef'}22`; el.style.color=t.color||'#7c6fef'; } });
     ['t-name','t-name-d'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=t.name||'Teacher'; });
     const hr=new Date().getHours();
-    document.getElementById('t-greeting').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', '+(t.name||'Teacher')+' 👋';
+    document.getElementById('t-greeting').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', '+(t.name||'Teacher')+' &#128075;';
   }
-  await Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests(),fetchProgressNotes(),fetchLeaveRequests(),fetchPayments()]);
-  buildTeacherAll();
+  
+  // Initialize empty data arrays to prevent crashes
+  window._students = [];
+  window._schedules = [];
+  window._homeworks = [];
+  window._announcements = [];
+  window._resources = [];
+  window._freeSlots = [];
+  window._classRequests = [];
+  window._progressNotes = [];
+  window._leaveRequests = [];
+  window._payments = [];
+  
+  // Try to fetch data in background without blocking
+  Promise.all([fetchStudents(),fetchSchedules(),fetchHomeworks(),fetchAnnouncements(),fetchResources(),fetchFreeSlots(),fetchClassRequests(),fetchProgressNotes(),fetchLeaveRequests(),fetchPayments()])
+    .then(() => {
+      console.log('Teacher data loaded successfully');
+      buildTeacherAll();
+    })
+    .catch(err => {
+      console.warn('Background data fetch failed:', err);
+      // Still build basic UI with empty data
+      buildTeacherAll();
+    });
+  
   fetchAndBuildResets();
   setupRealTimeListeners();
   if(!window._epicenterDocClick){
@@ -3782,6 +4901,7 @@ function buildStuTable(filter=''){
     <td style="color:var(--text2);font-size:.82rem">${s.next||'TBD'}</td>
     <td><span class="tag tag-${s.status||'active'}">${s.status||'active'}</span></td>
     <td style="display:flex;gap:6px">
+      <button class="btn btn-yellow btn-sm" onclick="openAwardXP('${s.uid}')">⭐ XP</button>
       <button class="btn btn-ghost btn-sm" onclick="teacherViewStudent('${s.uid}')">View →</button>
       <button class="btn btn-danger btn-sm" onclick="askDelStu('${s.uid}',event)" data-name="${s.name}">🗑</button>
     </td>
@@ -4173,7 +5293,7 @@ function initStudentUI(s){
   document.getElementById('s-pf-course').textContent= s.course||'—';
   document.getElementById('s-welcome').textContent  = 'Welcome back, '+(s.name||'Student').split(' ')[0]+'!';
   document.getElementById('s-subtitle').textContent = (s.course||'—')+' · Enrolled since '+(s.joined||'—');
-  const lvl=Math.max(1,Math.floor((s.points||0)/50));
+  const lvl = Math.max(1, Math.floor((s.xpPoints || 0) / 50));
   ['s-level','s-pf-lvl'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=lvl; });
   document.getElementById('s-pf-lvllbl').textContent=(LEVELS[lvl]||'Hawking')+' Mathematician';
   const backMain=document.getElementById('s-back-btn');
@@ -4214,7 +5334,7 @@ function sNav(section, el){
 ==================================================== -->
 <script>
 function buildSHome(s){
-  const lvl=Math.max(1,Math.floor((s.points||0)/50));
+  const lvl = Math.max(1, Math.floor((s.xpPoints || 0) / 50));
   document.getElementById('s-level').textContent=lvl;
   document.getElementById('s-stats').innerHTML=`
     <div class="stat-card s-purple"><div class="stat-icon2">🏅</div><div class="stat-big">${s.points||0}</div><div class="stat-lbl">Total Points</div></div>
@@ -4326,7 +5446,7 @@ function buildSClasses(s){
 }
 
 function buildSProgress(s){
-  const lvl=Math.max(1,Math.floor((s.points||0)/50));
+  const lvl = Math.max(1, Math.floor((s.xpPoints || 0) / 50));
   document.getElementById('s-prog-stats').innerHTML=`
     <div class="stat-card s-purple"><div class="stat-icon2">🏅</div><div class="stat-big">${s.points||0}</div><div class="stat-lbl">Points</div></div>
     <div class="stat-card s-green"> <div class="stat-icon2">📚</div><div class="stat-big">${s.done||0}</div><div class="stat-lbl">Classes Done</div></div>
@@ -4354,10 +5474,10 @@ function buildSHW(s){
 function buildSBadges(s){
   const el=document.getElementById('s-badge-grid');
   const earned=new Set(s.badges||[]);
-  if((s.points||0)>=50)  earned.add('pts_50');
-  if((s.points||0)>=100) earned.add('pts_100');
-  if((s.points||0)>=250) earned.add('pts_250');
-  if((s.points||0)>=500) earned.add('pts_500');
+if ((s.xpPoints || 0) >= 50)  earned.add('pts_50');
+if ((s.xpPoints || 0) >= 100) earned.add('pts_100');
+if ((s.xpPoints || 0) >= 250) earned.add('pts_250');
+if ((s.xpPoints || 0) >= 500) earned.add('pts_500');
   if((s.skills?.Algebra||0)>=90)  earned.add('algebra_90');
   if((s.skills?.Geometry||0)>=90) earned.add('geo_90');
   if((s.skills?.Calculus||0)>=90) earned.add('calc_90');
@@ -4373,7 +5493,7 @@ function buildSBadges(s){
 
 function buildSLeaderboard(s){
   const el=document.getElementById('s-lb-list');
-  const sorted=[...window._students].sort((a,b)=>(b.points||0)-(a.points||0));
+  const sorted = [...window._students].sort((a, b) => (b.xpPoints || 0) - (a.xpPoints || 0));
   if(!sorted.length){ el.innerHTML=`<div class="empty"><p>No students yet.</p></div>`; return; }
   el.innerHTML=sorted.map((st,i)=>{
     const rank=i+1, isMe=st.uid===s.uid;
@@ -4382,7 +5502,7 @@ function buildSLeaderboard(s){
       <div class="lb-rank ${cls}">${rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank}</div>
       <div class="avatar" style="background:${st.color||'#7c6fef'}22;color:${st.color||'#7c6fef'}">${st.avatar||'?'}</div>
       <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:.87rem">${st.name}${isMe?' (You)':''}</div><div style="font-size:.71rem;color:var(--text3)">${st.course||'—'}</div></div>
-      <div class="lb-pts">${st.points||0} pts</div>
+      <div class="lb-pts">${st.xpPoints || 0} pts</div>
     </div>`;
   }).join('');
 }
@@ -5006,7 +6126,7 @@ async function approvePaymentRequest(paymentId) {
       date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
     }];
 
-    await updateDoc(uRef, { pointsBalance: newBalance, points: newTotal, pointsLog: log });
+    await updateDoc(uRef, { pointsBalance: newBalance, pointsLog: log });
     await updateDoc(payRef, {
       status: 'approved',
       approvedAt: new Date().toISOString(),
@@ -5474,14 +6594,14 @@ async function processPaytmSuccess(orderId, student, amount, points) {
 
     // Update student points - AUTO-CREDITED, NO TEACHER APPROVAL NEEDED
     const updatedPointsLog = [...(student.pointsLog || []), {
-      icon: '',
+      icon: ' ',
       reason: `Auto-recharge: ${amount} (Order: ${orderId?.slice(-12)})`,
       val: points,
       date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
     }];
 
     const userRef = doc(db, 'users', student.uid);
-    await updateDoc(userRef, {
+   await updateDoc(userRef, { 
       pointsBalance: newBalance,
       points: newTotal,
       pointsLog: updatedPointsLog,
@@ -5490,7 +6610,6 @@ async function processPaytmSuccess(orderId, student, amount, points) {
 
     // Update local student data
     student.pointsBalance = newBalance;
-    student.points = newTotal;
     student.pointsLog = updatedPointsLog;
 
     // Update UI
@@ -6288,13 +7407,24 @@ async function callAIAPIWithRetry(text, maxRetries = 5) {
         }
         
         // Clean up AI response - remove unwanted characters and artifacts
-        reply = reply.replace(/[\[\]]/g, ''); // Remove stray brackets
-        reply = reply.replace(/[{}]/g, ''); // Remove stray braces
         reply = reply.replace(/\\boxed\{([^}]+)\}/g, '$1'); // Extract boxed answers
         reply = reply.replace(/\\text\{([^}]+)\}/g, '$1'); // Remove text artifacts
         reply = reply.replace(/\\mathrm\{([^}]+)\}/g, '$1'); // Remove mathrm artifacts
         reply = reply.replace(/\\displaystyle\{([^}]+)\}/g, '$1'); // Remove displaystyle artifacts
-        reply = reply.replace(/wtf type of answer is this/g, ''); // Remove inappropriate text
+        reply = reply.replace(/wtf type of answer is this/gi, ''); // Remove inappropriate text (case insensitive)
+        
+        // Only remove stray brackets/braces if they're not part of valid content
+        if (reply.includes('[') && reply.includes(']')) {
+          // Keep brackets that might be part of valid content
+        } else {
+          reply = reply.replace(/[\[\]]/g, ''); // Remove stray brackets
+        }
+        if (reply.includes('{') && reply.includes('}')) {
+          // Keep braces that might be part of valid content  
+        } else {
+          reply = reply.replace(/[{}]/g, ''); // Remove stray braces
+        }
+        
         reply = reply.trim(); // Clean up whitespace
         
         console.log(`Success with API Key ${keyAttempt + 1}`);
@@ -6433,7 +7563,7 @@ function escapeHtml(text) {
 
 // Test API key directly
 async function testAPIKeyDirectly() {
-  const testKey = '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';
+  const testKey = API_KEYS[0]; // Use first API key from the array
   console.log('Testing API key directly:', testKey.substring(0, 10) + '...');
   
   try {
@@ -6473,6 +7603,55 @@ document.addEventListener('DOMContentLoaded', function() {
     testAPIKeyDirectly();
   }, 1000);
 });
+
+/* XP Awarding Functions */
+async function awardXP(studentUid, amount, reason) {
+  const student = window._students.find(s => s.uid === studentUid);
+  if (!student) return;
+
+  const newXP = (student.xpPoints || 0) + amount;
+
+  await updateDoc_('users', studentUid, {
+    xpPoints: newXP,
+    pointsLog: [...(student.pointsLog || []), {
+      icon: ' ',
+      reason: reason || 'Awarded by teacher',
+      val: amount,
+      date: new Date().toLocaleDateString('en', { day:'numeric', month:'short', year:'numeric' })
+    }]
+  });
+
+  student.xpPoints = newXP;
+  toast(` +${amount} XP awarded to ${student.name}`);
+  buildStuTable();
+  buildOvTable();
+}
+
+let _awardXPuid = null;
+
+function openAwardXP(uid) {
+  _awardXPuid = uid;
+  const student = window._students.find(s => s.uid === uid);
+  document.getElementById('award-xp-name').textContent = student?.name || '';
+  document.getElementById('award-xp-amount').value = 10;
+  document.getElementById('award-xp-reason').value = '';
+  document.getElementById('award-xp-modal').classList.add('show');
+}
+
+function closeAwardXP() {
+  document.getElementById('award-xp-modal').classList.remove('show');
+  _awardXPuid = null;
+}
+
+async function submitAwardXP() {
+  const amount = parseInt(document.getElementById('award-xp-amount').value);
+  const reason = document.getElementById('award-xp-reason').value.trim();
+  if (!amount || amount < 1) { toast('Enter a valid XP amount.'); return; }
+  spin('Awarding XP...');
+  await awardXP(_awardXPuid, amount, reason || 'Awarded by teacher');
+  unspin();
+  closeAwardXP();
+}
 
 </script>
 
@@ -6521,5 +7700,84 @@ body.drawer-lock {
 }
 </style>
 
+<!-- Award XP Modal -->
+<div class="modal-overlay" id="award-xp-modal">
+  <div class="modal-box" style="width:420px">
+    <h3>⭐ Award XP Points</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:18px">
+      Awarding to: <strong id="award-xp-name">—</strong><br>
+      XP affects level and leaderboard rank. It does not affect class credits.
+    </p>
+    <div class="form-grid">
+      <div class="input-group">
+        <label>XP Amount</label>
+        <input type="number" id="award-xp-amount" value="10" min="1" max="500">
+      </div>
+      <div class="input-group">
+        <label>Reason</label>
+        <input type="text" id="award-xp-reason" placeholder="e.g. Perfect homework score">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAwardXP()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAwardXP()">Award XP ⭐</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── GLOBAL SAIRA STENCIL OVERRIDE ── */
+*, *::before, *::after {
+  font-family: "Saira Stencil", sans-serif !important;
+}
+
+body {
+  font-family: "Saira Stencil", sans-serif !important;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 100;
+}
+
+/* Explicitly override all font-family rules */
+h1, h2, h3, h4, h5, h6,
+p, span, div, li, td, th, label, button,
+input, select, textarea,
+.btn, .nav-btn, .s-nav-btn, .mob-nav-btn,
+.fs-tab, .reg-tab, .fs-day-filter,
+.brand-name, .brand-tag,
+.stat-big, .stat-lbl,
+.tag, .note-pill,
+.ann-title, .ann-body,
+.hw-title, .hw-meta,
+.res-title, .res-desc,
+.badge-name, .badge-desc,
+.pt-name, .pt-desc,
+.tp-name, .tp-role,
+.sp-name, .sp-course, .sp-pts,
+.nc-title, .nc-meta,
+.epi-brand, .epi-page,
+.login-submit,
+.preclass-join,
+.fsr-name, .fsr-meta,
+.fs-chip-time,
+.lb-pts,
+.pts-reason, .pts-date,
+.ib-lbl, .ib-val,
+.mld-url, .mld-label, .mld-note,
+.spr-stu, .spr-wk, .spr-body,
+.payment-student-name, .payment-student-email,
+.payment-amount, .payment-points {
+  font-family: "Saira Stencil", sans-serif !important;
+}
+
+/* Keep JetBrains Mono only for code/mono elements */
+code, pre,
+.preclass-countdown,
+.fs-time-label,
+.payment-transaction-id,
+.mld-url,
+.mono {
+  font-family: "JetBrains Mono", monospace !important;
+}
+</style>
 </body>
 </html>
