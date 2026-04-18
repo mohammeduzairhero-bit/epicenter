@@ -1002,7 +1002,7 @@ const firebaseConfig = {
 
 const TEACHER_CODE = "MATHMADE EASY";
 
-window._EMAILJS = { publicKey:"mgSCCBwAVEiDNZt-Krvice_98qf5oo", templateId:"template_66kgmnc" };
+window._EMAILJS = { publicKey:"mgSCCBwAVEiDNZt-Krvice_98qf5oo", templateId:"template_66kgmnc", serviceId:"default_service" };
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -7561,6 +7561,36 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+// Test Firebase configuration
+async function testFirebaseConfig() {
+  console.log('Testing Firebase configuration...');
+  
+  try {
+    // Test 1: Check if we can reach Firebase Auth API using proper auth endpoint
+    const testResponse = await fetch(`https://identitytoolkit.googleapis.com/v1/projects/epicenter-5340d/accounts:lookup?key=AIzaSyC_cKTsiZpgJbZaO68xCyRUFexInx1h_uw`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ idToken: 'test' })
+    });
+    
+    console.log('Firebase project test response:', testResponse.status, testResponse.statusText);
+    
+    if (testResponse.ok) {
+      const projectData = await testResponse.json();
+      console.log('Firebase project info:', projectData);
+    } else {
+      const errorData = await testResponse.json();
+      console.error('Firebase project error:', errorData);
+    }
+    
+  } catch (error) {
+    console.error('Firebase config test error:', error);
+    console.log('This CORS error means localhost:8000 is not authorized in Firebase project settings.');
+  }
+}
+
 // Test API key directly
 async function testAPIKeyDirectly() {
   const testKey = API_KEYS[0]; // Use first API key from the array
@@ -7592,15 +7622,9 @@ async function testAPIKeyDirectly() {
   }
 }
 
-// Initialize student session on page load
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize new student session when page loads
   setTimeout(() => {
     initializeStudentSession();
-    console.log('Student session management initialized');
-    
-    // Test API key directly for debugging
-    testAPIKeyDirectly();
   }, 1000);
 });
 
@@ -7653,6 +7677,255 @@ async function submitAwardXP() {
   closeAwardXP();
 }
 
+// OTP STATE MANAGEMENT
+let _otpCode = '';
+let _otpPendingData = null;
+let _otpTimerInterval = null;
+let _otpExpiry = null;
+
+function generateOTP() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+async function sendOTPEmail(email, name, otp) {
+  // Uses your existing EmailJS config from window._EMAILJS
+  const cfg = window._EMAILJS;
+  if (!cfg || !cfg.publicKey || !cfg.templateId) {
+    console.warn('EmailJS not configured - OTP:', otp);
+    return true; // In dev, skip email and let them proceed
+  }
+  try {
+    await emailjs.send(
+      cfg.serviceId || 'default_service',
+      cfg.templateId,
+      {
+        to_email: email,
+        to_name: name,
+        subject: 'Your Mathmade Epicenter Verification Code',
+        body: `Hi ${name},\n\nYour email verification code is:\n\n${otp}\n\nThis code expires in 10 minutes. Do not share it with anyone.\n\n- Mathmade Easy`
+      }
+    );
+    return true;
+  } catch(e) {
+    console.error('OTP email failed:', e);
+    return false;
+  }
+}
+
+function startOTPTimer() {
+  clearInterval(_otpTimerInterval);
+  _otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+  const timerEl = document.getElementById('otp-timer');
+  const resendBtn = document.getElementById('otp-resend-btn');
+  if (resendBtn) resendBtn.disabled = true;
+
+  _otpTimerInterval = setInterval(() => {
+    const remaining = Math.max(0, _otpExpiry - Date.now());
+    const m = Math.floor(remaining / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    if (timerEl) timerEl.textContent = `Code expires in ${m}:${String(s).padStart(2,'0')}`;
+    if (remaining === 0) {
+      clearInterval(_otpTimerInterval);
+      if (timerEl) timerEl.textContent = 'Code expired. Please resend.';
+      if (resendBtn) resendBtn.disabled = false;
+      _otpCode = ''; // Invalidate
+    }
+    // Enable resend after 60s
+    if (remaining < (9 * 60 * 1000) && resendBtn) resendBtn.disabled = false;
+  }, 1000);
+}
+
+function openOTP(email, name, pendingData) {
+  _otpPendingData = pendingData;
+  document.getElementById('otp-email-display').textContent = email;
+  hideMsg('otp-err'); hideMsg('otp-ok');
+  // Clear digit boxes
+  document.querySelectorAll('.otp-digit').forEach(i => { i.value = ''; i.classList.remove('filled'); });
+  document.getElementById('otp-modal').classList.add('show');
+  // Focus first box
+  setTimeout(() => document.querySelectorAll('.otp-digit')[0]?.focus(), 200);
+  startOTPTimer();
+  setupOTPBoxes();
+}
+
+function closeOTP() {
+  clearInterval(_otpTimerInterval);
+  document.getElementById('otp-modal').classList.remove('show');
+  _otpCode = '';
+  _otpPendingData = null;
+}
+
+function setupOTPBoxes() {
+  const boxes = document.querySelectorAll('.otp-digit');
+  boxes.forEach((box, i) => {
+    box.oninput = e => {
+      const val = e.target.value.replace(/\D/g, '');
+      box.value = val.slice(-1);
+      box.classList.toggle('filled', box.value !== '');
+      if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
+      // Auto-verify when all filled
+      if ([...boxes].every(b => b.value)) verifyOTP();
+    };
+    box.onkeydown = e => {
+      if (e.key === 'Backspace' && !box.value && i > 0) {
+        boxes[i - 1].focus();
+        boxes[i - 1].value = '';
+        boxes[i - 1].classList.remove('filled');
+      }
+      if (e.key === 'ArrowLeft' && i > 0) boxes[i - 1].focus();
+      if (e.key === 'ArrowRight' && i < boxes.length - 1) boxes[i + 1].focus();
+    };
+    box.onpaste = e => {
+      e.preventDefault();
+      const paste = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+      [...paste].forEach((ch, j) => {
+        if (boxes[j]) { boxes[j].value = ch; boxes[j].classList.add('filled'); }
+      });
+      if (paste.length === 6) verifyOTP();
+      else boxes[Math.min(paste.length, 5)].focus();
+    };
+  });
+}
+
+async function resendOTP() {
+  if (!_otpPendingData) return;
+  const newOTP = generateOTP();
+  _otpCode = newOTP;
+  hideMsg('otp-err'); hideMsg('otp-ok');
+  document.querySelectorAll('.otp-digit').forEach(i => { i.value = ''; i.classList.remove('filled'); });
+  spin('Resending code...');
+  const sent = await sendOTPEmail(_otpPendingData.email, _otpPendingData.name, newOTP);
+  unspin();
+  if (sent) {
+    showMsg('otp-ok', 'New code sent to your email!', 'ok');
+    startOTPTimer();
+    document.querySelectorAll('.otp-digit')[0]?.focus();
+  } else {
+    showMsg('otp-err', 'Failed to send email. Check your EmailJS config.');
+  }
+}
+
+function verifyOTP() {
+  const entered = [...document.querySelectorAll('.otp-digit')].map(b => b.value).join('');
+  hideMsg('otp-err'); hideMsg('otp-ok');
+
+  if (entered.length < 6) { showMsg('otp-err', 'Please enter all 6 digits.'); return; }
+  if (!_otpCode) { showMsg('otp-err', 'Code expired. Click Resend.'); return; }
+  if (Date.now() > _otpExpiry) { showMsg('otp-err', 'Code expired. Click Resend.'); _otpCode = ''; return; }
+  if (entered !== _otpCode) {
+    showMsg('otp-err', 'Incorrect code. Please try again.');
+    document.querySelectorAll('.otp-digit').forEach(b => { b.style.borderColor = 'var(--red)'; setTimeout(()=>b.style.borderColor='', 1000); });
+    return;
+  }
+
+  // OTP correct - create the account
+  clearInterval(_otpTimerInterval);
+  showMsg('otp-ok', 'Email verified! Creating your account...', 'ok');
+  setTimeout(() => createStudentAccount(_otpPendingData), 600);
+}
+
+async function createStudentAccount(data) {
+  const { auth, db, createUserWithEmailAndPassword, doc, setDoc, signOut } = window._FB;
+  try {
+    const color = randColor(), av = initials(data.name);
+    const cred = await createUserWithEmailAndPassword(auth, data.email, data.password);
+    await setDoc(doc(db, 'users', cred.user.uid), {
+      role: 'student', name: data.name, email: data.email,
+      username: data.username, avatar: av, color, course: data.subj,
+      age: parseInt(data.age), grade: data.grade, parent: data.parent, phone: data.phone,
+      progress: 0, done: 0, remaining: 20, xpPoints: 0, pointsBalance: 1000,
+      points: 0, fee: 800, status: 'active', emailVerified: true,
+      joined: new Date().toLocaleString('en', { month: 'short', year: 'numeric' }),
+      next: 'TBD',
+      skills: { Algebra: 0, Geometry: 0, Calculus: 0, Trigonometry: 0, Statistics: 0 },
+      pointsLog: [{
+        icon: ' ',
+        reason: 'Welcome Bonus - Free 1000 Points!',
+        val: 1000,
+        date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
+      }],
+      badges: []
+    });
+    await signOut(auth);
+    closeOTP();
+    unspin();
+    // Show success in reg modal
+    showMsg('reg-ok', 'Account created & verified! You can now sign in.', 'ok');
+    document.getElementById('reg-modal').classList.add('show');
+    setTimeout(() => closeReg(), 2800);
+  } catch(e) {
+    unspin();
+    closeOTP();
+    document.getElementById('reg-modal').classList.add('show');
+    showMsg('reg-err', ' ' + friendlyErr(e.message));
+  }
+}
+
+// REPLACE submitReg with OTP-enabled version
+async function submitReg() {
+  const { TEACHER_CODE } = window._FB;
+  hideMsg('reg-ok'); hideMsg('reg-err');
+
+  if (_regTab === 'teacher') {
+    // Teacher registration unchanged - no OTP needed
+    const { auth, db, createUserWithEmailAndPassword, doc, setDoc, signOut } = window._FB;
+    const name = document.getElementById('rt-name').value.trim();
+    const email = document.getElementById('rt-email').value.trim();
+    const password = document.getElementById('rt-pass').value;
+    const code = document.getElementById('rt-code').value.trim();
+    if (!name || !email || !password || !code) return showMsg('reg-err', 'Please fill in all fields.');
+    if (password.length < 6) return showMsg('reg-err', 'Password must be at least 6 characters.');
+    if (code !== TEACHER_CODE) return showMsg('reg-err', 'Invalid invite code.');
+    spin('Creating account...');
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, 'users', cred.user.uid), { role: 'teacher', name, email, avatar: initials(name), color: randColor() });
+      await signOut(auth); unspin();
+      showMsg('reg-ok', 'Teacher account created! You can now sign in.', 'ok');
+      setTimeout(() => closeReg(), 2400);
+    } catch(e) { unspin(); showMsg('reg-err', ' ' + friendlyErr(e.message)); }
+    return;
+  }
+
+  // STUDENT: validate first, then send OTP
+  const name     = document.getElementById('rs-name').value.trim();
+  const age      = document.getElementById('rs-age').value.trim();
+  const grade    = document.getElementById('rs-grade').value.trim();
+  const subj     = document.getElementById('rs-subj').value;
+  const parent   = document.getElementById('rs-parent').value.trim();
+  const phone    = document.getElementById('rs-phone').value.trim();
+  const email    = document.getElementById('rs-email').value.trim();
+  const username = document.getElementById('rs-user').value.trim().toLowerCase();
+  const password = document.getElementById('rs-pass').value;
+
+  if (!name || !age || !grade || !parent || !phone || !email || !username || !password)
+    return showMsg('reg-err', 'Please fill in all fields.');
+  if (password.length < 6)
+    return showMsg('reg-err', 'Password must be at least 6 characters.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return showMsg('reg-err', 'Please enter a valid email address.');
+
+  // Generate OTP and send email
+  const otp = generateOTP();
+  _otpCode = otp;
+
+  spin('Sending verification code...');
+  const sent = await sendOTPEmail(email, name, otp);
+  unspin();
+
+  if (!sent) {
+    showMsg('reg-err', 'Could not send verification email. Check your EmailJS setup, or contact your teacher.');
+    return;
+  }
+
+  // Store pending registration data
+  const pendingData = { name, age, grade, subj, parent, phone, email, username, password };
+
+  // Close reg modal, open OTP modal
+  document.getElementById('reg-modal').classList.remove('show');
+  openOTP(email, name, pendingData);
+}
+
 </script>
 
 <style>
@@ -7698,35 +7971,21 @@ body.drawer-lock {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-</style>
 
-<!-- Award XP Modal -->
-<div class="modal-overlay" id="award-xp-modal">
-  <div class="modal-box" style="width:420px">
-    <h3>⭐ Award XP Points</h3>
-    <p style="color:var(--text2);font-size:.85rem;margin-bottom:18px">
-      Awarding to: <strong id="award-xp-name">—</strong><br>
-      XP affects level and leaderboard rank. It does not affect class credits.
-    </p>
-    <div class="form-grid">
-      <div class="input-group">
-        <label>XP Amount</label>
-        <input type="number" id="award-xp-amount" value="10" min="1" max="500">
-      </div>
-      <div class="input-group">
-        <label>Reason</label>
-        <input type="text" id="award-xp-reason" placeholder="e.g. Perfect homework score">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeAwardXP()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitAwardXP()">Award XP ⭐</button>
-    </div>
-  </div>
-</div>
+/* ── OTP Verification Styles ── */
+.otp-digit {
+  width: 46px; height: 54px;
+  text-align: center; font-size: 1.4rem; font-weight: 800;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  outline: none; transition: border-color .15s;
+  caret-color: var(--accent);
+}
+.otp-digit:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,111,239,.15); }
+.otp-digit.filled { border-color: var(--green); }
 
-<style>
-/* ── GLOBAL SAIRA STENCIL OVERRIDE ── */
+/* GLOBAL SAIRA STENCIL OVERRIDE */
 *, *::before, *::after {
   font-family: "Saira Stencil", sans-serif !important;
 }
@@ -7779,5 +8038,57 @@ code, pre,
   font-family: "JetBrains Mono", monospace !important;
 }
 </style>
+
+<!-- Award XP Modal -->
+<div class="modal-overlay" id="award-xp-modal">
+  <div class="modal-box" style="width:420px">
+    <h3>Award XP Points</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:18px">
+      Awarding to: <strong id="award-xp-name">-</strong><br>
+      XP affects level and leaderboard rank. It does not affect class credits.
+    </p>
+    <div class="form-grid">
+      <div class="input-group">
+        <label>XP Amount</label>
+        <input type="number" id="award-xp-amount" value="10" min="1" max="500">
+      </div>
+      <div class="input-group">
+        <label>Reason</label>
+        <input type="text" id="award-xp-reason" placeholder="e.g. Perfect homework score">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAwardXP()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAwardXP()">Award XP </button>
+    </div>
+  </div>
+</div>
+
+<!-- OTP Verification Modal -->
+<div class="modal-overlay" id="otp-modal">
+  <div class="modal-box" style="width:440px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:12px">📧</div>
+    <h3>Verify Your Email</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin:10px 0 20px;line-height:1.6">
+      A 6-digit code was sent to<br>
+      <strong id="otp-email-display" style="color:var(--accent-h)">—</strong>
+    </p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px" id="otp-boxes">
+      <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+      <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+      <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+      <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+      <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+      <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+    </div>
+    <div class="msg-err" id="otp-err" style="margin-bottom:12px"></div>
+    <div class="msg-ok"  id="otp-ok"  style="margin-bottom:12px"></div>
+    <button class="btn btn-primary btn-full" onclick="verifyOTP()" style="margin-bottom:10px">Verify & Create Account ✓</button>
+    <button class="btn btn-ghost btn-full" onclick="resendOTP()" id="otp-resend-btn">Resend Code</button>
+    <div style="font-size:.72rem;color:var(--text3);margin-top:12px" id="otp-timer"></div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="closeOTP()">← Back</button>
+  </div>
+</div>
+
 </body>
 </html>
