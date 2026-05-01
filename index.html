@@ -1757,6 +1757,34 @@
         text-transform: uppercase;
     }
 
+    /* ── 49b. STUDENT PROFILE LAYOUT ── */
+    .sp-profile-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 18px;
+        align-items: start;
+        min-width: 0;
+    }
+
+    .sp-profile-layout > * {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .sp-avatar-card {
+        padding: 24px;
+        text-align: center;
+        overflow: visible;
+    }
+
+    .info-grid {
+        min-width: 0;
+    }
+
+    .info-grid > * {
+        min-width: 0;
+    }
+
     /* ── 50. MEET LINK DISPLAY ── */
     .meet-link-display {
         background: rgba(0, 255, 179, .06);
@@ -4854,6 +4882,8 @@
             background: var(--surface2);
             border-radius: 11px;
             padding: 13px 15px;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .info-box .ib-lbl {
@@ -4867,6 +4897,8 @@
         .info-box .ib-val {
             font-size: .88rem;
             font-weight: 500;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
     </style>
 
@@ -5825,7 +5857,22 @@
 
             .earnings-grid,
             .info-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sp-profile-layout {
+                grid-template-columns: 1fr !important;
+            }
+
+            .sp-avatar-card {
+                padding: 22px 16px !important;
+            }
+
+            /* Very small phones: single column info grid */
+            @media (max-width: 480px) {
+                .info-grid {
+                    grid-template-columns: 1fr !important;
+                }
             }
 
             .form-grid {
@@ -7121,8 +7168,8 @@
                         <p>Your personal details.</p>
                     </div>
                 </div>
-                <div style="display:grid;grid-template-columns:260px 1fr;gap:18px;align-items:start">
-                    <div class="card" style="padding:24px;text-align:center">
+                <div class="sp-profile-layout">
+                    <div class="card sp-avatar-card">
                         <div class="avatar avatar-xl" id="s-av3"
                             style="background:rgba(124,111,239,.2);color:var(--accent-h);margin:0 auto 12px">?</div>
                         <div style="font-size:1.05rem;font-weight:800" id="s-pf-name">—</div>
