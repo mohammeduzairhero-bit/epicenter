@@ -1101,6 +1101,35 @@
         font-family: 'Syne', sans-serif;
     }
 
+    /* ── 26. PAYMENT & LOADERS ── */
+    .loader {
+        width: 28px;
+        height: 28px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin-anim 0.8s linear infinite;
+    }
+
+    @keyframes spin-anim {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .qr-container {
+        background: white;
+        padding: 12px;
+        border-radius: 16px;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    #student-recharge-modal .btn-ghost:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+    }
+
     /* ── 26. RESOURCE CARDS ── */
     .res-card {
         background: rgba(12, 18, 32, .6);
@@ -1766,7 +1795,7 @@
         min-width: 0;
     }
 
-    .sp-profile-layout > * {
+    .sp-profile-layout>* {
         min-width: 0;
         overflow: hidden;
     }
@@ -1781,7 +1810,7 @@
         min-width: 0;
     }
 
-    .info-grid > * {
+    .info-grid>* {
         min-width: 0;
     }
 
@@ -1824,7 +1853,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#020409">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
     <title>Mathmade Epicenter — Academy Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3640,6 +3673,51 @@
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
+        }
+
+        /* ── REFRESH BUTTON ── */
+        .btn-refresh {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 13px;
+            background: rgba(124, 111, 239, .1);
+            border: 1px solid rgba(124, 111, 239, .25);
+            border-radius: 9px;
+            color: var(--accent-h);
+            font-size: .8rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: background .18s, border-color .18s, transform .15s, box-shadow .18s;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .btn-refresh:hover {
+            background: rgba(124, 111, 239, .2);
+            border-color: var(--accent);
+            box-shadow: 0 0 14px rgba(124, 111, 239, .25);
+        }
+
+        .btn-refresh:active {
+            transform: scale(.94);
+        }
+
+        .btn-refresh .rf-icon {
+            display: inline-block;
+            font-style: normal;
+            transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .btn-refresh.spinning .rf-icon {
+            animation: rfSpin .7s linear infinite;
+        }
+
+        @keyframes rfSpin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .t-search-wrap input {
@@ -6300,6 +6378,8 @@
             <div class="mt-brand">🧮 Epicenter</div>
             <div class="mt-right">
                 <span id="t-topbar-title" style="font-size:.8rem;color:var(--text2);font-weight:600">Overview</span>
+                <button type="button" id="t-refresh-btn-mob" class="mob-menu-btn" onclick="hubRefresh('teacher',this)"
+                    aria-label="Refresh" title="Refresh">🔄</button>
                 <button type="button" class="mob-menu-btn" onclick="event.stopPropagation();toggleMobNotif('t')"
                     aria-label="Alerts">🔔</button>
                 <button class="mob-menu-btn" onclick="openTDrawer()">☰</button>
@@ -6331,6 +6411,10 @@
                     <div class="t-search-wrap"><input type="search" id="t-global-search" placeholder="Find student…"
                             autocomplete="off" oninput="teacherGlobalSearch(this.value)"
                             onkeydown="if(event.key==='Enter')teacherGlobalSearchEnter()"></div>
+                    <button type="button" id="t-refresh-btn" class="btn-refresh" onclick="hubRefresh('teacher',this)"
+                        aria-label="Refresh dashboard" title="Refresh dashboard">
+                        <i class="rf-icon">🔄</i> Refresh
+                    </button>
                     <button type="button" class="btn btn-ghost btn-sm notif-bell"
                         onclick="toggleNotifDropdown('t',event)" aria-label="Inbox">🔔<span class="notif-dot"
                             id="t-notif-dot" style="display:none"></span></button>
@@ -6419,7 +6503,7 @@
                                 <th>Subject</th>
                                 <th>Progress</th>
                                 <th>Remaining</th>
-                                <th>Points</th>
+                                <th>Cash Balance</th>
                                 <th>Next Class</th>
                                 <th>Status</th>
                                 <th></th>
@@ -6822,14 +6906,14 @@
                             <div class="sp-course" id="s-course">—</div>
                         </div>
                     </div>
-                    <div class="sp-pts" id="s-pts">0 Points</div>
+                    <div class="sp-pts" id="s-pts">₹0</div>
                     <button class="btn btn-green btn-full" style="margin-top:8px;font-size:.8rem"
                         onclick="openStudentRechargeModal()">
-                        💳 Recharge Points
+                        💳 Add Cash
                     </button>
                     <div id="s-low-points-warning"
                         style="display:none;background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:8px;padding:8px;margin-top:8px;font-size:.75rem;color:var(--red);text-align:center">
-                        ⚠️ Low points! Recharge to attend more classes
+                        ⚠️ Low balance! Please recharge your account.
                     </div>
                 </div>
                 <button class="btn btn-ghost btn-full" style="margin-top:9px;font-size:.8rem" onclick="doLogout()">⇥
@@ -6885,7 +6969,15 @@
                             <div style="font-size:.71rem;color:var(--text3)" id="s-course-d">—</div>
                         </div>
                     </div>
-                    <div style="font-size:.77rem;color:var(--accent-h);font-weight:600" id="s-pts-d">0 Points</div>
+                    <div style="font-size:.77rem;color:var(--accent-h);font-weight:600" id="s-pts-d">₹0</div>
+                    <button class="btn btn-green btn-full" style="margin-top:8px;font-size:.8rem"
+                        onclick="openStudentRechargeModal();closeSDrawer()">
+                        💳 Add Cash
+                    </button>
+                    <div id="s-low-points-warning-d"
+                        style="display:none;background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:8px;padding:8px;margin-top:8px;font-size:.75rem;color:var(--red);text-align:center">
+                        ⚠️ Low balance! Please recharge your account.
+                    </div>
                 </div>
                 <button class="btn btn-ghost btn-full" style="margin-top:9px;font-size:.8rem" onclick="doLogout()">⇥
                     Logout</button>
@@ -6899,6 +6991,8 @@
             <div class="mt-brand">🧮 Epicenter</div>
             <div class="mt-right">
                 <span id="s-topbar-title" style="font-size:.8rem;color:var(--text2);font-weight:600">Home</span>
+                <button type="button" id="s-refresh-btn-mob" class="mob-menu-btn" onclick="hubRefresh('student',this)"
+                    aria-label="Refresh" title="Refresh">🔄</button>
                 <button type="button" class="mob-menu-btn" onclick="event.stopPropagation();toggleMobNotif('s')"
                     aria-label="Inbox">🔔</button>
                 <button class="mob-menu-btn" onclick="openSDrawer()">☰</button>
@@ -6927,6 +7021,10 @@
                     <span class="epi-page" id="s-page-crumbs">Home</span>
                 </div>
                 <div class="dash-topbar-actions">
+                    <button type="button" id="s-refresh-btn" class="btn-refresh" onclick="hubRefresh('student',this)"
+                        aria-label="Refresh dashboard" title="Refresh dashboard">
+                        <i class="rf-icon">🔄</i> Refresh
+                    </button>
                     <button type="button" class="btn btn-ghost btn-sm notif-bell" onclick="sNav('notifications',null)"
                         aria-label="Open inbox">🔔 Inbox</button>
                 </div>
@@ -6969,7 +7067,7 @@
                         <div class="skill-list" id="s-skills"></div>
                     </div>
                     <div class="card" style="padding:20px">
-                        <h3 style="margin-bottom:14px;font-size:.93rem">🏅 Recent Points</h3>
+                        <h3 style="margin-bottom:14px;font-size:.93rem">💵 Recent Transactions</h3>
                         <div class="pts-log" id="s-pts-log"></div>
                     </div>
                 </div>
@@ -7050,7 +7148,7 @@
                     <div class="skill-list" id="s-skills2"></div>
                 </div>
                 <div class="card" style="padding:20px">
-                    <h3 style="margin-bottom:14px;font-size:.93rem">🏅 Full Points History</h3>
+                    <h3 style="margin-bottom:14px;font-size:.93rem">💵 Full Transaction History</h3>
                     <div class="pts-log" id="s-pts-log2" style="max-height:320px"></div>
                 </div>
             </div>
@@ -7527,20 +7625,23 @@
 
     <!-- Resource Modal -->
     <div class="modal-overlay" id="res-modal">
-        <div class="modal-box" style="width:500px">
+        <div class="modal-box" style="width:520px">
             <h3>📂 Add Resource</h3>
             <div class="form-grid">
                 <div class="input-group full"><label>Title</label><input id="res-title" type="text"
                         placeholder="e.g. Algebra Cheat Sheet"></div>
-                <div class="input-group"><label>Type</label>
-                    <select id="res-type">
+                <div class="input-group">
+                    <label>Type</label>
+                    <select id="res-type" onchange="resTypeChanged()">
                         <option value="link">🔗 Link</option>
                         <option value="pdf">📄 PDF</option>
                         <option value="video">🎬 Video</option>
                         <option value="note">📝 Note</option>
+                        <option value="file">📁 File (upload)</option>
                     </select>
                 </div>
-                <div class="input-group"><label>Subject</label>
+                <div class="input-group">
+                    <label>Subject</label>
                     <select id="res-subj">
                         <option>Algebra</option>
                         <option>Geometry</option>
@@ -7550,8 +7651,35 @@
                         <option>General</option>
                     </select>
                 </div>
-                <div class="input-group full"><label>URL / Link</label><input id="res-url" type="url"
-                        placeholder="https://..."></div>
+
+                <!-- URL row (shown for link/video/note) -->
+                <div class="input-group full" id="res-url-row">
+                    <label>URL / Link</label>
+                    <input id="res-url" type="url" placeholder="https://...">
+                </div>
+
+                <!-- File picker row (shown when type=pdf or file) -->
+                <div class="input-group full" id="res-file-row" style="display:none">
+                    <label>File</label>
+                    <!-- hidden native file input -->
+                    <input type="file" id="res-file-input"
+                        accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.png,.jpg,.jpeg,.gif,.mp4,.mp3,.zip"
+                        style="display:none" onchange="resFileChosen(this)">
+                    <!-- styled trigger button -->
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                        <button type="button" class="btn btn-ghost btn-sm"
+                            style="gap:8px;display:flex;align-items:center"
+                            onclick="document.getElementById('res-file-input').click()">
+                            📁 Choose File
+                        </button>
+                        <span id="res-file-name" style="font-size:.82rem;color:var(--text2);word-break:break-all">No
+                            file selected</span>
+                    </div>
+                    <div id="res-file-warn" style="font-size:.75rem;color:var(--yellow);margin-top:6px;display:none">⚠️
+                        File is large — only files under 900 KB are stored inline. Use a URL link for bigger files.
+                    </div>
+                </div>
+
                 <div class="input-group full"><label>Description</label><textarea id="res-desc" rows="2"
                         placeholder="Brief description..."></textarea></div>
             </div>
@@ -8386,6 +8514,34 @@
             buildPaymentReviewsList(); updatePaymentRequestsBadge();
         }
 
+        /* ── HUB REFRESH ── */
+        function hubRefresh(hub, btn) {
+            // Collect all refresh buttons for this hub and spin them
+            const prefix = hub === 'teacher' ? 't' : 's';
+            const btns = [
+                document.getElementById(prefix + '-refresh-btn'),
+                document.getElementById(prefix + '-refresh-btn-mob')
+            ].filter(Boolean);
+            btns.forEach(b => b.classList.add('spinning'));
+            // Disable to prevent double-click
+            btns.forEach(b => b.disabled = true);
+
+            const done = () => {
+                btns.forEach(b => { b.classList.remove('spinning'); b.disabled = false; });
+            };
+
+            if (hub === 'teacher') {
+                Promise.all([fetchStudents(), fetchSchedules(), fetchHomeworks(), fetchAnnouncements(), fetchResources(), fetchFreeSlots(), fetchClassRequests(), fetchProgressNotes(), fetchLeaveRequests(), fetchPayments()])
+                    .then(() => { buildTeacherAll(); done(); })
+                    .catch(err => { console.warn('Refresh failed:', err); done(); });
+            } else {
+                const s = window._student;
+                Promise.all([fetchStudents(), fetchSchedules(), fetchHomeworks(), fetchAnnouncements(), fetchResources(), fetchFreeSlots(), fetchClassRequests(), fetchProgressNotes(), fetchPayments()])
+                    .then(() => { if (s) initStudentUI(s); done(); })
+                    .catch(err => { console.warn('Refresh failed:', err); done(); });
+            }
+        }
+
         function buildTNextClassWidget() {
             const el = document.getElementById('t-next-class-widget');
             if (!el) return;
@@ -9144,7 +9300,7 @@
       <span style="font-size:.72rem;color:var(--text3)">${s.progress || 0}%</span>
     </div></td>
     <td style="font-weight:600">${s.remaining || 0}</td>
-    <td style="font-weight:700;color:var(--yellow)">${s.points || 0}</td>
+    <td style="font-weight:700;color:var(--green)">₹${s.pointsBalance || 0}</td>
     <td style="color:var(--text2);font-size:.82rem">${s.next || 'TBD'}</td>
     <td><span class="tag tag-${s.status || 'active'}">${s.status || 'active'}</span></td>
     <td style="display:flex;gap:6px">
@@ -9420,20 +9576,63 @@
         /* Resource */
         function openResModal() {
             ['res-title', 'res-url', 'res-desc'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('res-type').value = 'link';
+            document.getElementById('res-file-input').value = '';
+            document.getElementById('res-file-name').textContent = 'No file selected';
+            document.getElementById('res-file-warn').style.display = 'none';
+            window._resFileData = null;
+            resTypeChanged();
             document.getElementById('res-modal').classList.add('show');
         }
-        function closeResModal() { document.getElementById('res-modal').classList.remove('show'); }
+        function closeResModal() { document.getElementById('res-modal').classList.remove('show'); window._resFileData = null; }
+
+        function resTypeChanged() {
+            const t = document.getElementById('res-type').value;
+            const showFile = (t === 'pdf' || t === 'file');
+            document.getElementById('res-url-row').style.display = showFile ? 'none' : '';
+            document.getElementById('res-file-row').style.display = showFile ? '' : 'none';
+            if (!showFile) { window._resFileData = null; document.getElementById('res-file-name').textContent = 'No file selected'; }
+        }
+
+        function resFileChosen(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const nameEl = document.getElementById('res-file-name');
+            const warnEl = document.getElementById('res-file-warn');
+            nameEl.textContent = file.name + ' (' + (file.size > 1048576 ? (file.size / 1048576).toFixed(1) + 'MB' : Math.round(file.size / 1024) + 'KB') + ')';
+            if (file.size > 900 * 1024) {
+                warnEl.style.display = '';
+                window._resFileData = null;
+                return;
+            }
+            warnEl.style.display = 'none';
+            const reader = new FileReader();
+            reader.onload = e => { window._resFileData = { name: file.name, data: e.target.result, mime: file.type }; };
+            reader.readAsDataURL(file);
+        }
+
         async function saveRes() {
             const title = document.getElementById('res-title').value.trim();
             if (!title) { toast('Please enter a title.'); return; }
+            const resType = document.getElementById('res-type').value;
+            const isFileUpload = (resType === 'pdf' || resType === 'file');
+            let url = '';
+            if (isFileUpload) {
+                if (!window._resFileData) { toast('Please choose a file under 900 KB, or use a URL link type.'); return; }
+                url = window._resFileData.data; // base64 data URL
+            } else {
+                url = document.getElementById('res-url').value.trim();
+            }
             spin('Saving...');
             try {
                 const data = {
-                    title, type: document.getElementById('res-type').value, subject: document.getElementById('res-subj').value,
-                    url: document.getElementById('res-url').value.trim(), desc: document.getElementById('res-desc').value.trim(), createdAt: new Date().toISOString()
+                    title, type: resType, subject: document.getElementById('res-subj').value,
+                    url, fileName: (window._resFileData ? window._resFileData.name : ''),
+                    desc: document.getElementById('res-desc').value.trim(), createdAt: new Date().toISOString()
                 };
                 const id = await addDoc_('resources', data);
                 window._resources.push({ ...data, id });
+                window._resFileData = null;
                 buildTRes(); closeResModal(); toast('Resource added!');
             } catch (e) { toast('Error: ' + e.message); }
             unspin();
@@ -9536,10 +9735,10 @@
             const avD = document.getElementById('s-av-d'); if (avD) { avD.textContent = av; avD.style.background = color + '22'; avD.style.color = color; }
             document.getElementById('s-name').textContent = s.name || 'Student';
             document.getElementById('s-course').textContent = s.course || '—';
-            document.getElementById('s-pts').textContent = (s.pointsBalance || s.points || 0) + ' Points';
+            document.getElementById('s-pts').textContent = '₹' + (s.pointsBalance || 0);
             document.getElementById('s-name-d').textContent = s.name || 'Student';
             document.getElementById('s-course-d').textContent = s.course || '—';
-            document.getElementById('s-pts-d').textContent = (s.pointsBalance || s.points || 0) + ' Points';
+            document.getElementById('s-pts-d').textContent = '₹' + (s.pointsBalance || 0);
             document.getElementById('s-pf-name').textContent = s.name || '—';
             document.getElementById('s-pf-course').textContent = s.course || '—';
             document.getElementById('s-welcome').textContent = 'Welcome back, ' + (s.name || 'Student').split(' ')[0] + '!';
@@ -9588,7 +9787,11 @@
             const lvl = Math.max(1, Math.floor((s.xpPoints || 0) / 50));
             document.getElementById('s-level').textContent = lvl;
             document.getElementById('s-stats').innerHTML = `
-    <div class="stat-card s-purple"><div class="stat-icon2">🏅</div><div class="stat-big">${s.points || 0}</div><div class="stat-lbl">Total Points</div></div>
+    <div class="stat-card s-purple" onclick="openStudentRechargeModal()" style="cursor:pointer">
+      <div class="stat-icon2">💳</div>
+      <div class="stat-big">₹${s.pointsBalance || 0}</div>
+      <div class="stat-lbl">Add Cash</div>
+    </div>
     <div class="stat-card s-green"> <div class="stat-icon2">📚</div><div class="stat-big">${s.done || 0}</div><div class="stat-lbl">Classes Done</div></div>
     <div class="stat-card s-pink">  <div class="stat-icon2">⏳</div><div class="stat-big">${s.remaining || 0}</div><div class="stat-lbl">Remaining</div></div>
     <div class="stat-card s-yellow"><div class="stat-icon2">📊</div><div class="stat-big">${s.progress || 0}%</div><div class="stat-lbl">Progress</div></div>`;
@@ -9668,8 +9871,8 @@
     <div class="pts-row">
       <div class="pts-ic">${p.icon || '⭐'}</div>
       <div style="flex:1;min-width:0"><div class="pts-reason">${p.reason || ''}</div><div class="pts-date">${p.date || ''}</div></div>
-      <div class="pts-val ${p.val > 0 ? 'pos' : 'neg'}">${p.val > 0 ? '+' : ''}${p.val}</div>
-    </div>`).join('') : `<div class="empty" style="padding:20px"><p>No points recorded yet.</p></div>`;
+      <div class="pts-val ${p.val > 0 ? 'pos' : 'neg'}">${p.val > 0 ? '+' : ''}₹${p.val}</div>
+    </div>`).join('') : `<div class="empty" style="padding:20px"><p>No transactions recorded yet.</p></div>`;
         }
 
         function buildSClasses(s) {
@@ -10068,14 +10271,13 @@
 
             _pendingPaymentId = studentId;
             document.getElementById('pay-student-name').textContent = student.name;
-            document.getElementById('pay-student-balance').textContent = student.pointsBalance || 0;
+            document.getElementById('pay-student-balance').textContent = '₹' + (student.pointsBalance || 0);
             document.getElementById('pay-amount').value = 500;
-            document.getElementById('pay-points').value = 500;
+            document.getElementById('pay-note').value = '';
 
             hideMsg('pay-ok');
             hideMsg('pay-err');
             document.getElementById('payment-modal').classList.add('show');
-            generatePaymentQR();
         }
 
         function closePaymentModal() {
@@ -10119,44 +10321,44 @@
             toast('Payment request sent via WhatsApp');
         }
 
-        /* Record payment and add points */
+        /* Record payment and add cash */
         async function recordPayment() {
             const student = window._students.find(s => s.uid === _pendingPaymentId);
             if (!student) return;
 
             const amount = parseInt(document.getElementById('pay-amount').value);
-            const points = parseInt(document.getElementById('pay-points').value);
+            const note = document.getElementById('pay-note').value.trim();
 
-            if (!amount || !points || amount <= 0 || points <= 0) {
-                showMsg('pay-err', 'Please enter valid amount and points');
+            if (!amount || amount <= 0) {
+                showMsg('pay-err', 'Please enter a valid amount');
                 return;
             }
 
-            spin('Processing payment...');
+            spin('Recording payment...');
 
             try {
-                // Update student's points balance
-                const newBalance = (student.pointsBalance || 0) + points;
-                const newTotalPoints = (student.points || 0) + points;
+                // Update student's balance and lifetime total
+                const newBalance = (student.pointsBalance || 0) + amount;
+                const newTotalPoints = (student.points || 0) + amount;
 
                 await updateDoc_('users', _pendingPaymentId, {
                     pointsBalance: newBalance,
                     points: newTotalPoints,
                     pointsLog: [...(student.pointsLog || []), {
-                        icon: '💳',
-                        reason: `Payment of ₹${amount}`,
-                        val: points,
+                        icon: '💵',
+                        reason: `Payment: ${note || 'Cash payment'}`,
+                        val: amount,
                         date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
                     }]
                 });
 
-                // Record payment transaction (teacher confirmed — already credited above)
+                // Record payment transaction
                 await addDoc_('payments', {
                     studentUid: _pendingPaymentId,
                     studentName: student.name,
                     amount: amount,
-                    points: points,
-                    method: 'UPI/QR',
+                    note: note,
+                    method: 'Cash',
                     type: 'teacher_record',
                     status: 'approved',
                     balanceAfter: newBalance,
@@ -10170,21 +10372,12 @@
 
                 unspin();
                 closePaymentModal();
-                showMsg('pay-ok', `✅ Payment recorded! ${points} points added to ${student.name}'s account.`, 'ok');
-                toast(`Payment successful! +${points} points added`);
+                toast(`✅ Payment of ₹${amount} recorded for ${student.name}.`);
 
             } catch (error) {
                 unspin();
-                showMsg('pay-err', '❌ Error processing payment: ' + error.message);
+                showMsg('pay-err', '❌ Error recording payment: ' + error.message);
             }
-        }
-
-        /* Sync amount and points fields */
-        function syncPaymentFields() {
-            const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
-            const ppr = window._PAYMENT_CONFIG?.pointsPerRupee ?? 1;
-            document.getElementById('pay-points').value = Math.max(0, Math.round(amount * ppr));
-            generatePaymentQR();
         }
 
         /* ============================================================
@@ -10201,39 +10394,9 @@
             document.getElementById('recharge-amount').value = 500;
             const tid = document.getElementById('recharge-txn-id');
             if (tid) tid.value = '';
-            syncRechargeFields();
 
             hideMsg('recharge-ok');
             hideMsg('recharge-err');
-
-            // Configure UI based on auto-payment availability
-            const config = window._PAYMENT_CONFIG;
-            const isAutoPayEnabled = config.autoCreditPoints === true;
-
-            const autoBanner = document.getElementById('auto-payment-banner');
-            const autoBtnContainer = document.getElementById('auto-pay-btn-container');
-            const manualSection = document.getElementById('manual-payment-section');
-            const submitBtn = document.getElementById('recharge-submit-btn');
-
-            if (isAutoPayEnabled) {
-                // Show auto-payment UI
-                if (autoBanner) autoBanner.style.display = 'block';
-                if (autoBtnContainer) autoBtnContainer.style.display = 'block';
-                if (manualSection) manualSection.style.display = 'none';
-                if (submitBtn) {
-                    submitBtn.textContent = '⚡ Pay Now (Auto)';
-                    submitBtn.onclick = startAutomaticPayment;
-                }
-            } else {
-                // Show manual verification UI
-                if (autoBanner) autoBanner.style.display = 'none';
-                if (autoBtnContainer) autoBtnContainer.style.display = 'none';
-                if (manualSection) manualSection.style.display = 'block';
-                if (submitBtn) {
-                    submitBtn.textContent = 'Submit for verification';
-                    submitBtn.onclick = submitRechargeForVerification;
-                }
-            }
 
             document.getElementById('student-recharge-modal').classList.add('show');
             generateRechargeQR();
@@ -10245,27 +10408,31 @@
 
         /* Generate QR code for recharge */
         async function generateRechargeQR() {
-            const amount = document.getElementById('recharge-amount').value;
-            const config = window._PAYMENT_CONFIG;
+            const amount = document.getElementById('recharge-amount').value || 0;
+            const config = window._PAYMENT_CONFIG || {};
+            const upiId = config.upiId || 'emailjesima@oksbi';
+            const teacherName = config.teacherName || 'Mathmade Academy';
 
-            if (!config.upiId) {
-                document.getElementById('recharge-qr-code').innerHTML = '<div style="color:var(--red);padding:20px;">⚠️ UPI ID not configured</div>';
-                return;
-            }
-
-            const upiString = `upi://pay?pa=${encodeURIComponent(config.upiId)}&pn=${encodeURIComponent(config.teacherName)}&am=${amount}&cu=INR`;
+            const upiString = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(teacherName)}&am=${amount}&cu=INR&tn=Mathmade_Fees`;
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
 
-            document.getElementById('recharge-qr-code').innerHTML =
-                `<img src="${qrUrl}" style="width:200px;height:200px;border-radius:8px;" alt="Recharge QR Code">`;
-        }
+            const qrEl = document.getElementById('recharge-qr-code');
+            if (qrEl) {
+                qrEl.innerHTML = `<img src="${qrUrl}" style="width:200px;height:200px;border-radius:8px;" alt="Recharge QR Code">`;
+            }
 
-        /* Sync recharge amount and points (₹ × rate) */
-        function syncRechargeFields() {
-            const amount = parseFloat(document.getElementById('recharge-amount').value) || 0;
-            const ppr = window._PAYMENT_CONFIG?.pointsPerRupee ?? 1;
-            document.getElementById('recharge-points').value = Math.max(0, Math.round(amount * ppr));
-            generateRechargeQR();
+            // Update text labels
+            const upiLabel = document.getElementById('recharge-upi-id');
+            if (upiLabel) upiLabel.textContent = upiId;
+
+            // Update mobile deep links
+            const ptm = document.getElementById('link-paytm');
+            const gpy = document.getElementById('link-gpay');
+            const phn = document.getElementById('link-phonepe');
+
+            if (ptm) ptm.href = `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(teacherName)}&am=${amount}&cu=INR&tn=Mathmade_Fees`;
+            if (gpy) gpy.href = `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(teacherName)}&am=${amount}&cu=INR&tn=Mathmade_Fees`;
+            if (phn) phn.href = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(teacherName)}&am=${amount}&cu=INR&tn=Mathmade_Fees`;
         }
 
         /* Send recharge payment request */
@@ -10286,59 +10453,65 @@
             toast('📱 Recharge request sent via WhatsApp');
         }
 
-        /* Submit recharge proof — points are added only after teacher approves (website + teacher verify reference) */
+        /* Submit "I've Paid" notification */
         async function submitRechargeForVerification() {
             const uid = window._FB.auth.currentUser?.uid;
             const student = window._student || window._students.find(s => s.uid === uid);
             if (!student) return;
 
             const amount = parseFloat(document.getElementById('recharge-amount').value);
-            const points = parseInt(document.getElementById('recharge-points').value, 10);
             const txnEl = document.getElementById('recharge-txn-id');
             const transactionId = (txnEl && txnEl.value ? txnEl.value : '').trim();
 
             hideMsg('recharge-err');
             hideMsg('recharge-ok');
 
-            if (!amount || amount < 1 || !points || points < 1) {
-                showMsg('recharge-err', 'Enter a valid amount (₹). Points are calculated from your rate.');
+            if (!amount || amount < 1) {
+                showMsg('recharge-err', 'Please enter a valid amount.');
                 return;
             }
-            if (transactionId.length < 6) {
-                showMsg('recharge-err', 'Enter your UPI / bank reference number from the app after you pay (at least 6 characters).');
-                return;
-            }
-
-            const dup = (window._payments || []).some(
-                p => (p.transactionId || '').trim().toLowerCase() === transactionId.toLowerCase() && (p.status === 'pending' || p.status === 'approved')
-            );
-            if (dup) {
-                showMsg('recharge-err', 'This reference was already submitted or approved. Use the reference shown in your payment app.');
+            if (!transactionId) {
+                showMsg('recharge-err', 'Please enter a reference or note.');
                 return;
             }
 
-            spin('Submitting request...');
+            spin('Notifying teacher...');
             try {
                 await addDoc_('payments', {
                     studentUid: student.uid,
                     studentName: student.name,
                     amount: Math.round(amount),
-                    points,
-                    method: 'UPI/QR',
+                    method: 'Manual',
                     type: 'recharge',
                     status: 'pending',
                     transactionId,
                     createdAt: new Date().toISOString()
                 });
 
+                // Notify teacher via email
+                await notifyTeacherAboutPayment(student, amount, transactionId);
+
                 unspin();
                 closeStudentRechargeModal();
-                toast('Request sent — points are added only after your teacher approves.');
+                toast('Teacher notified! Cash will be added after approval.');
                 loadPaymentHistory();
             } catch (error) {
                 unspin();
                 showMsg('recharge-err', '❌ ' + error.message);
             }
+        }
+
+        async function notifyTeacherAboutPayment(student, amount, ref) {
+            try {
+                const teacherEmail = window._TEACHER_EMAIL || 'teacher@mathmade.com';
+
+                const subject = `💰 New Payment Notification: ${student.name}`;
+                const message = `Hi Teacher,\n\n${student.name} has just clicked "I've Paid" in the Academy Hub.\n\n💰 Amount: ₹${amount}\n📝 Reference: ${ref}\n\nPlease check your bank/UPI and Approve/Decline this in the Payment Review section of your dashboard.\n\n— Mathmade Epicenter System`;
+
+                if (typeof sendEmail === 'function') {
+                    await sendEmail(teacherEmail, "Teacher", subject, message);
+                }
+            } catch (e) { console.error("Email notification failed", e); }
         }
 
         async function approvePaymentRequest(paymentId) {
@@ -10361,23 +10534,26 @@
                     return;
                 }
 
-                const pts = Number(pd.points) || 0;
                 const amt = Number(pd.amount) || 0;
                 const uRef = doc(db, 'users', pd.studentUid);
                 const uSnap = await getDoc(uRef);
                 if (!uSnap.exists()) throw new Error('Student account not found');
                 const u = uSnap.data();
 
-                const newBalance = (u.pointsBalance || 0) + pts;
-                const newTotal = (u.points || 0) + pts;
+                const newBalance = (u.pointsBalance || 0) + amt;
                 const log = [...(u.pointsLog || []), {
-                    icon: '💳',
-                    reason: `Verified payment ₹${amt} (Ref: ${pd.transactionId || '—'})`,
-                    val: pts,
+                    icon: '💵',
+                    reason: `Approved payment: ₹${amt} (Ref: ${pd.transactionId || '—'})`,
+                    val: amt,
                     date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
                 }];
 
-                await updateDoc(uRef, { pointsBalance: newBalance, pointsLog: log });
+                const newTotalPoints = (u.points || 0) + amt;
+                await updateDoc(uRef, {
+                    pointsBalance: newBalance,
+                    points: newTotalPoints,
+                    pointsLog: log
+                });
                 await updateDoc(payRef, {
                     status: 'approved',
                     approvedAt: new Date().toISOString(),
@@ -10387,7 +10563,7 @@
                 const stu = window._students.find(s => s.uid === pd.studentUid);
                 if (stu) {
                     stu.pointsBalance = newBalance;
-                    stu.points = newTotal;
+                    stu.points = newTotalPoints;
                     stu.pointsLog = log;
                 }
 
@@ -10399,11 +10575,7 @@
                 updatePaymentRequestsBadge();
                 buildTeacherAll();
                 unspin();
-                toast(`Approved — +${pts} points for ${pd.studentName || 'student'}`);
-                try {
-                    const stObj = window._students.find(s => s.uid === pd.studentUid) || { name: pd.studentName, pointsBalance: newBalance };
-                    await notifyTeacherAboutRecharge({ ...stObj, name: pd.studentName || stObj.name, pointsBalance: newBalance }, amt, pts);
-                } catch (e) { console.warn(e); }
+                toast(`✅ Approved! ₹${amt} added to ${pd.studentName || 'student'}'s balance.`);
             } catch (error) {
                 unspin();
                 alert(error.message);
@@ -10447,13 +10619,13 @@
         <div class="payment-req-header">
           <div class="payment-student-info">
             <div class="payment-student-name">${p.studentName || 'Student'}</div>
-            <div class="payment-student-email">₹${p.amount || 0} → <strong style="color:var(--green)">${p.points || 0} points</strong></div>
+            <div class="payment-student-email"><strong style="color:var(--green)">₹${p.amount || 0}</strong></div>
             <div class="payment-transaction-id">Ref: <code>${(p.transactionId || '—').replace(/</g, '')}</code></div>
             <div style="font-size:.72rem;color:var(--text3);margin-top:6px">${(p.createdAt || '').slice(0, 19).replace('T', ' ')}</div>
           </div>
           <div class="payment-actions">
-            <button type="button" class="btn btn-green btn-sm" onclick="approvePaymentRequest('${p.id}')">Approve &amp; credit</button>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="rejectPaymentRequest('${p.id}')">Reject</button>
+            <button type="button" class="btn btn-green btn-sm" onclick="approvePaymentRequest('${p.id}')">Approve ✓</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="rejectPaymentRequest('${p.id}')">Decline ✗</button>
           </div>
         </div>
       </div>`).join('');
@@ -10468,7 +10640,7 @@
         <div class="payment-req-header">
           <div class="payment-student-info">
             <div class="payment-student-name">${p.studentName || '—'}</div>
-            <div style="font-size:.8rem;color:var(--text2)">₹${p.amount || 0} · ${p.points || 0} pts · ${p.status}</div>
+            <div style="font-size:.8rem;color:var(--text2)">₹${p.amount || 0} · ${p.status}</div>
             <div class="payment-transaction-id">${(p.transactionId || '').replace(/</g, '')}</div>
           </div>
         </div>
@@ -10506,8 +10678,8 @@
                 const config = window._PAYMENT_CONFIG;
                 const isAutoPayEnabled = config.autoCreditPoints === true;
                 const msg = isAutoPayEnabled
-                    ? 'No payment activity yet. Click "Recharge Points" for instant payment with auto-credit!'
-                    : 'No payment activity yet. Recharge from the sidebar — points appear after teacher approval.';
+                    ? 'No payment activity yet. Click "Add Cash" for instant payment!'
+                    : 'No payment activity yet. Use the sidebar to notify your teacher after paying.';
                 listEl.innerHTML = `<div class="empty"><div class="empty-icon">💳</div><p>${msg}</p></div>`;
                 return;
             }
@@ -10521,7 +10693,7 @@
                 if (isAuto && st === 'approved') {
                     lbl = '⚡ Auto-credited — Instant';
                 } else {
-                    lbl = st === 'approved' ? 'Approved — points credited' : st === 'rejected' ? 'Rejected' : 'Waiting for teacher';
+                    lbl = st === 'approved' ? 'Approved — cash credited' : st === 'rejected' ? 'Declined' : 'Waiting for teacher';
                 }
                 // Payment reference (Razorpay ID or transaction ID)
                 const ref = isAuto
@@ -10532,7 +10704,7 @@
     <div class="payment-history-card ${badge}">
       <div class="payment-history-header">
         <div class="payment-history-info">
-          <div style="font-weight:800;margin-bottom:4px">₹${p.amount || 0} → ${p.points || 0} points</div>
+          <div style="font-weight:800;margin-bottom:4px">₹${p.amount || 0}</div>
           <div style="font-size:.8rem;color:var(--text2)">${lbl}</div>
           <div class="payment-transaction-id" style="margin-top:8px">${ref}</div>
           <div style="font-size:.72rem;color:var(--text3);margin-top:6px">${(p.createdAt || '').slice(0, 19).replace('T', ' ')}</div>
@@ -10546,26 +10718,25 @@
         /* Check and show low points warning */
         function checkAndShowLowPointsWarning(student) {
             const warningEl = document.getElementById('s-low-points-warning');
+            const warningMob = document.getElementById('s-low-points-warning-d');
             const balance = student.pointsBalance || 0;
-            const threshold = 100; // Show warning if less than 100 points
+            const threshold = 100; // Show warning if less than ₹100
 
-            if (balance < threshold) {
-                warningEl.style.display = 'block';
-            } else {
-                warningEl.style.display = 'none';
-            }
+            const show = balance < threshold;
+            if (warningEl) warningEl.style.display = show ? 'block' : 'none';
+            if (warningMob) warningMob.style.display = show ? 'block' : 'none';
         }
 
         /* Notify teacher about student recharge */
-        async function notifyTeacherAboutRecharge(student, amount, points) {
+        async function notifyTeacherAboutRecharge(student, amount) {
             try {
                 const teacherEmail = window._TEACHER_EMAIL || 'teacher@mathmade.com';
-                const message = `📚 Student Recharge Alert\n\n${student.name} has recharged their account:\n\n💰 Amount: ₹${amount}\n🎯 Points: +${points}\n💳 New Balance: ${student.pointsBalance || 0} points\n\nRecharge completed successfully.\n\n— Mathmade Easy System`;
+                const message = `💰 Student Payment Alert\n\n${student.name} has submitted a payment:\n\n💰 Amount: ₹${amount}\n💳 New Balance: ₹${student.pointsBalance || 0}\n\nPlease review and approve this in your dashboard.\n\n— Mathmade Epicenter System`;
 
                 // Send email notification to teacher
-                await sendEmail(teacherEmail, 'Teacher', `📚 Student Recharge: ${student.name}`, message);
+                await sendEmail(teacherEmail, 'Teacher', `💰 Student Payment: ${student.name}`, message);
 
-                console.log('✅ Teacher notified about recharge');
+                console.log('✅ Teacher notified about payment');
             } catch (error) {
                 console.error('❌ Failed to notify teacher:', error);
             }
@@ -10574,7 +10745,7 @@
         /* Update student points display and check warnings */
         function updateStudentPointsDisplay(student) {
             const balance = student.pointsBalance || 0;
-            const t = `${balance} Points`;
+            const t = `₹${balance}`;
             const p = document.getElementById('s-pts');
             const pd = document.getElementById('s-pts-d');
             if (p) p.textContent = t;
@@ -10582,411 +10753,10 @@
             checkAndShowLowPointsWarning(student);
         }
 
+
         /* ============================================================
-          AUTOMATIC PAYMENT GATEWAY - PAYTM INTEGRATION
-          No human approval needed - payments process instantly
-          Works on GitHub Pages without domain
+          AUTOMATIC MEETING CREATION SYSTEM
         ============================================================ */
-
-        /* Load Paytm JS Checkout script */
-        function loadPaytmScript() {
-            return new Promise((resolve) => {
-                if (window.Paytm && window.Paytm.CheckoutJS) { resolve(true); return; }
-                const script = document.createElement('script');
-                script.src = 'https://securegw.paytm.in/merchantpgpui/checkoutjs/merchants/YOUR_MID.js';
-                script.async = true;
-                script.onload = () => resolve(true);
-                script.onerror = () => resolve(false);
-                document.body.appendChild(script);
-            });
-        }
-
-        /* Start automatic payment with Paytm checkout */
-        async function startAutomaticPayment() {
-            const uid = window._FB.auth.currentUser?.uid;
-            const student = window._student || window._students?.find(s => s.uid === uid);
-            if (!student) { toast('Session expired. Please login again.'); return; }
-
-            const amount = parseFloat(document.getElementById('recharge-amount').value);
-            const points = parseInt(document.getElementById('recharge-points').value, 10);
-            const config = window._PAYMENT_CONFIG;
-
-            if (!amount || amount < 100) {
-                showMsg('recharge-err', 'Minimum recharge amount is ₹100');
-                return;
-            }
-
-            // Generate unique order ID
-            const orderId = `MATH_${Date.now()}_${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
-
-            // Store order details in Firestore for verification
-            const orderData = {
-                orderId: orderId,
-                studentUid: student.uid,
-                studentName: student.name,
-                studentEmail: student.email,
-                amount: amount,
-                points: points,
-                status: 'PENDING',
-                createdAt: new Date().toISOString(),
-                callbackUrl: window.location.origin + window.location.pathname
-            };
-
-            try {
-                // Save pending order to Firestore
-                await addDoc_("payments", {
-                    ...orderData,
-                    method: 'Paytm',
-                    type: 'auto_recharge_pending'
-                });
-
-                // Build Paytm payment URL (works on GitHub Pages!)
-                // Using Paytm's redirect flow which works without server
-                const paytmParams = new URLSearchParams({
-                    mid: config.paytmMerchantId,
-                    orderId: orderId,
-                    txnAmount: amount.toFixed(2),
-                    callbackUrl: window.location.href.split('?')[0] + '?paytm_callback=1',
-                    website: 'WEBSTAGING', // Change to 'DEFAULT' for production
-                    industryType: 'Retail',
-                    channelId: 'WEB'
-                });
-
-                // For GitHub Pages, we'll use Paytm's static checkout
-                // Create checksum and redirect to Paytm (simplified for client-side)
-                showPaytmQRCode(amount, orderId, student, points);
-
-            } catch (error) {
-                console.error('Paytm init error:', error);
-                showMsg('recharge-err', 'Error starting payment: ' + error.message);
-            }
-        }
-
-        /* Show Multi-Payment Gateway with choices */
-        function showPaytmQRCode(amount, orderId, student, points) {
-            const config = window._PAYMENT_CONFIG;
-            const upiId = config.upiId || 'emailjesima@oksbi';
-            const payeeName = config.teacherName || 'Mathmade Easy';
-            const note = `Mathmade_${orderId.slice(-8)}`;
-
-            // Build UPI payment URI
-            const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-
-            // Deep links for various apps
-            const paymentLinks = {
-                paytm: `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`,
-                gpay: `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`,
-                phonepe: `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`,
-                whatsapp: `https://wa.me/${config.whatsappNo}?text=${encodeURIComponent(`Payment of ₹${amount} for Order ${orderId} - ${payeeName}`)}`,
-                paypal: `https://www.paypal.com/paypalme/mathmadeeasy/${amount}USD`
-            };
-
-            const modalId = 'multi-payment-modal';
-            let modal = document.getElementById(modalId);
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = modalId;
-                modal.className = 'modal-overlay';
-                document.body.appendChild(modal);
-            }
-
-            modal.innerHTML = `
-    <div class="modal-box" style="width:440px;max-height:90vh;overflow-y:auto">
-      <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;border-radius:16px 16px 0 0;text-align:center">
-        <h3 style="margin:0;font-size:1.4rem">💳 Choose Payment Method</h3>
-        <p style="margin:6px 0 0 0;opacity:0.9;font-size:0.95rem">₹${amount} → ${points} points</p>
-        <p style="margin:4px 0 0 0;opacity:0.8;font-size:0.8rem">Ref: ${orderId.slice(-12)}</p>
-      </div>
-      
-      <div style="padding:20px">
-        <!-- QR Code Section -->
-        <div style="text-align:center;margin-bottom:20px">
-          <p style="font-size:0.85rem;color:var(--text2);margin-bottom:10px">📷 Scan with any UPI app</p>
-          <div id="payment-qr" style="display:inline-block;padding:12px;background:white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}" 
-                 style="width:180px;height:180px;" alt="Payment QR">
-          </div>
-        </div>
-
-        <!-- Payment Apps Grid -->
-        <p style="font-size:0.8rem;color:var(--text3);text-align:center;margin-bottom:12px">Or pay directly via:</p>
-        
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px">
-          <a href="${paymentLinks.paytm}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#00b4f0;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
-            <span style="font-size:1.2rem">💳</span> Paytm
-          </a>
-          <a href="${paymentLinks.gpay}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#1a73e8;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
-            <span style="font-size:1.2rem">G</span> Google Pay
-          </a>
-          <a href="${paymentLinks.phonepe}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#5f259f;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
-            <span style="font-size:1.2rem">📱</span> PhonePe
-          </a>
-          <a href="${upiUri}" class="payment-option" style="display:flex;align-items:center;gap:8px;padding:12px;background:#ff6b35;color:white;border-radius:10px;text-decoration:none;font-weight:600;justify-content:center">
-            <span style="font-size:1.2rem">⚡</span> Any UPI App
-          </a>
-        </div>
-
-        <!-- International Option -->
-        <div style="background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:16px">
-          <p style="font-size:0.8rem;color:var(--text3);margin:0 0 8px 0">🌍 International students:</p>
-          <a href="${paymentLinks.paypal}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#0070ba;color:white;border-radius:6px;text-decoration:none;font-size:0.85rem">
-            <span>🅿️</span> Pay with PayPal (~$${(amount / 83).toFixed(2)})
-          </a>
-        </div>
-
-        <!-- Bank Transfer Info -->
-        <div style="background:#f0f8ff;border:1px solid #90caf9;border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.8rem">
-          <p style="font-weight:600;color:#1565c0;margin:0 0 8px 0">🏦 Bank Transfer</p>
-          <p style="margin:0;color:var(--text2);line-height:1.5">
-            ${config.bankName || 'INDIAN BANK'}<br>
-            A/C: ${config.accountNo || '900707084'}<br>
-            IFSC: ${config.ifscCode || 'IDIB000C007'}<br>
-            <strong>Note:</strong> Add "${note}" as reference
-          </p>
-        </div>
-
-        <div style="background:#f5f5f5;border-radius:12px;padding:16px;margin-bottom:16px">
-          <p style="font-size:0.85rem;color:var(--text3);margin:0;text-align:center">
-            ⚡ <strong>Auto-credit enabled</strong><br>
-            After paying, click below to verify & get instant points!
-          </p>
-        </div>
-
-        <button class="btn btn-primary" onclick="verifyPaytmPayment('${orderId}', ${amount}, ${points})" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#667eea,#764ba2)">
-          ✅ I've Paid - Verify & Credit Points
-        </button>
-        <button class="btn btn-ghost" onclick="document.getElementById('${modalId}').classList.remove('show')" style="width:100%">
-          Cancel
-        </button>
-      </div>
-    </div>
-  `;
-
-            modal.classList.add('show');
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.classList.remove('show');
-            });
-        }
-
-        /* Verify Paytm payment and credit points automatically */
-        async function verifyPaytmPayment(orderId, amount, points) {
-            const uid = window._FB.auth.currentUser?.uid;
-            const student = window._student || window._students?.find(s => s.uid === uid);
-            if (!student) { toast('Session expired.'); return; }
-
-            spin('Verifying payment...');
-
-            try {
-                // In a real implementation, you would verify with Paytm API
-                // For now, we simulate verification and auto-credit
-                // The teacher can later verify via transaction ID if needed
-
-                // Check if order exists and is pending
-                const pendingPayment = (window._payments || []).find(p =>
-                    p.orderId === orderId && p.status === 'PENDING'
-                );
-
-                if (!pendingPayment) {
-                    unspin();
-                    showMsg('recharge-err', 'Order not found or already processed.');
-                    return;
-                }
-
-                // Auto-credit points (simulated verification - in production use Paytm API)
-                await processPaytmSuccess(orderId, student, amount, points);
-
-                unspin();
-                const modal = document.getElementById('multi-payment-modal') || document.getElementById('paytm-payment-modal');
-                if (modal) modal.classList.remove('show');
-                toast('🎉 Payment verified! Points credited instantly.')
-
-            } catch (error) {
-                unspin();
-                console.error('Paytm verification error:', error);
-                showMsg('recharge-err', 'Verification failed. Please contact support with Order ID: ' + orderId);
-            }
-        }
-
-        /* Process Paytm successful payment - auto credit points */
-        async function processPaytmSuccess(orderId, student, amount, points) {
-            spin('Processing payment...')
-
-            try {
-                const config = window._PAYMENT_CONFIG;
-                const { db, doc, getDoc, updateDoc, addDoc, collection } = window._FB;
-
-                // Calculate new balance
-                const newBalance = (student.pointsBalance || 0) + points;
-                const newTotal = (student.points || 0) + points;
-
-                // Create payment record with auto-approved status
-                const paymentData = {
-                    studentUid: student.uid,
-                    studentName: student.name,
-                    studentEmail: student.email,
-                    amount: amount,
-                    points: points,
-                    method: 'Paytm',
-                    type: 'auto_recharge',
-                    status: 'approved',
-                    orderId: orderId,
-                    paytmTxnId: 'PAYTM_' + Date.now(), // In production, get actual txn ID from Paytm
-                    balanceAfter: newBalance,
-                    createdAt: new Date().toISOString(),
-                    approvedAt: new Date().toISOString(),
-                    autoCredited: true,
-                    creditedBy: 'system', // No human intervention
-                    verifiedVia: 'auto' // Automatic verification
-                };
-
-                // Save payment record to Firestore
-                const paymentsRef = collection(db, 'payments');
-                const paymentDoc = await addDoc(paymentsRef, paymentData);
-
-                // Update student points - AUTO-CREDITED, NO TEACHER APPROVAL NEEDED
-                const updatedPointsLog = [...(student.pointsLog || []), {
-                    icon: ' ',
-                    reason: `Auto-recharge: ${amount} (Order: ${orderId?.slice(-12)})`,
-                    val: points,
-                    date: new Date().toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
-                }];
-
-                const userRef = doc(db, 'users', student.uid);
-                await updateDoc(userRef, {
-                    pointsBalance: newBalance,
-                    points: newTotal,
-                    pointsLog: updatedPointsLog,
-                    lastRechargeAt: new Date().toISOString()
-                });
-
-                // Update local student data
-                student.pointsBalance = newBalance;
-                student.pointsLog = updatedPointsLog;
-
-                // Update UI
-                unspin();
-                closeStudentRechargeModal();
-
-                // Update displays
-                updateStudentPointsDisplay(student);
-                loadPaymentHistory();
-
-                // Success notification
-                toast(` Payment successful! +${points} points auto-credited!`);
-
-                // Show success modal or banner
-                showAutoPaymentSuccess(amount, points, orderId);
-
-                console.log(' Automatic payment processed:', {
-                    orderId: orderId,
-                    amount: amount,
-                    points: points,
-                    newBalance: newBalance
-                });
-
-            } catch (error) {
-                unspin();
-                console.error('Payment processing error:', error);
-                showMsg('recharge-err', 'Payment succeeded but error crediting points. Please contact support with Order ID: ' + orderId);
-            }
-        }
-
-        /* Show success notification for automatic payment */
-        function showAutoPaymentSuccess(amount, points, paymentId) {
-            const successHtml = `
-    <div style="background:linear-gradient(135deg,rgba(61,214,140,.2),rgba(61,214,140,.05));border:2px solid var(--green);border-radius:16px;padding:24px;margin:20px 0;text-align:center">
-      <div style="font-size:3rem;margin-bottom:12px"></div>
-      <h3 style="color:var(--green);margin-bottom:8px;font-size:1.2rem">Payment Successful!</h3>
-      <p style="color:var(--text2);margin-bottom:12px"> ${amount}  <strong style="color:var(--green)">+${points} points</strong></p>
-      <p style="font-size:.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace">Ref: ${paymentId?.slice(-12)}</p>
-      <p style="font-size:.75rem;color:var(--text3);margin-top:8px">Points credited automatically - no waiting!</p>
-    </div>
-  `;
-
-            // Create temporary success modal
-            const modalId = 'auto-pay-success-modal';
-            let modal = document.getElementById(modalId);
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = modalId;
-                modal.className = 'modal-overlay';
-                document.body.appendChild(modal);
-            }
-
-            modal.innerHTML = `
-    <div class="modal-box" style="width:420px;text-align:center">
-      ${successHtml}
-      <button class="btn btn-primary" onclick="document.getElementById('${modalId}').classList.remove('show')" style="margin-top:8px">Awesome!</button>
-    </div>
-  `;
-
-            modal.classList.add('show');
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.classList.remove('show');
-            });
-        }
-
-        async function submitRechargeForVerification() {
-            const uid = window._FB.auth.currentUser?.uid;
-            const student = window._student || window._students?.find(s => s.uid === uid);
-            if (!student) return;
-
-            const config = window._PAYMENT_CONFIG;
-
-            // If auto-payment is enabled, use multi-gateway flow
-            if (config.autoCreditPoints) {
-                startAutomaticPayment();
-                return;
-            }
-
-            const amount = parseFloat(document.getElementById('recharge-amount').value);
-            const points = parseInt(document.getElementById('recharge-points').value, 10);
-            const txnEl = document.getElementById('recharge-txn-id');
-            const transactionId = (txnEl && txnEl.value ? txnEl.value : '').trim();
-
-            hideMsg('recharge-err');
-            hideMsg('recharge-ok');
-
-            if (!amount || amount < 1 || !points || points < 1) {
-                showMsg('recharge-err', 'Enter a valid amount (₹). Points are calculated from your rate.');
-                return;
-            }
-            if (transactionId.length < 6) {
-                showMsg('recharge-err', 'Enter your UPI / bank reference number from the app after you pay (at least 6 characters).');
-                return;
-            }
-
-            const dup = (window._payments || []).some(
-                p => (p.transactionId || '').trim().toLowerCase() === transactionId.toLowerCase() && (p.status === 'pending' || p.status === 'approved')
-            );
-            if (dup) {
-                showMsg('recharge-err', 'This reference was already submitted or approved. Use the reference shown in your payment app.');
-                return;
-            }
-
-            spin('Submitting request...');
-            try {
-                await addDoc_('payments', {
-                    studentUid: student.uid,
-                    studentName: student.name,
-                    amount: Math.round(amount),
-                    points,
-                    method: 'UPI/QR',
-                    type: 'recharge',
-                    status: 'pending',
-                    transactionId,
-                    createdAt: new Date().toISOString()
-                });
-
-                unspin();
-                closeStudentRechargeModal();
-                toast('Request sent — points are added only after your teacher approves.');
-                loadPaymentHistory();
-            } catch (error) {
-                unspin();
-                showMsg('recharge-err', '❌ ' + error.message);
-            }
-        }
 
         /* ============================================================
           AUTOMATIC MEETING CREATION SYSTEM
@@ -11091,155 +10861,88 @@
 
     </script>
 
-    <!-- Payment Modal HTML -->
+    <!-- Teacher: Record Cash Payment Modal -->
     <div class="modal-overlay" id="payment-modal">
-        <div class="modal-box" style="width:500px">
-            <h3>💳 Record Payment</h3>
+        <div class="modal-box" style="width:92%;max-width:460px">
+            <h3>💵 Record Cash Payment</h3>
             <div
                 style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
                     <span style="font-weight:700">Student: <span id="pay-student-name">—</span></span>
-                    <span style="font-size:.8rem;color:var(--text3)">Current Balance: <span
-                            id="pay-student-balance">0</span> points</span>
+                    <span style="font-size:.8rem;color:var(--text3)">Balance: <strong id="pay-student-balance"
+                            style="color:var(--green)">₹0</strong></span>
                 </div>
-
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Payment Amount (₹)</label>
-                        <input type="number" id="pay-amount" value="500" min="1" onchange="syncPaymentFields()" />
-                    </div>
-                    <div class="input-group">
-                        <label>Points to Add</label>
-                        <input type="number" id="pay-points" value="500" min="1" readonly
-                            style="background:var(--surface3)" />
-                    </div>
+                <div class="input-group full">
+                    <label>Cash Amount Received (₹)</label>
+                    <input type="number" id="pay-amount" value="500" min="1" />
+                </div>
+                <div class="input-group full" style="margin-top:10px">
+                    <label>Note (optional)</label>
+                    <input type="text" id="pay-note" placeholder="e.g. April fees, partial payment…" />
                 </div>
             </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-                <div style="text-align:center">
-                    <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Scan QR Code to
-                        Pay</div>
-                    <div id="pay-qr-code"
-                        style="display:flex;justify-content:center;align-items:center;min-height:200px;background:#fff;border-radius:8px;padding:10px">
-                        Generating QR...
-                    </div>
-                </div>
-                <div style="text-align:center">
-                    <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Or Send Payment
-                        Request</div>
-                    <button class="btn btn-green" onclick="sendPaymentRequest()" style="width:100%">
-                        📱 Send via WhatsApp
-                    </button>
-                </div>
-            </div>
-
             <div class="msg-ok" id="pay-ok"></div>
             <div class="msg-err" id="pay-err"></div>
-
             <div class="modal-footer">
                 <button class="btn btn-ghost" onclick="closePaymentModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="recordPayment()">✓ Record Payment</button>
+                <button class="btn btn-primary" onclick="recordPayment()">✓ Mark as Paid</button>
             </div>
         </div>
     </div>
 
-    <!-- Student Recharge Modal -->
+    <!-- Student: I've Paid Modal -->
     <div class="modal-overlay" id="student-recharge-modal">
-        <div class="modal-box student-recharge-modal" style="width:520px;max-height:90vh;overflow-y:auto">
-            <h3>💳 Recharge Your Points</h3>
+        <div class="modal-box" style="width:92%;max-width:480px">
+            <h3>💵 I've Paid — Notify Teacher</h3>
             <div
                 style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                    <span style="font-weight:700">Current Balance</span>
-                    <span style="font-size:.8rem;color:var(--text3)">Points: <span
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                    <span style="font-weight:700">Your Cash Balance</span>
+                    <span style="font-size:1.1rem;font-weight:800;color:var(--green)">₹<span
                             id="recharge-current-balance">0</span></span>
                 </div>
-
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Recharge Amount (₹)</label>
-                        <input type="number" id="recharge-amount" value="500" min="100" max="5000" step="100"
-                            onchange="syncRechargeFields()" />
-                    </div>
-                    <div class="input-group">
-                        <label>Points you'll get</label>
-                        <input type="number" id="recharge-points" value="500" min="100" max="5000" readonly
-                            style="background:var(--surface3)" />
-                    </div>
-                </div>
-
-                <!-- Auto-payment info banner -->
-                <div id="auto-payment-banner"
-                    style="display:none;background:linear-gradient(135deg,rgba(124,111,239,.15),rgba(61,214,140,.1));border:1px solid var(--accent);border-radius:10px;padding:12px;margin-top:12px">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-                        <span style="font-size:1.2rem">⚡</span>
-                        <span style="font-weight:700;color:var(--accent-h);font-size:.85rem">INSTANT AUTO-CREDIT
-                            ENABLED</span>
-                    </div>
-                    <p style="font-size:.75rem;color:var(--text2);line-height:1.4;margin:0">
-                        Points are credited <strong style="color:var(--green)">automatically</strong> after successful
-                        payment. No waiting for approval!
-                    </p>
-                </div>
-
-                <!-- Manual verification section (shown when auto-payment not configured) -->
-                <div id="manual-payment-section" style="margin-top:12px">
-                    <div class="input-group full" style="margin-top:12px">
-                        <label>Payment reference (after you pay)</label>
-                        <input type="text" id="recharge-txn-id" placeholder="UPI / bank transaction ID from your app"
-                            autocomplete="off" />
-                    </div>
-                    <p style="font-size:.76rem;color:var(--text3);line-height:1.45;margin-top:12px">
-                        Points are added only after your teacher verifies this reference and approves in <strong>Payment
-                            reviews</strong>.
-                    </p>
-                </div>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-                <div style="text-align:center">
-                    <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Scan QR Code to
-                        Pay</div>
+                <div
+                    style="background:var(--surface3);border-radius:10px;padding:12px;margin-bottom:14px;font-size:.82rem;line-height:1.9;text-align:center">
+                    <div style="font-weight:700;margin-bottom:8px">Scan to Pay:</div>
                     <div id="recharge-qr-code"
-                        style="display:flex;justify-content:center;align-items:center;min-height:200px;background:#fff;border-radius:8px;padding:10px">
-                        Generating QR...
-                    </div>
-                </div>
-                <div style="text-align:center">
-                    <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px">Payment Options
+                        style="margin-bottom:12px;min-height:200px;display:flex;align-items:center;justify-content:center;background:white;border-radius:12px;padding:10px">
+                        <div class="loader"></div>
                     </div>
 
-                    <!-- Automatic Pay Now button (shown when configured) -->
-                    <div id="auto-pay-btn-container" style="display:none;margin-bottom:12px">
-                        <button class="btn btn-primary" onclick="startAutomaticPayment()"
-                            style="width:100%;padding:14px;font-size:1rem;background:linear-gradient(135deg,var(--accent),#9b91f5)">
-                            ⚡ Pay Now (Auto)
-                        </button>
-                        <p style="font-size:.7rem;color:var(--accent-h);margin-top:4px">UPI, Cards, NetBanking • Instant
-                            credit</p>
+                    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap">
+                        <a id="link-paytm" href="#" class="btn btn-ghost"
+                            style="padding:6px 10px;font-size:.7rem;background:#00baf2;color:white;border:none">Paytm</a>
+                        <a id="link-gpay" href="#" class="btn btn-ghost"
+                            style="padding:6px 10px;font-size:.7rem;background:#4285f4;color:white;border:none">GPay</a>
+                        <a id="link-phonepe" href="#" class="btn btn-ghost"
+                            style="padding:6px 10px;font-size:.7rem;background:#5f259f;color:white;border:none">PhonePe</a>
                     </div>
 
-                    <button class="btn btn-green" onclick="sendRechargeRequest()" style="width:100%;margin-bottom:8px">
-                        📱 Send via WhatsApp
-                    </button>
                     <div
-                        style="font-size:.75rem;color:var(--text3);padding:8px;background:var(--surface2);border-radius:6px">
-                        💳 UPI: <span id="recharge-upi-id">emailjesima@oksbi</span><br>
-                        🏦 Bank: INDIAN BANK<br>
-                        📞 WhatsApp: 9188921 93291
+                        style="font-size:.75rem;color:var(--text3);border-top:1px solid var(--border);padding-top:10px;margin-top:10px">
+                        UPI: <strong id="recharge-upi-id">emailjesima@oksbi</strong><br>
+                        🏦 Bank: INDIAN BANK &nbsp;|&nbsp; A/C: 900707084 &nbsp;|&nbsp; IFSC: IDIB000C007
                     </div>
                 </div>
+                <div class="input-group full">
+                    <label>Amount to Pay (₹)</label>
+                    <input type="number" id="recharge-amount" value="500" min="1" oninput="generateRechargeQR()" />
+                </div>
+                <div class="input-group full" style="margin-top:10px">
+                    <label>Transaction ID / Ref <span style="font-weight:400;color:var(--text3)">(after
+                            paying)</span></label>
+                    <input type="text" id="recharge-txn-id" placeholder="Enter UPI ref no." autocomplete="off" />
+                </div>
+                <p style="font-size:.75rem;color:var(--text3);margin-top:10px;line-height:1.5">
+                    ⏳ Your teacher will review and approve. Once approved, the cash will be added to your balance.
+                </p>
             </div>
-
             <div class="msg-ok" id="recharge-ok"></div>
             <div class="msg-err" id="recharge-err"></div>
-
             <div class="modal-footer">
                 <button class="btn btn-ghost" onclick="closeStudentRechargeModal()">Cancel</button>
-                <!-- Dynamic button based on configuration -->
-                <button id="recharge-submit-btn" class="btn btn-primary"
-                    onclick="submitRechargeForVerification()">Submit for verification</button>
+                <button class="btn btn-primary" onclick="submitRechargeForVerification()">✅ I've Paid — Notify
+                    Teacher</button>
             </div>
         </div>
     </div>
@@ -12450,6 +12153,17 @@ For more practice, check out the <strong>Practice Lab</strong>! 🧮`;
         </div>
     </div>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('Service Worker registered!');
+                }).catch(err => {
+                    console.log('Service Worker registration failed:', err);
+                });
+            });
+        }
+    </script>
 </body>
 
 </html>
