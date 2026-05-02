@@ -6301,6 +6301,9 @@
                     <span class="nav-ic">🔑</span> Password Resets
                     <span class="nav-badge" id="reset-badge" style="display:none">0</span>
                 </button>
+                <button class="nav-btn" onclick="tNav('download',this)">
+                    <span class="nav-ic">📲</span> Download App
+                </button>
             </nav>
             <div class="t-sidebar-foot">
                 <div class="t-profile-mini">
@@ -6358,6 +6361,9 @@
                 <button class="nav-btn" onclick="tNav('resets',this);closeTDrawer()">
                     <span class="nav-ic">🔑</span> Password Resets
                     <span class="nav-badge" id="reset-badge-d" style="display:none">0</span>
+                </button>
+                <button class="nav-btn" onclick="tNav('download',this);closeTDrawer()">
+                    <span class="nav-ic">📲</span> Download App
                 </button>
             </nav>
             <div class="t-sidebar-foot">
@@ -6853,6 +6859,40 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Download App -->
+            <div id="tp-download" class="dash-page">
+                <div class="sec-header">
+                    <div>
+                        <h2>📲 Download Mobile App</h2>
+                        <p>Take Epicenter with you and stay updated on the go.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="max-width: 600px; margin: 20px auto; padding: 40px 20px; text-align: center;">
+                    <div style="font-size: 5rem; margin-bottom: 20px; filter: drop-shadow(0 0 20px var(--accent));">📱</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Android Experience</h3>
+                    <p style="color: var(--text2); margin-bottom: 30px; line-height: 1.6;">
+                        Download the official Epicenter APK to get real-time notifications, 
+                        offline access to resources, and a smoother experience on your Android device.
+                    </p>
+
+                    <a href="https://github.com/mohammeduzairhero-bit/epicenter/releases/latest/download/app-release.apk" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+                        <span>📥</span> Download .APK
+                    </a>
+
+                    <div style="margin-top: 40px; text-align: left; background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--r);">
+                        <h4 style="margin-bottom: 15px; color: var(--accent-h);">How to Install:</h4>
+                        <ol style="color: var(--text2); font-size: 0.9rem; line-height: 1.8; padding-left: 20px;">
+                            <li>Click the <strong>Download .APK</strong> button above.</li>
+                            <li>Once downloaded, open the file from your notifications or browser downloads.</li>
+                            <li>If prompted, allow "Installation from unknown sources" in your device settings.</li>
+                            <li>Follow the on-screen instructions to complete the installation.</li>
+                            <li>Launch <strong>Epicenter</strong> and log in with your credentials.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -6894,6 +6934,7 @@
                     History</button>
                 <button class="s-nav-btn" onclick="sNav('aitutor',this)"><span class="sn-ic">🤖</span> AI Math
                     Tutor</button>
+                <button class="s-nav-btn" onclick="sNav('download',this)"><span class="sn-ic">📲</span> Download App</button>
             </nav>
             <div class="s-sidebar-foot">
                 <div class="s-profile-card">
@@ -6957,6 +6998,7 @@
                     Payment History</button>
                 <button class="s-nav-btn" onclick="sNav('aitutor',this);closeSDrawer()"><span class="sn-ic">🤖</span> AI
                     Math Tutor</button>
+                <button class="s-nav-btn" onclick="sNav('download',this);closeSDrawer()"><span class="sn-ic">📲</span> Download App</button>
             </nav>
             <div class="s-sidebar-foot" style="padding:13px 11px;border-top:1px solid var(--border)">
                 <div class="s-profile-card">
@@ -7439,6 +7481,41 @@
                             style="font-size:.78rem;">Mean vs Median</button>
                         <button class="btn btn-ghost btn-sm" onclick="setAIQuestion('Explain factoring polynomials')"
                             style="font-size:.78rem;">Factoring polynomials</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download App -->
+            <div id="sp-download" class="dash-page">
+                <div class="sec-header">
+                    <div>
+                        <h2>📲 Download Mobile App</h2>
+                        <p>Get the best experience on your phone.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="max-width: 600px; margin: 20px auto; padding: 40px 20px; text-align: center;">
+                    <div style="font-size: 5rem; margin-bottom: 20px; filter: drop-shadow(0 0 20px var(--accent));">📱</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Android Experience</h3>
+                    <p style="color: var(--text2); margin-bottom: 30px; line-height: 1.6;">
+                        Download our mobile app to track your progress, attend classes, 
+                        and stay updated anytime, anywhere.
+                    </p>
+
+                    <a href="https://github.com/mohammeduzairhero-bit/epicenter/releases/latest/download/app-release.apk" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+                        <span>📥</span> Download .APK
+                    </a>
+
+                    <div style="margin-top: 40px; text-align: left; background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--r);">
+                        <h4 style="margin-bottom: 15px; color: var(--accent-h);">How to Install:</h4>
+                        <ul style="color: var(--text2); font-size: 0.9rem; list-style: none; padding: 0; line-height: 1.8;">
+                            <li>✅ <strong>Step 1:</strong> Download the .APK file.</li>
+                            <li>✅ <strong>Step 2:</strong> Open the file and allow installation.</li>
+                            <li>✅ <strong>Step 3:</strong> Log in and start learning!</li>
+                        </ul>
+                        <p style="font-size: 0.8rem; color: var(--text3); margin-top: 15px;">
+                            Note: Since this is an external app, you might see a "Play Protect" or "Unknown Source" warning. It is safe to proceed.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -8426,7 +8503,8 @@
             overview: 'Overview', students: 'My Students', schedule: 'Schedule',
             freeschedule: 'Free Schedule', homework: 'Homework', announcements: 'Announcements',
             resources: 'Resources', spr: 'Progress Notes', leave: 'Time off', help: 'Help & policies',
-            earnings: 'Earnings', paymentreviews: 'Payment reviews', performance: 'Performance', resets: 'Password Resets'
+            earnings: 'Earnings', paymentreviews: 'Payment reviews', performance: 'Performance', resets: 'Password Resets',
+            download: 'Download App'
         };
 
         async function initTeacher() {
@@ -9713,7 +9791,7 @@
             progress: 'My Progress', homework: 'Homework', badges: 'Badges',
             leaderboard: 'Leaderboard', resources: 'Resources', practice: 'Practice lab',
             announcements: 'Announcements', profile: 'Profile', payments: 'Payment History',
-            aitutor: 'AI Math Tutor'
+            aitutor: 'AI Math Tutor', download: 'Download App'
         };
 
         async function initStudent() {
